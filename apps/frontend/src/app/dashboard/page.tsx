@@ -3,19 +3,16 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import {
-  LayoutDashboard, Bell, Shield, ArrowRight,
+  LayoutDashboard, Shield, ArrowRight,
   Code2, Database, Globe2, Zap, ShieldCheck, Package,
+  Newspaper, Calendar,
 } from 'lucide-react';
 import { apiFetch } from '@/lib/api';
 
 export const metadata = { title: 'Dashboard' };
 
-interface Me {
-  name: string;
-  email: string;
-  role: string;
-  createdAt: string;
-}
+interface Me { name: string; email: string; role: string; createdAt: string; }
+interface NewsItem { id: string; title: string; slug: string; type: string; published_at: string | null; }
 
 async function getMe(): Promise<Me | null> {
   try {
@@ -35,6 +32,15 @@ async function getUnreadCount(): Promise<number> {
   } catch { return 0; }
 }
 
+async function getLatestNews(): Promise<NewsItem[]> {
+  try {
+    const res = await apiFetch('/news?limit=2&page=1');
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.data?.items ?? [];
+  } catch { return []; }
+}
+
 const STACK = [
   { icon: <Code2 className="size-5 text-primary" />,         label: 'NestJS',    desc: 'Backend API' },
   { icon: <Globe2 className="size-5 text-blue-500" />,       label: 'Next.js 16', desc: 'Frontend & Admin' },
@@ -44,9 +50,15 @@ const STACK = [
   { icon: <Package className="size-5 text-orange-500" />,    label: 'pnpm Monorepo', desc: 'Turborepo' },
 ];
 
+const TYPE_STYLES: Record<string, string> = {
+  ANNOUNCEMENT: 'bg-primary/10 text-primary',
+  UPDATE:       'bg-emerald-500/10 text-emerald-600',
+  MAINTENANCE:  'bg-destructive/10 text-destructive',
+};
+
 export default async function DashboardPage() {
   const t = await getTranslations('dashboard');
-  const [me, unread] = await Promise.all([getMe(), getUnreadCount()]);
+  const [me, unread, news] = await Promise.all([getMe(), getUnreadCount(), getLatestNews()]);
   const dashboardPath = process.env.NEXT_PUBLIC_DASHBOARD_PATH ?? '/dashboard';
 
   if (!me) {
@@ -75,20 +87,56 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      {/* Latest News */}
+      {news.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+              <Newspaper className="size-4" /> {t('latestNews')}
+            </h2>
+            <Link href={`${dashboardPath}/news`}
+              className="text-xs text-primary hover:underline font-medium">{t('viewAllNews')}</Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {news.map((item) => (
+              <Link
+                key={item.id}
+                href={`${dashboardPath}/news/${item.slug}`}
+                className="group flex items-start gap-3 rounded-xl border border-border bg-card px-4 py-3.5 hover:border-primary/40 hover:bg-primary/5 transition-all"
+              >
+                <div className="flex-1 min-w-0">
+                  <span className={`text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full ${TYPE_STYLES[item.type] ?? 'bg-muted text-muted-foreground'}`}>
+                    {item.type.toLowerCase()}
+                  </span>
+                  <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors mt-1 truncate">{item.title}</p>
+                  {item.published_at && (
+                    <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                      <Calendar className="size-2.5" />
+                      {new Date(item.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </p>
+                  )}
+                </div>
+                <ArrowRight className="size-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all flex-shrink-0 mt-1" />
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4">
         {[
           {
             label: t('stats.unreadNotifications'),
             value: unread,
-            icon: <Bell className="size-5 text-primary" />,
-            href: `${dashboardPath}/notifications`,
+            icon:  <Shield className="size-5 text-primary" />,
+            href:  null,
           },
           {
             label: t('stats.memberSince'),
             value: memberSince,
-            icon: <ShieldCheck className="size-5 text-emerald-500" />,
-            href: null,
+            icon:  <ShieldCheck className="size-5 text-emerald-500" />,
+            href:  null,
           },
         ].map((stat, i) => (
           <div key={i} className="col-span-1 rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
@@ -109,11 +157,10 @@ export default async function DashboardPage() {
       {/* Quick Actions */}
       <section>
         <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-4">{t('quickActions')}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
-            { label: t('actions.manageNotifications'), href: `${dashboardPath}/notifications`,       icon: <Bell className="size-4" /> },
-            { label: t('actions.editProfile'),         href: `${dashboardPath}/settings`,            icon: <LayoutDashboard className="size-4" /> },
-            { label: t('actions.security'),            href: `${dashboardPath}/settings/security`,   icon: <Shield className="size-4" /> },
+            { label: t('actions.editProfile'),  href: `${dashboardPath}/settings/profile`,  icon: <LayoutDashboard className="size-4" /> },
+            { label: t('actions.security'),     href: `${dashboardPath}/settings/security`, icon: <Shield className="size-4" /> },
           ].map((action) => (
             <Link
               key={action.href}

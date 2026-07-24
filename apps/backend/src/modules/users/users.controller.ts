@@ -9,8 +9,8 @@ import { BanService } from './ban.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { CreateUserSchema, UpdateUserSchema, UpdateProfileSchema, BanUserSchema, messages } from '@ahansk/shared';
-import type { CreateUserDto, UpdateUserDto, UpdateProfileDto, BanUserDto, AuthUser } from '@ahansk/shared';
+import { CreateUserSchema, UpdateUserSchema, UpdateProfileSchema, BanUserSchema, ChangePasswordSchema, messages } from '@ahansk/shared';
+import type { CreateUserDto, UpdateUserDto, UpdateProfileDto, BanUserDto, AuthUser, ChangePasswordDto } from '@ahansk/shared';
 import type { UploadedFile as StorageFile } from '../../infrastructure/storage/storage.service';
 
 @Controller('users')
@@ -36,6 +36,14 @@ export class UsersController {
   ) {
     const file = avatar ? (avatar as unknown as StorageFile) : undefined;
     return this.usersService.updateProfile(user.id, dto, file);
+  }
+
+  @Patch('me/password')
+  async changePassword(
+    @CurrentUser() user: AuthUser,
+    @Body(new ZodValidationPipe(ChangePasswordSchema)) dto: ChangePasswordDto,
+  ) {
+    return this.usersService.changePassword(user.id, dto);
   }
 
   // ─── Admin endpoints ──────────────────────────────────────────────────────

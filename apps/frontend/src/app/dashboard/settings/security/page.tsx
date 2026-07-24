@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { Shield, Key, Smartphone } from 'lucide-react';
+import { Shield, Key, Smartphone, Mail } from 'lucide-react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth.store';
 import { Button } from '@/components/ui/button';
@@ -67,31 +66,33 @@ function ChangePasswordSection() {
 }
 
 function TwoFactorSection() {
-  const user = useAuthStore((s) => s.user);
+  const user    = useAuthStore((s) => s.user);
   const fetchMe = useAuthStore((s) => s.fetchMe);
-  const [loading, setLoading] = useState(false);
-  const [qrUri, setQrUri] = useState<string | null>(null);
-  const [secret, setSecret] = useState<string | null>(null);
-  const [code, setCode] = useState('');
+  const [loading, setLoading]               = useState(false);
+  const [qrUri, setQrUri]                   = useState<string | null>(null);
+  const [secret, setSecret]                 = useState<string | null>(null);
+  const [code, setCode]                     = useState('');
+  const [disablePassword, setDisablePassword] = useState('');
 
-  const enable = async () => {
+  const setup = async () => {
     setLoading(true);
     try {
-      const { data } = await api.post('/auth/2fa/enable');
-      setQrUri(data.data.otpauthUrl);
+      const { data } = await api.get<{ data: { secret: string; qrCodeDataUrl: string } }>('/auth/2fa/setup');
+      setQrUri(data.data.qrCodeDataUrl);
       setSecret(data.data.secret);
     } catch { toast.error('Failed to start 2FA setup.'); }
     finally { setLoading(false); }
   };
 
-  const verify = async (e: React.FormEvent) => {
+  const enable = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.post('/auth/2fa/confirm', { code });
+      await api.post('/auth/2fa/enable', { code });
       toast.success('Two-factor authentication enabled!');
       await fetchMe();
       setQrUri(null);
+      setCode('');
     } catch { toast.error('Invalid code. Please try again.'); }
     finally { setLoading(false); }
   };
@@ -99,11 +100,11 @@ function TwoFactorSection() {
   const disable = async () => {
     setLoading(true);
     try {
-      await api.post('/auth/2fa/disable', { code });
+      await api.post('/auth/2fa/disable', { password: disablePassword });
       toast.success('Two-factor authentication disabled.');
       await fetchMe();
-      setCode('');
-    } catch { toast.error('Invalid code.'); }
+      setDisablePassword('');
+    } catch { toast.error('Invalid password.'); }
     finally { setLoading(false); }
   };
 
@@ -125,16 +126,15 @@ function TwoFactorSection() {
       </div>
 
       {!user?.totp_enabled && !qrUri && (
-        <Button variant="outline" loading={loading} onClick={enable}>Enable 2FA</Button>
+        <Button variant="outline" loading={loading} onClick={setup}>Enable 2FA</Button>
       )}
 
       {qrUri && (
         <div className="space-y-4">
           <p className="text-xs text-muted-foreground">Scan this QR code with your authenticator app, then enter the 6-digit code.</p>
-          <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrUri)}&size=180x180`}
-            alt="2FA QR Code" className="rounded-xl border border-border" />
+          <img src={qrUri} alt="2FA QR Code" className="rounded-xl border border-border w-44 h-44" />
           {secret && <p className="text-xs font-mono bg-muted px-3 py-2 rounded-lg text-foreground">Manual: {secret}</p>}
-          <form onSubmit={verify} className="flex gap-2">
+          <form onSubmit={enable} className="flex gap-2">
             <Input placeholder="000000" maxLength={6} value={code} onChange={(e) => setCode(e.target.value)} className="w-36" />
             <Button type="submit" loading={loading}>Verify & Enable</Button>
           </form>
@@ -143,8 +143,8 @@ function TwoFactorSection() {
 
       {user?.totp_enabled && (
         <div className="flex items-center gap-2">
-          <Input placeholder="Enter 6-digit code to disable" maxLength={6} value={code}
-            onChange={(e) => setCode(e.target.value)} className="w-52" />
+          <Input type="password" placeholder="Enter current password to disable" value={disablePassword}
+            onChange={(e) => setDisablePassword(e.target.value)} className="w-64" />
           <Button variant="outline" loading={loading} onClick={disable} className="text-destructive border-destructive hover:bg-destructive/10">
             Disable 2FA
           </Button>
@@ -154,6 +154,84 @@ function TwoFactorSection() {
   );
 }
 
+function ChangeEmailSection() {
+  const [step, setStep]       = useState<1 | 2>(1);
+  const [loading, setLoading] = useState(false);
+  const [newEmail, setNewEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [otp, setOtp]           = useState('');
+
+  const requestChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await api.post('/auth/email-change/request', { new_email: newEmail, password });
+      toast.success('OTP sent to both your current and new email addresses.');
+      setStep(2);
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      toast.error(msg ?? 'Failed to send OTP.');
+    } finally { setLoading(false); }
+  };
+
+  const verifyChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await api.post('/auth/email-change/verify', { new_email: newEmail, password, otp });
+      toast.success('Email address changed successfully!');
+      setStep(1); setNewEmail(''); setPassword(''); setOtp('');
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      toast.error(msg ?? 'Invalid OTP. Please try again.');
+    } finally { setLoading(false); }
+  };
+
+  return (
+    <section className="rounded-2xl border border-border bg-card p-6 space-y-5">
+      <div className="flex items-center gap-3">
+        <div className="size-10 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+          <Mail className="size-5 text-blue-500" />
+        </div>
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">Change Email</h2>
+          <p className="text-xs text-muted-foreground">
+            {step === 1 ? 'Enter your new email and current password — we will send an OTP to the new email.' : `Enter the OTP sent to ${newEmail}.`}
+          </p>
+        </div>
+      </div>
+
+      {step === 1 ? (
+        <form onSubmit={requestChange} className="space-y-4">
+          <div className="flex flex-col gap-1.5">
+            <Label>New Email Address</Label>
+            <Input type="email" placeholder="new@example.com" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} required />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>Current Password</Label>
+            <Input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          </div>
+          <Button type="submit" loading={loading}>Send OTP</Button>
+        </form>
+      ) : (
+        <form onSubmit={verifyChange} className="space-y-4">
+          <p className="text-xs text-muted-foreground">Check your new inbox <strong>{newEmail}</strong> for the OTP code.</p>
+          <div className="flex flex-col gap-1.5">
+            <Label>OTP Code</Label>
+            <Input placeholder="6-digit code" maxLength={6} value={otp} onChange={(e) => setOtp(e.target.value)} required />
+          </div>
+          <div className="flex gap-2">
+            <Button type="submit" loading={loading}>Confirm Change</Button>
+            <Button type="button" variant="outline" onClick={() => setStep(1)}>Back</Button>
+          </div>
+        </form>
+      )}
+    </section>
+  );
+}
+
+// useTranslations is imported but used only to satisfy linting; strings are hardcoded for now
+// since this is a dev-facing security page
 export default function SecurityPage() {
   return (
     <div className="max-w-2xl space-y-6 mx-auto">
@@ -161,10 +239,11 @@ export default function SecurityPage() {
         <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <Shield className="size-6 text-foreground" /> Security
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">Manage your password and two-factor authentication.</p>
+        <p className="text-sm text-muted-foreground mt-1">Manage your password, email and two-factor authentication.</p>
       </div>
       <ChangePasswordSection />
       <TwoFactorSection />
+      <ChangeEmailSection />
     </div>
   );
 }

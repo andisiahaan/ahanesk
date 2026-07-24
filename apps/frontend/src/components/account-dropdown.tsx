@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Settings, Bell, Shield, LogOut, ChevronDown, User } from 'lucide-react';
+import { Settings, Shield, LogOut, ChevronDown, User } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth.store';
 
 import { cn } from '@/lib/cn';
@@ -78,11 +78,6 @@ export function AccountDropdown({ className }: AccountDropdownProps) {
               className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors">
               <Settings className="size-4 text-muted-foreground" />
               {t('settings')}
-            </Link>
-            <Link href={`${dashboardPath}/notifications`} onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors">
-              <Bell className="size-4 text-muted-foreground" />
-              {t('notifications')}
             </Link>
             <Link href={`${dashboardPath}/settings/security`} onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors">

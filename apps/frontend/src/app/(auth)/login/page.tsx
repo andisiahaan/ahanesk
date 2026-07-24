@@ -15,7 +15,7 @@ function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const nextUrl = params.get('next') ?? (process.env.NEXT_PUBLIC_DASHBOARD_PATH ?? '/dashboard');
-  const setAuth = useAuthStore((s) => s.setAuth);
+  const fetchMe = useAuthStore((s) => s.fetchMe);
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [twoFactor, setTwoFactor] = useState<{ partial: string } | null>(null);
@@ -29,7 +29,7 @@ function LoginForm() {
       if (data.data.requiresTwoFactor) {
         setTwoFactor({ partial: data.data.partialToken });
       } else {
-        setAuth(data.data.user, data.data.accessToken);
+        await fetchMe();
         toast.success('Welcome back!');
         router.push(nextUrl);
       }
@@ -43,8 +43,8 @@ function LoginForm() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await api.post('/auth/2fa/verify', { partialToken: twoFactor!.partial, code: totpCode });
-      setAuth(data.data.user, data.data.accessToken);
+      await api.post('/auth/2fa/verify', { partialToken: twoFactor!.partial, code: totpCode });
+      await fetchMe();
       toast.success('Welcome back!');
       router.push(nextUrl);
     } catch { toast.error('Invalid 2FA code.'); }

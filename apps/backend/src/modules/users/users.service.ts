@@ -1,17 +1,19 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import * as argon2 from 'argon2';
 import { UsersRepository } from './users.repository';
+import { AuthRepository } from '../auth/auth.repository';
 import { StorageService } from '../../infrastructure/storage/storage.service';
 import { messages } from '@ahansk/shared';
-import type { CreateUserDto, UpdateUserDto, UpdateProfileDto } from '@ahansk/shared';
+import type { CreateUserDto, UpdateUserDto, UpdateProfileDto, ChangePasswordDto } from '@ahansk/shared';
 import { buildPaginationMeta } from '@ahansk/shared';
 import type { UploadedFile } from '../../infrastructure/storage/storage.service';
 
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly repo: UsersRepository,
-    private readonly storage: StorageService,
+    private readonly repo:     UsersRepository,
+    private readonly authRepo: AuthRepository,
+    private readonly storage:  StorageService,
   ) {}
 
   async findAll(page = 1, limit = 20) {
@@ -53,5 +55,18 @@ export class UsersService {
       avatarPath = await this.storage.upload(avatarFile, 'avatar');
     }
     return this.repo.updateUser(id, { ...dto, ...(avatarPath ? { avatar: avatarPath } : {}) });
+  }
+
+  async changePassword(id: string, dto: ChangePasswordDto): Promise<{ message: string }> {
+    const user = await this.authRepo.findUserById(id);
+    if (!user) throw new NotFoundException(messages.users.notFound);
+    if (!user.password) throw new BadRequestException('No password set. Use social login.');
+
+    const valid = await argon2.verify(user.password, dto.currentPassword);
+    if (!valid) throw new UnauthorizedException(messages.auth.invalidPassword);
+
+    const newHash = await argon2.hash(dto.newPassword);
+    await this.authRepo.updateUser(id, { password: newHash });
+    return { message: 'Password updated successfully.' };
   }
 }

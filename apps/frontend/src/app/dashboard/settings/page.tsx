@@ -1,7 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
-import { Shield, Bell } from 'lucide-react';
-import { NotificationPreferencesForm } from './notifications/preferences-form';
+import { Shield, Bell, User } from 'lucide-react';
 
 export const metadata = { title: 'Settings' };
 
@@ -17,8 +16,18 @@ export default async function SettingsPage() {
         <p className="text-sm text-muted-foreground mt-1">Manage your account preferences and settings.</p>
       </div>
 
-      {/* Quick nav */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Link href={`${dashboardPath}/settings/profile`}
+          className="group flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-4 hover:border-primary/40 hover:bg-primary/5 transition-all">
+          <div className="size-10 rounded-xl bg-violet-500/10 flex items-center justify-center flex-shrink-0">
+            <User className="size-5 text-violet-500" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">Profile</p>
+            <p className="text-xs text-muted-foreground">Name, avatar & phone</p>
+          </div>
+        </Link>
+
         <Link href={`${dashboardPath}/settings/notifications`}
           className="group flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-4 hover:border-primary/40 hover:bg-primary/5 transition-all">
           <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -29,6 +38,7 @@ export default async function SettingsPage() {
             <p className="text-xs text-muted-foreground">Channels & notification types</p>
           </div>
         </Link>
+
         <Link href={`${dashboardPath}/settings/security`}
           className="group flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-4 hover:border-primary/40 hover:bg-primary/5 transition-all">
           <div className="size-10 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
@@ -36,7 +46,7 @@ export default async function SettingsPage() {
           </div>
           <div>
             <p className="text-sm font-semibold text-foreground">{t('security')}</p>
-            <p className="text-xs text-muted-foreground">Password & two-factor auth</p>
+            <p className="text-xs text-muted-foreground">Password, email & 2FA</p>
           </div>
         </Link>
       </div>

@@ -22,14 +22,14 @@ export const RegisterSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email(),
   password: z.string().min(8).max(128),
-  recaptchaToken: z.string().min(1),
+  recaptchaToken: z.string().optional(),
 });
 export type RegisterDto = z.infer<typeof RegisterSchema>;
 
 export const LoginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
-  recaptchaToken: z.string().min(1),
+  recaptchaToken: z.string().optional(),
 });
 export type LoginDto = z.infer<typeof LoginSchema>;
 
@@ -46,7 +46,7 @@ export type VerifyTotpDto = z.infer<typeof VerifyTotpSchema>;
 
 export const ForgotPasswordSchema = z.object({
   email: z.string().email(),
-  recaptchaToken: z.string().min(1),
+  recaptchaToken: z.string().optional(),
 });
 export type ForgotPasswordDto = z.infer<typeof ForgotPasswordSchema>;
 
@@ -65,6 +65,12 @@ export const DisableTotpSchema = z.object({
   password: z.string().min(1),
 });
 export type DisableTotpDto = z.infer<typeof DisableTotpSchema>;
+
+export const ChangePasswordSchema = z.object({
+  currentPassword: z.string().min(1),
+  newPassword:     z.string().min(8).max(128),
+});
+export type ChangePasswordDto = z.infer<typeof ChangePasswordSchema>;
 
 // ─── Auth User (JWT payload shape) ───────────────────────────────────────────
 export const AuthUserSchema = z.object({

@@ -17,5 +17,8 @@
   "stack": {
     "title": "Your Starter Stack",
     "desc": "This project is powered by a carefully crafted set of tools."
-  }
+  },
+  "latestNews": "Latest News",
+  "viewAllNews": "View all news",
+  "readMore": "Read"
 }

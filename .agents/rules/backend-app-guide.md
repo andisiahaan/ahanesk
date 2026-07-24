@@ -1,6 +1,5 @@
 ---
 trigger: always_on
-glob:
 description: Standar dan aturan khusus NestJS backend — routing, auth, validasi, cache, dan lainnya
 ---
 
@@ -87,7 +86,7 @@ Error handling lewat **Exception Filter global** (`http-exception.filter.ts`).
 ## Prisma Migrations
 
 - Setiap ubah `schema.prisma`: `npx prisma migrate dev --name <nama>`.
-- File `.sql` di `migrations/` wajib di-commit ke Git.
+- Dilarang menjalankan db push langsung ya 
 
 ## Personal Access Token & Secret
 

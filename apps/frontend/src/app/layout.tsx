@@ -31,9 +31,14 @@ const themeScript = `
 
 import { QueryProvider } from '@/providers/query-provider';
 
+import { cookies } from 'next/headers';
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   const messages = await getMessages();
+  
+  const cookieStore = await cookies();
+  const isLoggedIn = !!cookieStore.get('access_token')?.value;
 
   return (
     <html lang={locale} className={geist.variable} suppressHydrationWarning>
@@ -45,7 +50,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <IntlProvider locale={locale} messages={messages}>
           <QueryProvider>
             <ThemeProvider>
-              <AuthProvider>
+              <AuthProvider isLoggedIn={isLoggedIn}>
                 {children}
                 <Toaster />
               </AuthProvider>

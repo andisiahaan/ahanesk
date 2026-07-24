@@ -12,8 +12,8 @@ import {
 } from '@ahansk/shared';
 
 async function fetchPrefs(): Promise<NotificationPreferences> {
-  const res = await api.get<NotificationPreferences>('/notifications/preferences');
-  return res.data;
+  const res = await api.get<{ data: NotificationPreferences }>('/notifications/preferences');
+  return res.data.data;
 }
 
 async function savePrefs(prefs: NotificationPreferences): Promise<void> {

@@ -7,6 +7,7 @@ import { BanService } from './ban.service';
 import { BanRepository } from './ban.repository';
 import { DISK_CONFIGS } from '../../config/filesystem';
 import { NotificationModule } from '../notifications/notification.module';
+import { AuthRepository } from '../auth/auth.repository';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { NotificationModule } from '../notifications/notification.module';
     }),
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository, BanService, BanRepository],
+  providers: [UsersService, UsersRepository, AuthRepository, BanService, BanRepository],
   exports: [BanService],
 })
 export class UsersModule {}
