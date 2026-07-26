@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { Lock } from 'lucide-react';
+import { Lock, Settings2 } from 'lucide-react';
 import api from '@/lib/api';
+import { PushDevicesModal } from './push-devices-modal';
 import {
   getUserNotificationTypes, getNotificationCategory,
   isSecurityCritical, NOTIFICATION_CATEGORIES,
@@ -25,6 +27,7 @@ const USER_TYPES = getUserNotificationTypes();
 export function NotificationPreferencesForm() {
   const t  = useTranslations('notifications');
   const qc = useQueryClient();
+  const [pushModalOpen, setPushModalOpen] = useState(false);
 
   const { data: prefs, isLoading } = useQuery({ queryKey: ['notification-prefs'], queryFn: fetchPrefs });
 
@@ -55,79 +58,99 @@ export function NotificationPreferencesForm() {
   }, {});
 
   return (
-    <div className="space-y-8">
-      {/* Channel toggles */}
-      <section>
-        <h2 className="text-sm font-semibold text-foreground mb-4">{t('preferences.channelSection')}</h2>
-        <div className="space-y-3">
-          {NOTIFICATION_CHANNELS.map((ch) => {
-            const isRequired = REQUIRED_CHANNELS.includes(ch);
-            const enabled    = isRequired || channelEnabled(ch);
-            return (
-              <label key={ch} className={`flex items-center justify-between p-4 rounded-xl border border-border bg-card ${isRequired ? 'opacity-70' : 'cursor-pointer hover:bg-muted/50'}`}>
-                <div>
-                  <p className="text-sm font-medium text-foreground capitalize">{t(`channels.${ch}`)}</p>
+    <>
+      <div className="space-y-8">
+        {/* Channel toggles */}
+        <section>
+          <h2 className="text-sm font-semibold text-foreground mb-4">{t('preferences.channelSection')}</h2>
+          <div className="space-y-3">
+            {NOTIFICATION_CHANNELS.map((ch) => {
+              const isRequired = REQUIRED_CHANNELS.includes(ch);
+              const enabled    = isRequired || channelEnabled(ch);
+              const isPush     = ch === 'push';
+              return (
+                <div key={ch} className={`flex items-center justify-between p-4 rounded-xl border border-border bg-card ${isRequired ? 'opacity-70' : ''}`}>
+                  <div>
+                    <p className="text-sm font-medium text-foreground capitalize">{t(`channels.${ch}`)}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{t(`channelDescriptions.${ch}`)}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {isRequired && <Lock className="w-3.5 h-3.5 text-muted-foreground" />}
+                    {isPush && (
+                      <button
+                        onClick={() => setPushModalOpen(true)}
+                        className="size-7 flex items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                        title="Manage push devices"
+                      >
+                        <Settings2 className="w-4 h-4" />
+                      </button>
+                    )}
+                    <button
+                      role="switch"
+                      aria-checked={enabled}
+                      disabled={isRequired}
+                      onClick={() => !isRequired && toggle('channels', ch, enabled)}
+                      className={`w-10 h-6 rounded-full transition-colors ${enabled ? 'bg-primary' : 'bg-muted'} disabled:cursor-not-allowed`}
+                    >
+                      <span className={`block w-4 h-4 rounded-full bg-white shadow transition-transform mx-1 ${enabled ? 'translate-x-4' : 'translate-x-0'}`} />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {isRequired && <Lock className="w-3.5 h-3.5 text-muted-foreground" />}
-                  <button
-                    role="switch"
-                    aria-checked={enabled}
-                    disabled={isRequired}
-                    onClick={() => !isRequired && toggle('channels', ch, enabled)}
-                    className={`w-10 h-6 rounded-full transition-colors ${enabled ? 'bg-primary' : 'bg-muted'} disabled:cursor-not-allowed`}
-                  >
-                    <span className={`block w-4 h-4 rounded-full bg-white shadow transition-transform mx-1 ${enabled ? 'translate-x-4' : 'translate-x-0'}`} />
-                  </button>
-                </div>
-              </label>
-            );
-          })}
-        </div>
-      </section>
+              );
+            })}
+          </div>
+        </section>
 
-      {/* Type toggles */}
-      <section>
-        <h2 className="text-sm font-semibold text-foreground mb-4">{t('preferences.typeSection')}</h2>
-        <div className="space-y-6">
-          {(Object.entries(groupedByCategory) as [NotificationCategory, NotificationType[]][])
-            .filter(([, types]) => types.length > 0)
-            .map(([cat, types]) => (
-              <div key={cat}>
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 capitalize">{t(`categories.${cat}`)}</p>
-                <div className="space-y-2">
-                  {types.map((tp) => {
-                    const critical = isSecurityCritical(tp);
-                    const enabled  = critical || typeEnabled(tp);
-                    const labelKey = tp.replace('.', '_') as never;
-                    return (
-                      <label key={tp} className={`flex items-center justify-between p-3 rounded-lg border border-border bg-card ${critical ? 'opacity-70' : 'cursor-pointer hover:bg-muted/50'}`}>
-                        <div>
-                          <p className="text-sm text-foreground">{t(`types.${labelKey}`)}</p>
-                          {critical && <p className="text-xs text-muted-foreground">{t('securityCriticalLabel')}</p>}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {critical && <Lock className="w-3.5 h-3.5 text-muted-foreground" />}
-                          <button
-                            role="switch"
-                            aria-checked={enabled}
-                            disabled={critical}
-                            onClick={() => !critical && toggle('types', tp, enabled)}
-                            className={`w-10 h-6 rounded-full transition-colors ${enabled ? 'bg-primary' : 'bg-muted'} disabled:cursor-not-allowed`}
-                          >
-                            <span className={`block w-4 h-4 rounded-full bg-white shadow transition-transform mx-1 ${enabled ? 'translate-x-4' : 'translate-x-0'}`} />
-                          </button>
-                        </div>
-                      </label>
-                    );
-                  })}
+        {/* Type toggles */}
+        <section>
+          <h2 className="text-sm font-semibold text-foreground mb-4">{t('preferences.typeSection')}</h2>
+          <div className="space-y-6">
+            {(Object.entries(groupedByCategory) as [NotificationCategory, NotificationType[]][])
+              .filter(([, types]) => types.length > 0)
+              .map(([cat, types]) => (
+                <div key={cat}>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 capitalize">{t(`categories.${cat}`)}</p>
+                  <div className="space-y-2">
+                    {types.map((tp) => {
+                      const critical = isSecurityCritical(tp);
+                      const enabled  = critical || typeEnabled(tp);
+                      const labelKey = tp.replace('.', '_') as never;
+                      return (
+                        <label key={tp} className={`flex items-center justify-between p-3 rounded-lg border border-border bg-card ${critical ? 'opacity-70' : 'cursor-pointer hover:bg-muted/50'}`}>
+                          <div>
+                            <p className="text-sm text-foreground">{t(`types.${labelKey}`)}</p>
+                            {critical && <p className="text-xs text-muted-foreground">{t('securityCriticalLabel')}</p>}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {critical && <Lock className="w-3.5 h-3.5 text-muted-foreground" />}
+                            <button
+                              role="switch"
+                              aria-checked={enabled}
+                              disabled={critical}
+                              onClick={() => !critical && toggle('types', tp, enabled)}
+                              className={`w-10 h-6 rounded-full transition-colors ${enabled ? 'bg-primary' : 'bg-muted'} disabled:cursor-not-allowed`}
+                            >
+                              <span className={`block w-4 h-4 rounded-full bg-white shadow transition-transform mx-1 ${enabled ? 'translate-x-4' : 'translate-x-0'}`} />
+                            </button>
+                          </div>
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
-        </div>
-      </section>
+              ))}
+          </div>
+        </section>
 
-      {mutation.isSuccess && <p className="text-sm text-primary">{t('preferences.saved')}</p>}
-    </div>
+        {mutation.isSuccess && <p className="text-sm text-primary">{t('preferences.saved')}</p>}
+      </div>
+
+      {pushModalOpen && (
+        <PushDevicesModal
+          onClose={() => setPushModalOpen(false)}
+          pushEnabled={channelEnabled('push')}
+        />
+      )}
+    </>
   );
 }

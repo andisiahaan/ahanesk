@@ -2,6 +2,14 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin();
 
+const securityHeaders = [
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'X-XSS-Protection', value: '1; mode=block' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+];
+
 /** @type {import('next').NextConfig} */
 const config = {
   basePath: process.env.NEXT_BASE_PATH || '',
@@ -12,6 +20,9 @@ const config = {
       { protocol: 'http', hostname: 'localhost' },
     ],
     unoptimized: process.env.NODE_ENV !== 'production',
+  },
+  async headers() {
+    return [{ source: '/(.*)', headers: securityHeaders }];
   },
   turbopack: {
     resolveAlias: {

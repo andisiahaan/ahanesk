@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
   LayoutDashboard, Shield, ArrowRight,
   Code2, Database, Globe2, Zap, ShieldCheck, Package,
-  Newspaper, Calendar,
+  Newspaper, Calendar, LifeBuoy,
 } from 'lucide-react';
 import { apiFetch } from '@/lib/api';
 
@@ -41,6 +41,17 @@ async function getLatestNews(): Promise<NewsItem[]> {
   } catch { return []; }
 }
 
+async function getOpenTicketCount(): Promise<number> {
+  try {
+    const res = await apiFetch('/tickets?limit=1');
+    if (!res.ok) return 0;
+    const data = await res.json();
+    return Array.isArray(data.data)
+      ? data.data.filter((t: { status: string }) => !['RESOLVED', 'CLOSED'].includes(t.status)).length
+      : 0;
+  } catch { return 0; }
+}
+
 const STACK = [
   { icon: <Code2 className="size-5 text-primary" />,         label: 'NestJS',    desc: 'Backend API' },
   { icon: <Globe2 className="size-5 text-blue-500" />,       label: 'Next.js 16', desc: 'Frontend & Admin' },
@@ -58,7 +69,7 @@ const TYPE_STYLES: Record<string, string> = {
 
 export default async function DashboardPage() {
   const t = await getTranslations('dashboard');
-  const [me, unread, news] = await Promise.all([getMe(), getUnreadCount(), getLatestNews()]);
+  const [me, unread, news, openTickets] = await Promise.all([getMe(), getUnreadCount(), getLatestNews(), getOpenTicketCount()]);
   const dashboardPath = process.env.NEXT_PUBLIC_DASHBOARD_PATH ?? '/dashboard';
 
   if (!me) {
@@ -133,6 +144,12 @@ export default async function DashboardPage() {
             href:  null,
           },
           {
+            label: 'Open Tickets',
+            value: openTickets,
+            icon:  <LifeBuoy className="size-5 text-amber-500" />,
+            href:  `${dashboardPath}/tickets`,
+          },
+          {
             label: t('stats.memberSince'),
             value: memberSince,
             icon:  <ShieldCheck className="size-5 text-emerald-500" />,
@@ -161,6 +178,7 @@ export default async function DashboardPage() {
           {[
             { label: t('actions.editProfile'),  href: `${dashboardPath}/settings/profile`,  icon: <LayoutDashboard className="size-4" /> },
             { label: t('actions.security'),     href: `${dashboardPath}/settings/security`, icon: <Shield className="size-4" /> },
+            { label: 'Support Tickets',         href: `${dashboardPath}/tickets`,           icon: <LifeBuoy className="size-4" /> },
           ].map((action) => (
             <Link
               key={action.href}

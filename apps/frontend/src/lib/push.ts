@@ -14,6 +14,11 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
   }
 }
 
+/**
+ * Get or create a push subscription.
+ * NOTE: Hanya boleh dipanggil SETELAH izin sudah granted oleh user.
+ * Tidak pernah meminta izin secara otomatis.
+ */
 export async function getPushSubscription(vapidPublicKey: string): Promise<PushSubscription | null> {
   const reg = await registerServiceWorker();
   if (!reg) return null;
@@ -29,6 +34,10 @@ export async function getPushSubscription(vapidPublicKey: string): Promise<PushS
   }
 }
 
+/**
+ * Unsubscribe from browser push (client-side only).
+ * Panggil setelah menghapus endpoint dari backend.
+ */
 export async function unregisterPushSubscription(): Promise<void> {
   const reg = await registerServiceWorker();
   if (!reg) return;

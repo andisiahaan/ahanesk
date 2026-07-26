@@ -1,4 +1,4 @@
-import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
+import { PipeTransform, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { messages } from '@ahansk/shared';
 
 // Minimal structural type compatible with any Zod v4 schema.
@@ -24,7 +24,7 @@ export class ZodValidationPipe implements PipeTransform {
         },
         {},
       );
-      throw new BadRequestException({
+      throw new UnprocessableEntityException({
         message: messages.common.validationError,
         error: formattedErrors,
       });

@@ -1,12 +1,14 @@
 'use client';
 import { useEffect, useState, useCallback, use } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+
 import api from '@/lib/api';
 import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { UserSessionsPanel } from './user-sessions-panel';
+import { Trash2 } from 'lucide-react';
 
 interface UserDetail {
   id: string;
@@ -73,19 +75,19 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
     e.preventDefault();
     setIsUpdating(true);
     try {
-      const payload: any = {
+      const payload: Record<string, unknown> = {
         name: editName,
         email: editEmail,
         role: editRole,
         is_active: editIsActive,
       };
-      if (editPassword) payload.password = editPassword;
+      if (editPassword) payload['password'] = editPassword;
       await api.patch(`/users/${id}`, payload);
       toast.success(t('messages.updated') || 'User updated successfully');
       setEditPassword('');
       await fetchUser();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || t('messages.updateFailed'));
+    } catch (err: unknown) {
+      toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message || t('messages.updateFailed'));
     } finally {
       setIsUpdating(false);
     }
@@ -104,8 +106,9 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
       setBanReason('');
       setBanExpiresAt('');
       await fetchUser();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || t('messages.banFailed'));
+    } catch (err: unknown) {
+      toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message || t('messages.banFailed'));
+
     } finally {
       setIsBanning(false);
     }
@@ -117,8 +120,19 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
       await api.post(`/users/${id}/unban`);
       toast.success(t('messages.unbanSuccess'));
       await fetchUser();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || t('messages.unbanFailed'));
+    } catch (err: unknown) {
+      toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message || t('messages.unbanFailed'));
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!confirm(`Permanently delete user "${user?.name}"? This action cannot be undone.`)) return;
+    try {
+      await api.delete(`/users/${id}`);
+      toast.success('User deleted.');
+      router.push('/users');
+    } catch (err: unknown) {
+      toast.error((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to delete user.');
     }
   };
 
@@ -137,6 +151,9 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
           </Button>
           <h1 className="text-2xl font-bold text-foreground">{t('details.title')}</h1>
         </div>
+        <Button variant="destructive" size="sm" onClick={handleDelete}>
+          <Trash2 className="size-4 mr-1.5" /> Delete Account
+        </Button>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -221,6 +238,11 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
             </form>
           )}
         </div>
+      </div>
+
+      {/* Sessions & Activity */}
+      <div className="grid grid-cols-1">
+        <UserSessionsPanel userId={id} />
       </div>
     </div>
   );

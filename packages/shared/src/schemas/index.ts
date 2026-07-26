@@ -201,3 +201,27 @@ export const VoteHelpfulSchema = z.object({
   helpful: z.boolean(),
 });
 export type VoteHelpfulDto = z.infer<typeof VoteHelpfulSchema>;
+
+// ─── Tickets ───────────────────────────────────────────────────────────────────
+export const TICKET_PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'] as const;
+export const TICKET_STATUSES   = ['OPEN', 'IN_PROGRESS', 'ON_HOLD', 'RESOLVED', 'CLOSED'] as const;
+
+export const CreateTicketSchema = z.object({
+  subject:     z.string().min(3).max(255),
+  description: z.string().min(10),
+  category:    z.string().max(100).optional(),
+  priority:    z.enum(TICKET_PRIORITIES).default('MEDIUM'),
+});
+export type CreateTicketDto = z.infer<typeof CreateTicketSchema>;
+
+export const CreateReplySchema = z.object({
+  message: z.string().min(1),
+});
+export type CreateReplyDto = z.infer<typeof CreateReplySchema>;
+
+// ─── Personal Access Tokens ────────────────────────────────────────────────────
+export const CreatePatSchema = z.object({
+  name:       z.string().min(1).max(100),
+  expires_at: z.string().datetime().optional(),
+});
+export type CreatePatDto = z.infer<typeof CreatePatSchema>;

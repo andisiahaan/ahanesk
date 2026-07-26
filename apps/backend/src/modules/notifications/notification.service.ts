@@ -138,6 +138,14 @@ export class NotificationService {
     await this.repo.deletePushSubscription(userId, endpoint);
   }
 
+  async getPushSubscriptions(userId: string) {
+    return this.repo.getPushSubscriptions(userId);
+  }
+
+  async deletePushSubscriptionById(userId: string, id: string): Promise<void> {
+    await this.repo.deletePushSubscriptionById(userId, id);
+  }
+
   // ─── Private: Channel Resolution ──────────────────────────────────────────
 
   private async resolveChannels(userId: string, type: NotificationType): Promise<string[]> {

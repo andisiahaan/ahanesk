@@ -13,7 +13,9 @@
   "account": "Account",
   "dashboard": "Dashboard",
   "news": "News",
+  "tickets": "Support",
   "notifications": "Notifications",
+  "personalAccessTokens": "API Keys",
   "openMenu": "Open menu",
   "closeMenu": "Close menu"
 }

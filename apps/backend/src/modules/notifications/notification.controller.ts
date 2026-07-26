@@ -87,6 +87,18 @@ export class NotificationController {
     return { message: 'Subscribed' };
   }
 
+  @Get('push/subscriptions')
+  async listSubscriptions(@CurrentUser() user: AuthUser) {
+    return this.svc.getPushSubscriptions(user.id);
+  }
+
+  @Delete('push/subscriptions/:id')
+  @HttpCode(HttpStatus.OK)
+  async deleteSubscription(@Param('id') id: string, @CurrentUser() user: AuthUser) {
+    await this.svc.deletePushSubscriptionById(user.id, id);
+    return { message: 'Unsubscribed' };
+  }
+
   @Delete('push/unsubscribe')
   @HttpCode(HttpStatus.OK)
   async unsubscribe(

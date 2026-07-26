@@ -3,8 +3,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
-  LayoutDashboard, Newspaper, ChevronRight, PanelLeftClose, PanelLeft
+  LayoutDashboard, Newspaper, ChevronRight, PanelLeftClose, PanelLeft,
+  LifeBuoy, User2,
 } from 'lucide-react';
+
 import { cn } from '@/lib/cn';
 
 interface NavItem {
@@ -15,8 +17,15 @@ interface NavItem {
 }
 
 const useNavItems = (base: string): NavItem[] => [
-  { key: 'dashboard', href: base,              icon: <LayoutDashboard className="size-4" /> },
-  { key: 'news',      href: `${base}/news`,    icon: <Newspaper className="size-4" /> },
+  { key: 'dashboard', href: base,                       icon: <LayoutDashboard className="size-4" /> },
+  { key: 'news',      href: `${base}/news`,             icon: <Newspaper className="size-4" /> },
+  { key: 'tickets',   href: `${base}/tickets`,          icon: <LifeBuoy className="size-4" /> },
+  {
+    key: 'account', href: `${base}/account`, icon: <User2 className="size-4" />,
+    children: [
+      { key: 'personalAccessTokens', href: `${base}/account/personal-access-tokens` },
+    ],
+  },
 ];
 
 interface DashboardSidebarProps {

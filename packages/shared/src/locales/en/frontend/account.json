@@ -1,0 +1,20 @@
+{
+  "title": "Account Overview",
+  "description": "Manage your personal information, security, and preferences.",
+  "profile": {
+    "title": "Profile",
+    "description": "Update your name, avatar, phone number, and basic info."
+  },
+  "security": {
+    "title": "Security",
+    "description": "Manage your password, email address, and two-factor authentication."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "description": "Configure how and when we send you notifications and alerts."
+  },
+  "apiKeys": {
+    "title": "API Keys (PAT)",
+    "description": "Generate personal access tokens to authenticate with our API."
+  }
+}

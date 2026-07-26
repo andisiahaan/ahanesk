@@ -19,7 +19,7 @@ App: `apps/admin` — domain `admin.domain.com`
 
 ## Route Protection (2 Layer)
 
-1. **`src/proxy.ts`** (server-side proxy di Next.js 16): cek cookie `access_token` dan set cookie `locale`. Tidak ada token pada route terproteksi → redirect ke `/auth/login?from=<pathname>`.
+1. **`src/middleware.ts`** (Next.js middleware): cek cookie `access_token` dan set cookie `locale`. Tidak ada token pada route terproteksi → redirect ke `/auth/login?from=<pathname>`.
 2. **`AdminShell`** (client-side): `fetchMe()` — verify user masih ADMIN, populate store. Tidak ada token di `localStorage`.
 
 Auth store (`useAdminAuthStore`) hanya menyimpan objek `user` — tidak ada `accessToken`. Setelah login, panggil `fetchMe()` untuk populate store.
@@ -75,7 +75,7 @@ const { modules, admin } = localeRegistry[locale];
 
 ## Checklist Admin
 
-- [ ] Route protection ada di 2 layer (`src/proxy.ts` + `AdminShell`)?
+- [ ] Route protection ada di 2 layer (`src/middleware.ts` + `AdminShell`)?
 - [ ] Auth store tidak menyimpan token, hanya `user` object?
 - [ ] Login flow: `api.post('/auth/login')` → `fetchMe()` → cek role ADMIN?
 - [ ] Semua API call via `src/lib/api.ts`?

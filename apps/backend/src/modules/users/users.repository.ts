@@ -40,4 +40,35 @@ export class UsersRepository {
   async deleteById(id: string): Promise<void> {
     await this.prisma.user.delete({ where: { id } });
   }
+
+  findActiveSessions(userId: string) {
+    return this.prisma.refreshToken.findMany({
+      where: { user_id: userId, revoked_at: null },
+      orderBy: { created_at: 'desc' },
+      select: { id: true, user_agent: true, ip_address: true, created_at: true, expires_at: true },
+    });
+  }
+
+  async revokeSession(tokenId: string): Promise<void> {
+    await this.prisma.refreshToken.update({
+      where: { id: tokenId },
+      data: { revoked_at: new Date() },
+    });
+  }
+
+  async revokeAllSessions(userId: string): Promise<void> {
+    await this.prisma.refreshToken.updateMany({
+      where: { user_id: userId, revoked_at: null },
+      data: { revoked_at: new Date() },
+    });
+  }
+
+  findActivityByUser(userId: string, limit = 20) {
+    return this.prisma.userActivity.findMany({
+      where: { user_id: userId },
+      orderBy: { created_at: 'desc' },
+      take: limit,
+      select: { id: true, type: true, ip_address: true, user_agent: true, created_at: true, success: true },
+    });
+  }
 }

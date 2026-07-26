@@ -59,7 +59,7 @@ const { modules, frontend } = localeRegistry[locale];
 // messages: { auth, common, blog: {...modules.blog, ...frontend.blog}, nav: frontend.nav }
 ```
 
-- Locale: cookie `locale` (1 tahun) diset otomatis di `src/proxy.ts` dari header `Accept-Language`. Guest: cookie. User login: `user.preferences.locale`.
+- Locale: cookie `locale` (1 tahun) diset otomatis di `src/middleware.ts` dari header `Accept-Language`. Guest: cookie. User login: `user.preferences.locale`.
 - Menambah namespace baru: tambah JSON di `shared/src/locales/en/frontend/`, import di `en/index.ts`, wiring di `request.ts`.
 - `next-intl/plugin` **tidak** mengekspor tipe `Config`. Cukup:
   ```ts
@@ -81,7 +81,7 @@ const { modules, frontend } = localeRegistry[locale];
 ## Checklist Frontend
 
 - [ ] Semua API call via `src/lib/api.ts`?
-- [ ] Route protection SSR dan penentuan cookie locale via `src/proxy.ts` (bukan `middleware.ts`)?
+- [ ] Route protection SSR dan penentuan cookie locale via `src/middleware.ts`?
 - [ ] Tidak ada URL hardcoded?
 - [ ] Logic fetch di custom hook atau TanStack Query?
 - [ ] State management layer tepat (local / Zustand)?

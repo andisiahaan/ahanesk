@@ -95,5 +95,31 @@ export class UsersController {
     return this.banService.unbanUser(id, admin.id);
   }
 
+  // ─── Session Management (Admin) ───────────────────────────────────────────
 
+  @Get(':id/sessions')
+  @Roles('ADMIN')
+  async getSessions(@Param('id') id: string) {
+    return this.usersService.getActiveSessions(id);
+  }
+
+  @Delete(':id/sessions')
+  @Roles('ADMIN')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async revokeAllSessions(@Param('id') id: string): Promise<void> {
+    await this.usersService.revokeAllSessions(id);
+  }
+
+  @Delete(':id/sessions/:tokenId')
+  @Roles('ADMIN')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async revokeSession(@Param('id') id: string, @Param('tokenId') tokenId: string): Promise<void> {
+    await this.usersService.revokeSession(id, tokenId);
+  }
+
+  @Get(':id/activity')
+  @Roles('ADMIN')
+  async getActivity(@Param('id') id: string) {
+    return this.usersService.getActivityLog(id);
+  }
 }

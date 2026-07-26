@@ -13,9 +13,8 @@ interface AuthUser {
 
 interface AuthState {
   user: AuthUser | null;
-  accessToken: string | null;
   isAuthenticated: boolean;
-  setAuth: (user: AuthUser, token: string) => void;
+  setAuth: (user: AuthUser) => void;
   updateUser: (partial: Partial<AuthUser>) => void;
   logout: () => Promise<void>;
   fetchMe: () => Promise<void>;
@@ -25,11 +24,10 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
-      accessToken: null,
       isAuthenticated: false,
 
-      setAuth: (user, accessToken) => {
-        set({ user, accessToken, isAuthenticated: true });
+      setAuth: (user) => {
+        set({ user, isAuthenticated: true });
       },
 
       updateUser: (partial) => {
@@ -39,7 +37,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         try { await api.post('/auth/logout'); } catch { /* ignore */ }
-        set({ user: null, accessToken: null, isAuthenticated: false });
+        set({ user: null, isAuthenticated: false });
       },
 
       fetchMe: async () => {
@@ -47,7 +45,7 @@ export const useAuthStore = create<AuthState>()(
           const { data } = await api.get('/users/me');
           set({ user: data.data, isAuthenticated: true });
         } catch {
-          set({ user: null, accessToken: null, isAuthenticated: false });
+          set({ user: null, isAuthenticated: false });
         }
       },
     }),
@@ -57,3 +55,4 @@ export const useAuthStore = create<AuthState>()(
     },
   ),
 );
+

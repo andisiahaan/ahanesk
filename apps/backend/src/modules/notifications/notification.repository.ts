@@ -68,8 +68,16 @@ export class NotificationRepository {
     await this.prisma.pushSubscription.deleteMany({ where: { user_id: userId, endpoint } });
   }
 
+  async deletePushSubscriptionById(userId: string, id: string): Promise<void> {
+    await this.prisma.pushSubscription.deleteMany({ where: { id, user_id: userId } });
+  }
+
   async getPushSubscriptions(userId: string) {
-    return this.prisma.pushSubscription.findMany({ where: { user_id: userId } });
+    return this.prisma.pushSubscription.findMany({
+      where: { user_id: userId },
+      orderBy: { created_at: 'desc' },
+      select: { id: true, endpoint: true, user_agent: true, created_at: true },
+    });
   }
 
   async getUserPreferences(userId: string) {
@@ -79,10 +87,12 @@ export class NotificationRepository {
   }
 
   async saveUserPreferences(userId: string, notificationPrefs: Record<string, unknown>): Promise<void> {
-    const user  = await this.prisma.user.findUnique({ where: { id: userId }, select: { preferences: true } });
-    const prefs: Record<string, unknown> = ((user?.preferences as Record<string, unknown>) ?? {});
-    prefs.notifications = notificationPrefs;
-    await this.prisma.user.update({ where: { id: userId }, data: { preferences: prefs as Prisma.InputJsonValue } });
+    await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({ where: { id: userId }, select: { preferences: true } });
+      const prefs: Record<string, unknown> = ((user?.preferences as Record<string, unknown>) ?? {});
+      prefs.notifications = notificationPrefs;
+      await tx.user.update({ where: { id: userId }, data: { preferences: prefs as Prisma.InputJsonValue } });
+    });
   }
 
   async findAllAdmin(page: number, limit: number) {

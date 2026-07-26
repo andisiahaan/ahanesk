@@ -1,6 +1,9 @@
 'use client';
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import api from '@/lib/api';
 import { Logo } from '@ahansk/ui';
 import { toast } from '@/components/ui/toast';
@@ -8,18 +11,26 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
+// Frontend-only schema — confirm field tidak ada di shared schema
+const ResetPasswordFormSchema = z.object({
+  password: z.string().min(8).max(128),
+  confirm:  z.string().min(1),
+}).refine((d: { password: string; confirm: string }) => d.password === d.confirm, {
+  message: 'Passwords do not match',
+  path: ['confirm'],
+});
+type ResetPasswordFormValues = z.infer<typeof ResetPasswordFormSchema>;
+
 function ResetPasswordForm() {
   const params = useSearchParams();
   const router = useRouter();
   const token = params.get('token') ?? '';
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password !== confirm) { toast.error('Passwords do not match.'); return; }
-    setLoading(true);
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<ResetPasswordFormValues>({
+    resolver: zodResolver(ResetPasswordFormSchema),
+  });
+
+  const onSubmit = async ({ password }: ResetPasswordFormValues) => {
     try {
       await api.post('/auth/reset-password', { token, password });
       toast.success('Password reset! Redirecting to login…');
@@ -27,20 +38,22 @@ function ResetPasswordForm() {
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
       toast.error(msg ?? 'Reset failed. Token may have expired.');
-    } finally { setLoading(false); }
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
         <Label>New Password</Label>
-        <Input type="password" placeholder="Min 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Input type="password" placeholder="Min 8 characters" {...register('password')} />
+        {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
       </div>
       <div className="flex flex-col gap-1.5">
         <Label>Confirm Password</Label>
-        <Input type="password" placeholder="••••••••" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+        <Input type="password" placeholder="••••••••" {...register('confirm')} />
+        {errors.confirm && <p className="text-xs text-destructive">{errors.confirm.message}</p>}
       </div>
-      <Button type="submit" loading={loading} className="w-full">Reset Password</Button>
+      <Button type="submit" loading={isSubmitting} className="w-full">Reset Password</Button>
     </form>
   );
 }

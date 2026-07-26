@@ -2,8 +2,12 @@
 import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import api from '@/lib/api';
 import { useAuthStore } from '@/stores/auth.store';
+import { LoginSchema, type LoginDto } from '@ahansk/shared';
 import { Logo } from '@ahansk/ui';
 import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
@@ -11,23 +15,66 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 
+// ─── TOTP sub-form ─────────────────────────────────────────────────────────────
+const TotpSchema = z.object({ code: z.string().length(6, 'Code must be 6 digits') });
+type TotpValues = z.infer<typeof TotpSchema>;
+
+interface TotpFormProps { partial: string; onBack: () => void; }
+
+function TotpForm({ partial, onBack }: TotpFormProps) {
+  const router = useRouter();
+  const params = useSearchParams();
+  const nextUrl = params.get('next') ?? (process.env.NEXT_PUBLIC_DASHBOARD_PATH ?? '/dashboard');
+  const fetchMe = useAuthStore((s) => s.fetchMe);
+
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<TotpValues>({
+    resolver: zodResolver(TotpSchema),
+  });
+
+  const onSubmit = async ({ code }: TotpValues) => {
+    try {
+      await api.post('/auth/2fa/verify', { partialToken: partial, code });
+      await fetchMe();
+      toast.success('Welcome back!');
+      router.push(nextUrl);
+    } catch {
+      toast.error('Invalid 2FA code.');
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <div>
+        <Label>Authenticator Code</Label>
+        <Input placeholder="000000" maxLength={6} autoFocus {...register('code')} />
+        {errors.code && <p className="text-xs text-destructive mt-1">{errors.code.message}</p>}
+      </div>
+      <Button type="submit" loading={isSubmitting} className="w-full">Verify</Button>
+      <button type="button" onClick={onBack}
+        className="text-sm text-muted-foreground hover:text-foreground transition-colors text-center">
+        ← Back to login
+      </button>
+    </form>
+  );
+}
+
+// ─── Login form ────────────────────────────────────────────────────────────────
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const nextUrl = params.get('next') ?? (process.env.NEXT_PUBLIC_DASHBOARD_PATH ?? '/dashboard');
   const fetchMe = useAuthStore((s) => s.fetchMe);
-  const [form, setForm] = useState({ email: '', password: '' });
-  const [loading, setLoading] = useState(false);
   const [twoFactor, setTwoFactor] = useState<{ partial: string } | null>(null);
-  const [totpCode, setTotpCode] = useState('');
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginDto>({
+    resolver: zodResolver(LoginSchema),
+  });
+
+  const onSubmit = async (data: LoginDto) => {
     try {
-      const { data } = await api.post('/auth/login', { ...form, recaptchaToken: 'bypass-dev' });
-      if (data.data.requiresTwoFactor) {
-        setTwoFactor({ partial: data.data.partialToken });
+      const { data: res } = await api.post('/auth/login', { ...data, recaptchaToken: 'bypass-dev' });
+      if (res.data.requiresTwoFactor) {
+        setTwoFactor({ partial: res.data.partialToken });
       } else {
         await fetchMe();
         toast.success('Welcome back!');
@@ -36,49 +83,24 @@ function LoginForm() {
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
       toast.error(msg ?? 'Login failed. Please try again.');
-    } finally { setLoading(false); }
+    }
   };
 
-  const handleTotp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await api.post('/auth/2fa/verify', { partialToken: twoFactor!.partial, code: totpCode });
-      await fetchMe();
-      toast.success('Welcome back!');
-      router.push(nextUrl);
-    } catch { toast.error('Invalid 2FA code.'); }
-    finally { setLoading(false); }
-  };
-
-  if (twoFactor) return (
-    <form onSubmit={handleTotp} className="flex flex-col gap-4">
-      <div>
-        <Label>Authenticator Code</Label>
-        <Input placeholder="000000" maxLength={6} value={totpCode}
-          onChange={(e) => setTotpCode(e.target.value)} autoFocus />
-      </div>
-      <Button type="submit" loading={loading} className="w-full">Verify</Button>
-      <button type="button" onClick={() => setTwoFactor(null)}
-        className="text-sm text-muted-foreground hover:text-foreground transition-colors text-center">
-        ← Back to login
-      </button>
-    </form>
-  );
+  if (twoFactor) return <TotpForm partial={twoFactor.partial} onBack={() => setTwoFactor(null)} />;
 
   return (
-    <form onSubmit={handleLogin} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div>
         <Label>Email</Label>
-        <Input type="email" placeholder="you@example.com"
-          value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+        <Input type="email" placeholder="you@example.com" {...register('email')} />
+        {errors.email && <p className="text-xs text-destructive mt-1">{errors.email.message}</p>}
       </div>
       <div>
         <Label>Password</Label>
-        <Input type="password" placeholder="••••••••"
-          value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+        <Input type="password" placeholder="••••••••" {...register('password')} />
+        {errors.password && <p className="text-xs text-destructive mt-1">{errors.password.message}</p>}
       </div>
-      <Button type="submit" loading={loading} className="w-full">Sign In</Button>
+      <Button type="submit" loading={isSubmitting} className="w-full">Sign In</Button>
       <p className="text-center text-sm text-muted-foreground">
         <Link href="/forgot-password" className="text-primary hover:underline">Forgot password?</Link>
         {' · '}

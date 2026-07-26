@@ -69,4 +69,24 @@ export class UsersService {
     await this.authRepo.updateUser(id, { password: newHash });
     return { message: 'Password updated successfully.' };
   }
+
+  async getActiveSessions(userId: string) {
+    await this.findById(userId);
+    return this.repo.findActiveSessions(userId);
+  }
+
+  async revokeSession(userId: string, tokenId: string): Promise<void> {
+    await this.findById(userId);
+    await this.repo.revokeSession(tokenId);
+  }
+
+  async revokeAllSessions(userId: string): Promise<void> {
+    await this.findById(userId);
+    await this.repo.revokeAllSessions(userId);
+  }
+
+  async getActivityLog(userId: string) {
+    await this.findById(userId);
+    return this.repo.findActivityByUser(userId);
+  }
 }

@@ -1,8 +1,11 @@
 'use client';
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import api from '@/lib/api';
 import { useAdminAuthStore } from '@/stores/auth.store';
+import { LoginSchema, type LoginDto } from '@ahansk/shared';
 import { Logo } from '@ahansk/ui';
 import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
@@ -15,16 +18,16 @@ function AdminLoginForm() {
   const params = useSearchParams();
   const nextUrl = params.get('from') ?? '/';
   const fetchMe = useAdminAuthStore((s) => s.fetchMe);
-  const [form, setForm] = useState({ email: '', password: '' });
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginDto>({
+    resolver: zodResolver(LoginSchema),
+  });
+
+  const onSubmit = async (data: LoginDto) => {
     try {
       // Cookies are set by the server via Set-Cookie — no token in response body
-      const { data } = await api.post('/auth/login', { ...form, recaptchaToken: 'bypass-dev' });
-      if (data.data?.requiresTwoFactor) {
+      const { data: res } = await api.post('/auth/login', { ...data, recaptchaToken: 'bypass-dev' });
+      if (res.data?.requiresTwoFactor) {
         toast.warning('2FA is not yet supported in admin.');
         return;
       }
@@ -37,22 +40,22 @@ function AdminLoginForm() {
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
       toast.error(msg ?? 'Login failed.');
-    } finally { setLoading(false); }
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
         <Label>Email</Label>
-        <Input type="email" placeholder="admin@example.com"
-          value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} autoFocus />
+        <Input type="email" placeholder="admin@example.com" autoFocus {...register('email')} />
+        {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
       </div>
       <div className="flex flex-col gap-1.5">
         <Label>Password</Label>
-        <Input type="password" placeholder="••••••••"
-          value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+        <Input type="password" placeholder="••••••••" {...register('password')} />
+        {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
       </div>
-      <Button type="submit" loading={loading} className="w-full">Sign In</Button>
+      <Button type="submit" loading={isSubmitting} className="w-full">Sign In</Button>
     </form>
   );
 }
