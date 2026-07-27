@@ -31,7 +31,7 @@ Ini adalah **starter kit monorepo untuk project skala menengah ke atas**. Kerumi
 | Task orchestrator | Turborepo (Full Monorepo) |
 | Cache | Redis DB 1, namespace `cache:*` — **bukan Memcached** |
 | Queue | Redis DB 0 + BullMQ |
-| Validasi | Zod v4 (backend: `ZodValidationPipe`; frontend: react-hook-form + zodResolver) |
+| Validasi | Zod v4 (backend: global `ZodValidationPipe` + `createZodDto` class; frontend: react-hook-form + zodResolver) |
 | i18n | next-intl, cookie-based locale, semua locale di `packages/shared` |
 
 ## Monorepo Structure
@@ -74,3 +74,5 @@ packages/
 - Menggunakan named import `{ KeyvAdapter }` dari `@keyv/redis` — pakai default import.
 - Menambahkan `@types/otplib` — otplib v12+ sudah bundle types.
 - Menggunakan `import * as cookieParser` — pakai `import cookieParser = require(...)`.
+- Melakukan mutasi data tanpa memverifikasi CSRF Token di backend (Double-Submit Cookie).
+- Menggunakan alias `type` pada DTO di controller NestJS. Wajib memakai `class` via `createZodDto`.

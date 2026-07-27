@@ -2,9 +2,8 @@ import { Controller, Get, Post, Patch, Delete, Param, Body, Query, HttpCode, Htt
 import { NewsService } from './news.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { CreateNewsSchema, UpdateNewsSchema, ListNewsQuerySchema } from './news.dto';
-import type { CreateNewsDto, UpdateNewsDto, ListNewsQueryDto } from './news.dto';
+
+import { CreateNewsDto, UpdateNewsDto, ListNewsQueryDto } from './news.dto';
 import type { AuthUser } from '@ahansk/shared';
 
 @Controller('admin/news')
@@ -13,7 +12,7 @@ export class NewsAdminController {
   constructor(private readonly svc: NewsService) {}
 
   @Get()
-  list(@Query(new ZodValidationPipe(ListNewsQuerySchema)) q: ListNewsQueryDto) {
+  list(@Query() q: ListNewsQueryDto) {
     return this.svc.listAll(q);
   }
 
@@ -23,7 +22,7 @@ export class NewsAdminController {
   @Post()
   create(
     @CurrentUser() user: AuthUser,
-    @Body(new ZodValidationPipe(CreateNewsSchema)) dto: CreateNewsDto,
+    @Body() dto: CreateNewsDto,
   ) {
     return this.svc.create(dto, user.id);
   }
@@ -31,7 +30,7 @@ export class NewsAdminController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body(new ZodValidationPipe(UpdateNewsSchema)) dto: UpdateNewsDto,
+    @Body() dto: UpdateNewsDto,
   ) {
     return this.svc.update(id, dto);
   }

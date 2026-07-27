@@ -10,8 +10,8 @@ description: Standar dan aturan khusus NestJS backend — routing, auth, validas
 ## Stack & Library
 
 - **ORM**: Prisma — akses DB **hanya** lewat `*.repository.ts`, bukan dari service/controller langsung.
-- **Validasi**: Zod v4 via `ZodValidationPipe` (`common/pipes/zod-validation.pipe.ts`). **Bukan class-validator.**
-- **Auth**: `@nestjs/jwt` + `@nestjs/passport`. Token di **httpOnly cookie** — lihat bagian Auth.
+- **Validasi**: Zod v4 via `ZodValidationPipe` yang berjalan sebagai **Global Pipe**. Semua DTO wajib direpresentasikan sebagai `class` menggunakan `createZodDto()` kustom.
+- **Auth**: `@nestjs/jwt` + `@nestjs/passport`. Token di **httpOnly cookie**. Dilengkapi dengan perlindungan CSRF (Double-Submit Cookie).
 - **Cache**: `@nestjs/cache-manager` + `@keyv/redis` (default import), Redis DB 1, namespace `cache:`.
 - **Queue**: BullMQ + Redis DB 0.
 - **Logger**: `pino` via `nestjs-pino`. **Tidak boleh ada `console.*` di production code.**
@@ -76,6 +76,7 @@ Error handling lewat **Exception Filter global** (`http-exception.filter.ts`).
 - `jwt.strategy.ts` ekstrak dari cookie `access_token` dulu, fallback ke `Authorization: Bearer`.
 - Logout: `res.clearCookie()` keduanya.
 - Frontend/Admin **tidak boleh simpan token di localStorage**.
+- **CSRF Protection**: Semua request yang merubah state (POST, PUT, PATCH, DELETE) **wajib** menyertakan header `X-CSRF-Token` yang nilainya sama dengan cookie `csrf_token` (Double-Submit Cookie). Middleware untuk ini dikonfigurasi di `main.ts`.
 
 ## Caching
 
@@ -126,7 +127,7 @@ Gunakan `PaginatedResponse<T>` dan `buildPaginationMeta()`.
 - **Dilarang `any`** — gunakan `unknown` + type narrowing.
 - Gunakan tipe Prisma (`@prisma/client`) untuk semua entitas DB.
 - Semua fungsi async wajib return type eksplisit.
-- Semua DTO: Zod schema, derive type via `z.infer<typeof Schema>`.
+- Semua DTO: Zod schema, derive type via `createZodDto(Schema)` lalu export sebagai `class`, bukan `type alias`.
 
 ## Checklist Backend
 

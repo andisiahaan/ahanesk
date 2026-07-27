@@ -6,14 +6,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { BlogService } from './blog.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
+
+
 import {
-  CreatePostSchema, UpdatePostSchema,
-  CreateCategorySchema, UpdateCategorySchema,
-  CreateTagSchema, UpdateTagSchema,
-  ListPostsQuerySchema,
-} from './blog.dto';
-import type {
   CreatePostDto, UpdatePostDto, CreateCategoryDto, UpdateCategoryDto,
   CreateTagDto, UpdateTagDto, ListPostsQueryDto,
 } from './blog.dto';
@@ -27,7 +22,7 @@ export class BlogAdminController {
 
   // ─── Posts ───────────────────────────────────────────────────
   @Get('posts')
-  listPosts(@Query(new ZodValidationPipe(ListPostsQuerySchema)) q: ListPostsQueryDto) {
+  listPosts(@Query() q: ListPostsQueryDto) {
     return this.svc.listAll(q);
   }
 
@@ -38,7 +33,7 @@ export class BlogAdminController {
   @UseInterceptors(FileInterceptor('cover_image'))
   createPost(
     @CurrentUser() user: AuthUser,
-    @Body(new ZodValidationPipe(CreatePostSchema)) dto: CreatePostDto,
+    @Body() dto: CreatePostDto,
     @UploadedFile() file?: Express.Multer.File,
   ) {
     return this.svc.createPost(dto, user.id, file as unknown as StorageFile);
@@ -48,7 +43,7 @@ export class BlogAdminController {
   @UseInterceptors(FileInterceptor('cover_image'))
   updatePost(
     @Param('id') id: string,
-    @Body(new ZodValidationPipe(UpdatePostSchema)) dto: UpdatePostDto,
+    @Body() dto: UpdatePostDto,
     @UploadedFile() file?: Express.Multer.File,
   ) {
     return this.svc.updatePost(id, dto, file as unknown as StorageFile);
@@ -66,13 +61,13 @@ export class BlogAdminController {
 
   @Post('categories')
   @UseInterceptors(FileInterceptor('cover_image'))
-  createCategory(@Body(new ZodValidationPipe(CreateCategorySchema)) dto: CreateCategoryDto, @UploadedFile() file?: Express.Multer.File) {
+  createCategory(@Body() dto: CreateCategoryDto, @UploadedFile() file?: Express.Multer.File) {
     return this.svc.createCategory(dto, file as unknown as StorageFile);
   }
 
   @Patch('categories/:id')
   @UseInterceptors(FileInterceptor('cover_image'))
-  updateCategory(@Param('id') id: string, @Body(new ZodValidationPipe(UpdateCategorySchema)) dto: UpdateCategoryDto, @UploadedFile() file?: Express.Multer.File) {
+  updateCategory(@Param('id') id: string, @Body() dto: UpdateCategoryDto, @UploadedFile() file?: Express.Multer.File) {
     return this.svc.updateCategory(id, dto, file as unknown as StorageFile);
   }
 
@@ -87,10 +82,10 @@ export class BlogAdminController {
   }
 
   @Post('tags')
-  createTag(@Body(new ZodValidationPipe(CreateTagSchema)) dto: CreateTagDto) { return this.svc.createTag(dto); }
+  createTag(@Body() dto: CreateTagDto) { return this.svc.createTag(dto); }
 
   @Patch('tags/:id')
-  updateTag(@Param('id') id: string, @Body(new ZodValidationPipe(UpdateTagSchema)) dto: UpdateTagDto) {
+  updateTag(@Param('id') id: string, @Body() dto: UpdateTagDto) {
     return this.svc.updateTag(id, dto);
   }
 

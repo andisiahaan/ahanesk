@@ -22,6 +22,8 @@ export const ListNewsQuerySchema = z.object({
   pinned: z.preprocess((v) => v === 'true', z.boolean()).optional(),
 });
 
-export type CreateNewsDto      = z.infer<typeof CreateNewsSchema>;
-export type UpdateNewsDto      = z.infer<typeof UpdateNewsSchema>;
-export type ListNewsQueryDto   = z.infer<typeof ListNewsQuerySchema>;
+import { createZodDto } from '../../common/utils/zod.dto';
+
+export class CreateNewsDto extends createZodDto(CreateNewsSchema) {}
+export class UpdateNewsDto extends createZodDto(UpdateNewsSchema) {}
+export class ListNewsQueryDto extends createZodDto(ListNewsQuerySchema) {}

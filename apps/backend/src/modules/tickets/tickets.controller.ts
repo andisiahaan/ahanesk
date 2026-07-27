@@ -2,9 +2,8 @@ import { Controller, Get, Post, Patch, Param, Body, Query, UseInterceptors, Uplo
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { TicketsService } from './tickets.service';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { CreateTicketSchema, CreateReplySchema } from './tickets.dto';
-import type { CreateTicketDto, CreateReplyDto } from './tickets.dto';
+
+import { CreateTicketDto, CreateReplyDto } from './tickets.dto';
 import type { AuthUser } from '@ahansk/shared';
 import type { UploadedFile as StorageFile } from '../../infrastructure/storage/storage.service';
 
@@ -29,7 +28,7 @@ export class TicketsController {
   @Post()
   create(
     @CurrentUser() user: AuthUser,
-    @Body(new ZodValidationPipe(CreateTicketSchema)) dto: CreateTicketDto,
+    @Body() dto: CreateTicketDto,
   ) {
     return this.svc.create(dto, user.id);
   }
@@ -39,7 +38,7 @@ export class TicketsController {
   reply(
     @CurrentUser() user: AuthUser,
     @Param('id') id: string,
-    @Body(new ZodValidationPipe(CreateReplySchema)) dto: CreateReplyDto,
+    @Body() dto: CreateReplyDto,
     @UploadedFiles() files?: Express.Multer.File[],
   ) {
     return this.svc.addReply(id, dto, user.id, false, files as unknown as StorageFile[]);

@@ -3,9 +3,10 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { TicketsService } from './tickets.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { UpdateTicketAdminSchema, CreateReplySchema, ListTicketsQuerySchema } from './tickets.dto';
-import type { UpdateTicketAdminDto, CreateReplyDto, ListTicketsQueryDto } from './tickets.dto';
+
+import {
+  UpdateTicketAdminDto, CreateReplyDto, ListTicketsQueryDto,
+} from './tickets.dto';
 import type { AuthUser } from '@ahansk/shared';
 import type { UploadedFile as StorageFile } from '../../infrastructure/storage/storage.service';
 
@@ -15,7 +16,7 @@ export class TicketsAdminController {
   constructor(private readonly svc: TicketsService) {}
 
   @Get()
-  list(@Query(new ZodValidationPipe(ListTicketsQuerySchema)) q: ListTicketsQueryDto) {
+  listTickets(@Query() q: ListTicketsQueryDto) {
     return this.svc.listAll(q);
   }
 
@@ -25,7 +26,7 @@ export class TicketsAdminController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body(new ZodValidationPipe(UpdateTicketAdminSchema)) dto: UpdateTicketAdminDto,
+    @Body() dto: UpdateTicketAdminDto,
   ) {
     return this.svc.adminUpdate(id, dto);
   }
@@ -35,7 +36,7 @@ export class TicketsAdminController {
   reply(
     @CurrentUser() user: AuthUser,
     @Param('id') id: string,
-    @Body(new ZodValidationPipe(CreateReplySchema)) dto: CreateReplyDto,
+    @Body() dto: CreateReplyDto,
     @UploadedFiles() files?: Express.Multer.File[],
   ) {
     return this.svc.addReply(id, dto, user.id, true, files as unknown as StorageFile[]);

@@ -1,9 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { NewsService } from './news.service';
 import { Public } from '../../common/decorators/public.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { ListNewsQuerySchema } from './news.dto';
-import type { ListNewsQueryDto } from './news.dto';
+import { ListNewsQueryDto } from './news.dto';
 
 @Controller('news')
 export class NewsController {
@@ -11,7 +9,7 @@ export class NewsController {
 
   @Get()
   @Public()
-  list(@Query(new ZodValidationPipe(ListNewsQuerySchema)) q: ListNewsQueryDto) {
+  list(@Query() q: ListNewsQueryDto) {
     return this.svc.listPublished(q);
   }
 

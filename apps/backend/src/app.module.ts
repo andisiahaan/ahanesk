@@ -37,6 +37,10 @@ import { QUEUE_EMAIL } from '@ahansk/shared';
     // ─── Logger (Pino) ────────────────────────────────────────────────────────
     LoggerModule.forRoot({
       pinoHttp: {
+        redact: {
+          paths: ['req.headers.authorization', 'req.headers.cookie', 'req.body.password', 'req.body.token', 'req.body.refreshToken'],
+          censor: '[REDACTED]',
+        },
         transport:
           process.env.NODE_ENV !== 'production'
             ? { target: 'pino-pretty', options: { singleLine: true } }

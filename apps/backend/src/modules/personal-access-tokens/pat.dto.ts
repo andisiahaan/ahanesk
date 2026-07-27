@@ -5,4 +5,6 @@ export const CreatePatSchema = z.object({
   expires_at: z.coerce.date().optional().nullable(),
 });
 
-export type CreatePatDto = z.infer<typeof CreatePatSchema>;
+import { createZodDto } from '../../common/utils/zod.dto';
+
+export class CreatePatDto extends createZodDto(CreatePatSchema) {}

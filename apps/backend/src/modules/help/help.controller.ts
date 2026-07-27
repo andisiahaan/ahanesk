@@ -1,9 +1,7 @@
 import { Controller, Get, Post, Patch, Param, Body, Query } from '@nestjs/common';
 import { HelpService } from './help.service';
 import { Public } from '../../common/decorators/public.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { VoteHelpfulSchema } from '@ahansk/shared';
-import type { VoteHelpfulDto } from '@ahansk/shared';
+import { VoteHelpfulDto } from './help.dto';
 
 @Controller('help')
 export class HelpController {
@@ -30,7 +28,7 @@ export class HelpController {
   @Post('articles/:id/vote')
   async vote(
     @Param('id') id: string,
-    @Body(new ZodValidationPipe(VoteHelpfulSchema)) dto: VoteHelpfulDto,
+    @Body() dto: VoteHelpfulDto,
   ) {
     return this.service.voteHelpful(id, dto.helpful);
   }

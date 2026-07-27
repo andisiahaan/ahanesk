@@ -27,7 +27,9 @@ export const ListTicketsQuerySchema = z.object({
   search:   z.string().optional(),
 });
 
-export type CreateTicketDto       = z.infer<typeof CreateTicketSchema>;
-export type UpdateTicketAdminDto  = z.infer<typeof UpdateTicketAdminSchema>;
-export type CreateReplyDto        = z.infer<typeof CreateReplySchema>;
-export type ListTicketsQueryDto   = z.infer<typeof ListTicketsQuerySchema>;
+import { createZodDto } from '../../common/utils/zod.dto';
+
+export class CreateTicketDto extends createZodDto(CreateTicketSchema) {}
+export class UpdateTicketAdminDto extends createZodDto(UpdateTicketAdminSchema) {}
+export class CreateReplyDto extends createZodDto(CreateReplySchema) {}
+export class ListTicketsQueryDto extends createZodDto(ListTicketsQuerySchema) {}

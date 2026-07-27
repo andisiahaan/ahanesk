@@ -46,10 +46,12 @@ export const ListPostsQuerySchema = z.object({
   search:   z.string().optional(),
 });
 
-export type CreatePostDto       = z.infer<typeof CreatePostSchema>;
-export type UpdatePostDto       = z.infer<typeof UpdatePostSchema>;
-export type CreateCategoryDto   = z.infer<typeof CreateCategorySchema>;
-export type UpdateCategoryDto   = z.infer<typeof UpdateCategorySchema>;
-export type CreateTagDto        = z.infer<typeof CreateTagSchema>;
-export type UpdateTagDto        = z.infer<typeof UpdateTagSchema>;
-export type ListPostsQueryDto   = z.infer<typeof ListPostsQuerySchema>;
+import { createZodDto } from '../../common/utils/zod.dto';
+
+export class CreatePostDto extends createZodDto(CreatePostSchema) {}
+export class UpdatePostDto extends createZodDto(UpdatePostSchema) {}
+export class CreateCategoryDto extends createZodDto(CreateCategorySchema) {}
+export class UpdateCategoryDto extends createZodDto(UpdateCategorySchema) {}
+export class CreateTagDto extends createZodDto(CreateTagSchema) {}
+export class UpdateTagDto extends createZodDto(UpdateTagSchema) {}
+export class ListPostsQueryDto extends createZodDto(ListPostsQuerySchema) {}

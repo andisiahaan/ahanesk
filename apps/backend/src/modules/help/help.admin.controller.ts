@@ -1,15 +1,10 @@
 import { Controller, Get, Post, Patch, Delete, Param, Body, Query, HttpCode, HttpStatus } from '@nestjs/common';
 import { HelpService } from './help.service';
 import { Roles } from '../../common/decorators/roles.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 import {
-  CreateHelpCategorySchema, UpdateHelpCategorySchema,
-  CreateHelpArticleSchema, UpdateHelpArticleSchema,
-} from '@ahansk/shared';
-import type {
   CreateHelpCategoryDto, UpdateHelpCategoryDto,
   CreateHelpArticleDto, UpdateHelpArticleDto,
-} from '@ahansk/shared';
+} from './help.dto';
 
 @Roles('ADMIN')
 @Controller('admin/help')
@@ -24,14 +19,14 @@ export class HelpAdminController {
   }
 
   @Post('categories')
-  async createCategory(@Body(new ZodValidationPipe(CreateHelpCategorySchema)) dto: CreateHelpCategoryDto) {
+  async createCategory(@Body() dto: CreateHelpCategoryDto) {
     return this.service.createCategory(dto);
   }
 
   @Patch('categories/:id')
   async updateCategory(
     @Param('id') id: string,
-    @Body(new ZodValidationPipe(UpdateHelpCategorySchema)) dto: UpdateHelpCategoryDto,
+    @Body() dto: UpdateHelpCategoryDto,
   ) {
     return this.service.updateCategory(id, dto);
   }
@@ -59,14 +54,14 @@ export class HelpAdminController {
   }
 
   @Post('articles')
-  async createArticle(@Body(new ZodValidationPipe(CreateHelpArticleSchema)) dto: CreateHelpArticleDto) {
+  async createArticle(@Body() dto: CreateHelpArticleDto) {
     return this.service.createArticle(dto);
   }
 
   @Patch('articles/:id')
   async updateArticle(
     @Param('id') id: string,
-    @Body(new ZodValidationPipe(UpdateHelpArticleSchema)) dto: UpdateHelpArticleDto,
+    @Body() dto: UpdateHelpArticleDto,
   ) {
     return this.service.updateArticle(id, dto);
   }

@@ -68,13 +68,13 @@ export class BlogService {
       const cover_image = await this.storage.upload(file, 'blog_cover');
       return this.repo.updateCategory(id, { ...dto, cover_image });
     }
-    return this.repo.updateCategory(id, dto as Record<string, unknown>);
+    return this.repo.updateCategory(id, dto as unknown as Record<string, unknown>);
   }
 
   deleteCategory(id: string) { return this.repo.deleteCategory(id); }
 
   // Tags
-  createTag(dto: CreateTagDto) { return this.repo.createTag(dto); }
-  updateTag(id: string, dto: UpdateTagDto) { return this.repo.updateTag(id, dto as Record<string, unknown>); }
+  createTag(dto: CreateTagDto) { return this.repo.createTag(dto as unknown as Record<string, unknown>); }
+  updateTag(id: string, dto: UpdateTagDto) { return this.repo.updateTag(id, dto as unknown as Record<string, unknown>); }
   deleteTag(id: string) { return this.repo.deleteTag(id); }
 }

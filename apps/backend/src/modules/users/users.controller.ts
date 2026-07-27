@@ -8,9 +8,10 @@ import { UsersService } from './users.service';
 import { BanService } from './ban.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { CreateUserSchema, UpdateUserSchema, UpdateProfileSchema, BanUserSchema, ChangePasswordSchema, messages } from '@ahansk/shared';
-import type { CreateUserDto, UpdateUserDto, UpdateProfileDto, BanUserDto, AuthUser, ChangePasswordDto } from '@ahansk/shared';
+
+import { messages } from '@ahansk/shared';
+import type { AuthUser } from '@ahansk/shared';
+import { CreateUserDto, UpdateUserDto, UpdateProfileDto, BanUserDto, ChangePasswordDto } from './users.dto';
 import type { UploadedFile as StorageFile } from '../../infrastructure/storage/storage.service';
 
 @Controller('users')
@@ -31,7 +32,7 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('avatar'))
   async updateMe(
     @CurrentUser() user: AuthUser,
-    @Body(new ZodValidationPipe(UpdateProfileSchema)) dto: UpdateProfileDto,
+    @Body() dto: UpdateProfileDto,
     @UploadedFile() avatar?: Express.Multer.File & { buffer: Buffer },
   ) {
     const file = avatar ? (avatar as unknown as StorageFile) : undefined;
@@ -41,7 +42,7 @@ export class UsersController {
   @Patch('me/password')
   async changePassword(
     @CurrentUser() user: AuthUser,
-    @Body(new ZodValidationPipe(ChangePasswordSchema)) dto: ChangePasswordDto,
+    @Body() dto: ChangePasswordDto,
   ) {
     return this.usersService.changePassword(user.id, dto);
   }
@@ -62,13 +63,13 @@ export class UsersController {
 
   @Post()
   @Roles('ADMIN')
-  async create(@Body(new ZodValidationPipe(CreateUserSchema)) dto: CreateUserDto) {
+  async create(@Body() dto: CreateUserDto) {
     return this.usersService.create(dto);
   }
 
   @Patch(':id')
   @Roles('ADMIN')
-  async update(@Param('id') id: string, @Body(new ZodValidationPipe(UpdateUserSchema)) dto: UpdateUserDto) {
+  async update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.usersService.update(id, dto);
   }
 
@@ -83,7 +84,7 @@ export class UsersController {
   @Roles('ADMIN')
   async banUser(
     @Param('id') id: string,
-    @Body(new ZodValidationPipe(BanUserSchema)) dto: BanUserDto,
+    @Body() dto: BanUserDto,
     @CurrentUser() admin: AuthUser,
   ) {
     return this.banService.banUser(id, admin.id, dto);

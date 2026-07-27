@@ -5,20 +5,16 @@ import { AuthService } from './auth.service';
 import { AuthTotpService } from './auth-totp.service';
 import { Public } from '../../common/decorators/public.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
+
+
+import { messages } from '@ahansk/shared';
+import type { AuthUser } from '@ahansk/shared';
 import {
-  RegisterSchema, LoginSchema, GoogleAuthSchema,
-  ForgotPasswordSchema, ResetPasswordSchema,
-  EnableTotpSchema, DisableTotpSchema, VerifyTotpSchema,
-  RequestEmailChangeSchema, VerifyEmailChangeOtpSchema,
-  messages,
-} from '@ahansk/shared';
-import type {
   RegisterDto, LoginDto, GoogleAuthDto,
   ForgotPasswordDto, ResetPasswordDto,
-  EnableTotpDto, DisableTotpDto, VerifyTotpDto, AuthUser,
+  EnableTotpDto, DisableTotpDto, VerifyTotpDto,
   RequestEmailChangeDto, VerifyEmailChangeOtpDto,
-} from '@ahansk/shared';
+} from './auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -31,7 +27,7 @@ export class AuthController {
   @Post('register')
   @UseGuards(ThrottlerGuard)
   async register(
-    @Body(new ZodValidationPipe(RegisterSchema)) dto: RegisterDto,
+    @Body() dto: RegisterDto,
     @Req() req: Request,
   ) {
     return this.authService.register(dto, req.ip, req.headers['user-agent']);
@@ -42,7 +38,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(ThrottlerGuard)
   async login(
-    @Body(new ZodValidationPipe(LoginSchema)) dto: LoginDto,
+    @Body() dto: LoginDto,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
@@ -53,7 +49,7 @@ export class AuthController {
   @Post('google')
   @HttpCode(HttpStatus.OK)
   async googleAuth(
-    @Body(new ZodValidationPipe(GoogleAuthSchema)) dto: GoogleAuthDto,
+    @Body() dto: GoogleAuthDto,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
@@ -64,7 +60,7 @@ export class AuthController {
   @Post('2fa/verify')
   @HttpCode(HttpStatus.OK)
   async verifyTotp(
-    @Body(new ZodValidationPipe(VerifyTotpSchema)) dto: VerifyTotpDto,
+    @Body() dto: VerifyTotpDto,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
@@ -95,14 +91,14 @@ export class AuthController {
   @Public()
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
-  async forgotPassword(@Body(new ZodValidationPipe(ForgotPasswordSchema)) dto: ForgotPasswordDto) {
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto);
   }
 
   @Public()
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
-  async resetPassword(@Body(new ZodValidationPipe(ResetPasswordSchema)) dto: ResetPasswordDto) {
+  async resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto);
   }
 
@@ -114,7 +110,7 @@ export class AuthController {
   @Post('2fa/enable')
   async enableTotp(
     @CurrentUser() user: AuthUser,
-    @Body(new ZodValidationPipe(EnableTotpSchema)) dto: EnableTotpDto,
+    @Body() dto: EnableTotpDto,
   ) {
     return this.totpService.enableTotp(user.id, dto);
   }
@@ -122,7 +118,7 @@ export class AuthController {
   @Post('2fa/disable')
   async disableTotp(
     @CurrentUser() user: AuthUser,
-    @Body(new ZodValidationPipe(DisableTotpSchema)) dto: DisableTotpDto,
+    @Body() dto: DisableTotpDto,
   ) {
     return this.totpService.disableTotp(user.id, dto);
   }
@@ -130,7 +126,7 @@ export class AuthController {
   @Post('email-change/request')
   async requestEmailChange(
     @CurrentUser() user: AuthUser,
-    @Body(new ZodValidationPipe(RequestEmailChangeSchema)) dto: RequestEmailChangeDto,
+    @Body() dto: RequestEmailChangeDto,
   ) {
     return this.authService.requestEmailChange(user.id, dto);
   }
@@ -138,7 +134,7 @@ export class AuthController {
   @Post('email-change/verify')
   async verifyEmailChange(
     @CurrentUser() user: AuthUser,
-    @Body(new ZodValidationPipe(VerifyEmailChangeOtpSchema)) dto: VerifyEmailChangeOtpDto,
+    @Body() dto: VerifyEmailChangeOtpDto,
   ) {
     return this.authService.verifyEmailChange(user.id, dto);
   }

@@ -5,9 +5,8 @@ import {
 import { PagesService } from './pages.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Public } from '../../common/decorators/public.decorator';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import { CreatePageSchema, UpdatePageSchema, messages } from '@ahansk/shared';
-import type { CreatePageDto, UpdatePageDto } from '@ahansk/shared';
+import { messages } from '@ahansk/shared';
+import { CreatePageDto, UpdatePageDto } from './pages.dto';
 
 @Controller('pages')
 export class PagesController {
@@ -39,7 +38,7 @@ export class PagesController {
 
   @Post()
   @Roles('ADMIN')
-  async create(@Body(new ZodValidationPipe(CreatePageSchema)) dto: CreatePageDto) {
+  async create(@Body() dto: CreatePageDto) {
     const data = await this.pagesService.create(dto);
     return { success: true, message: messages.pages.created, data };
   }
@@ -48,7 +47,7 @@ export class PagesController {
   @Roles('ADMIN')
   async update(
     @Param('id') id: string,
-    @Body(new ZodValidationPipe(UpdatePageSchema)) dto: UpdatePageDto,
+    @Body() dto: UpdatePageDto,
   ) {
     const data = await this.pagesService.update(id, dto);
     return { success: true, message: messages.pages.updated, data };

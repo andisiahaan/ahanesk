@@ -1,9 +1,7 @@
 import { Controller, Get, Post, Delete, Param, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { PatService } from './pat.service';
-import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
+import { CreatePatDto } from './pat.dto';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { CreatePatSchema } from './pat.dto';
-import type { CreatePatDto } from './pat.dto';
 import type { AuthUser } from '@ahansk/shared';
 
 @Controller('personal-access-tokens')
@@ -18,7 +16,7 @@ export class PatController {
   @Post()
   create(
     @CurrentUser() user: AuthUser,
-    @Body(new ZodValidationPipe(CreatePatSchema)) dto: CreatePatDto,
+    @Body() dto: CreatePatDto,
   ) {
     return this.svc.create(user.id, dto);
   }
