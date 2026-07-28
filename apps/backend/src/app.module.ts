@@ -62,10 +62,20 @@ import { QUEUE_EMAIL } from '@ahansk/shared';
     // ─── Cache (Redis, namespace: cache:*) ────────────────────────────────────
     CacheModule.registerAsync({
       isGlobal: true,
-      useFactory: () => ({
-        store: new KeyvAdapter(`${process.env.REDIS_URL}/1`, { namespace: 'cache' }),
-        ttl: 0, // no default TTL — invalidate explicitly
-      }),
+      useFactory: () => {
+        let redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+        try {
+          const urlObj = new URL(redisUrl);
+          urlObj.pathname = '/1';
+          redisUrl = urlObj.toString();
+        } catch (e) {
+          redisUrl = redisUrl.replace(/\/$/, '') + '/1';
+        }
+        return {
+          store: new KeyvAdapter(redisUrl, { namespace: 'cache' }),
+          ttl: 0,
+        };
+      },
     }),
 
 

@@ -26,8 +26,7 @@ async function bootstrap(): Promise<void> {
   app.use((req: any, res: any, next: () => void) => {
     let csrfToken = req.cookies['csrf_token'];
     if (!csrfToken) {
-      // In production, use crypto.randomBytes(32).toString('hex')
-      csrfToken = Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
+      csrfToken = require('crypto').randomBytes(32).toString('hex');
       res.cookie('csrf_token', csrfToken, {
         httpOnly: false, // Must be readable by frontend JS
         secure: process.env.NODE_ENV === 'production',

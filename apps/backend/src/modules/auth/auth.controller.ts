@@ -1,5 +1,5 @@
 import { Controller, Post, Get, Body, Query, Req, Res, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
-import { ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerGuard, Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthTotpService } from './auth-totp.service';
@@ -26,6 +26,7 @@ export class AuthController {
   @Public()
   @Post('register')
   @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   async register(
     @Body() dto: RegisterDto,
     @Req() req: Request,
@@ -37,6 +38,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   async login(
     @Body() dto: LoginDto,
     @Req() req: Request,
@@ -59,6 +61,8 @@ export class AuthController {
   @Public()
   @Post('2fa/verify')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   async verifyTotp(
     @Body() dto: VerifyTotpDto,
     @Req() req: Request,
@@ -91,6 +95,8 @@ export class AuthController {
   @Public()
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   async forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto);
   }
