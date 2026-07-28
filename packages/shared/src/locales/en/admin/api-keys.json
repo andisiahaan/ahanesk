@@ -1,0 +1,26 @@
+{
+  "title": "API Keys Audit",
+  "total": "tokens total",
+  "fields": {
+    "owner": "Owner",
+    "name": "Key Name",
+    "prefix": "Prefix",
+    "lastUsed": "Last Used",
+    "expires": "Expires",
+    "actions": "Action"
+  },
+  "status": {
+    "never": "Never",
+    "noExpiry": "—"
+  },
+  "actions": {
+    "revoke": "Revoke",
+    "confirmRevoke": "Are you sure you want to revoke this token? Any applications using it will lose access immediately."
+  },
+  "messages": {
+    "loadFailed": "Failed to load API keys.",
+    "revoked": "Token revoked successfully.",
+    "revokeFailed": "Failed to revoke token.",
+    "empty": "No API keys found in the system."
+  }
+}

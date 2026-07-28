@@ -16,6 +16,7 @@ import adminNews from './admin/news.json';
 import adminSettings from './admin/settings.json';
 import adminNotifications from './admin/notifications.json';
 import adminHelp from './admin/help.json';
+import adminApiKeys from './admin/api-keys.json';
 
 /**
  * English locale data — structured by layer:
@@ -48,5 +49,6 @@ export const en = {
     settings:      adminSettings,
     notifications: adminNotifications,
     help:          adminHelp,
+    'api-keys':    adminApiKeys,
   },
 } as const;
