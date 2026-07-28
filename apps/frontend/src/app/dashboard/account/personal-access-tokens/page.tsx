@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { KeyRound, Plus, Copy, Check, Trash2, Clock, AlertTriangle } from 'lucide-react';
 import api from '@/lib/api';
+import { z } from 'zod';
 import { CreatePatSchema, type CreatePatDto } from '@ahansk/shared';
 import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
@@ -23,7 +24,7 @@ export default function PersonalAccessTokensPage() {
   const [copied, setCopied]       = useState(false);
   const [showForm, setShowForm]   = useState(false);
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<CreatePatDto>({
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<z.input<typeof CreatePatSchema>>({
     resolver: zodResolver(CreatePatSchema),
   });
 
@@ -34,9 +35,10 @@ export default function PersonalAccessTokensPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const onCreate = async (data: CreatePatDto) => {
+  const onCreate = async (data: z.input<typeof CreatePatSchema>) => {
     try {
-      const res = await api.post('/personal-access-tokens', data);
+      const payload = { ...data, expires_at: data.expires_at === '' ? undefined : data.expires_at };
+      const res = await api.post('/personal-access-tokens', payload);
       const created = res.data.data;
       setNewToken(created.token);
       setTokens((prev) => [created, ...prev]);
