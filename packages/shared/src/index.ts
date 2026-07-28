@@ -6,3 +6,5 @@ export * from './settings';
 export * from './pagination';
 export * from './locales/index';
 export * from './notification-types';
+export * from './upload-configs';
+

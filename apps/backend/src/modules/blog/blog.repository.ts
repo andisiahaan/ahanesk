@@ -24,8 +24,10 @@ export class BlogRepository {
     if (q.category)  where['categories'] = { some: { slug: q.category } };
     if (q.tag)       where['tags']       = { some: { slug: q.tag } };
 
+    const orderBy = q.sort === 'popular' ? { view_count: 'desc' as const } : { published_at: 'desc' as const };
+
     const [posts, total] = await Promise.all([
-      this.prisma.blogPost.findMany({ where, skip, take: q.limit, orderBy: { published_at: 'desc' }, select: POST_SUMMARY }),
+      this.prisma.blogPost.findMany({ where, skip, take: q.limit, orderBy, select: POST_SUMMARY }),
       this.prisma.blogPost.count({ where }),
     ]);
     return { posts, pagination: { page: q.page, limit: q.limit, total, pages: Math.ceil(total / q.limit) } };
@@ -45,12 +47,15 @@ export class BlogRepository {
     });
   }
 
-  create(data: Record<string, unknown>) {
+  async create(data: Record<string, unknown>) {
     const { categories, tags, ...rest } = data as { categories: string[]; tags: string[]; [key: string]: unknown };
+    
+    const tagIds = await this.ensureTagsExist(tags || []);
+
     return this.prisma.blogPost.create({
       data: Object.assign({}, rest, {
-        categories: { connect: categories.map((id) => ({ id })) },
-        tags:       { connect: tags.map((id) => ({ id })) },
+        categories: { connect: (categories || []).map((id) => ({ id })) },
+        tags:       { connect: tagIds.map((id) => ({ id })) },
       }) as never,
       include: { categories: true, tags: true },
     });
@@ -58,14 +63,51 @@ export class BlogRepository {
 
   async update(id: string, data: Record<string, unknown>) {
     const { categories, tags, ...rest } = data as { categories?: string[]; tags?: string[]; [key: string]: unknown };
+    
+    const tagIds = tags ? await this.ensureTagsExist(tags) : undefined;
+
     return this.prisma.blogPost.update({
       where: { id },
       data: Object.assign({}, rest, {
         ...(categories ? { categories: { set: categories.map((cid) => ({ id: cid })) } } : {}),
-        ...(tags       ? { tags:       { set: tags.map((tid) => ({ id: tid })) } }       : {}),
+        ...(tags       ? { tags:       { set: tagIds!.map((tid) => ({ id: tid })) } }       : {}),
       }) as never,
       include: { categories: true, tags: true },
     });
+  }
+
+  private async ensureTagsExist(tags: string[]): Promise<string[]> {
+    if (!tags || tags.length === 0) return [];
+    
+    const processed = tags.map(t => {
+      const slug = t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+      return { name: t, slug };
+    });
+    
+    const slugs = processed.map(p => p.slug);
+    
+    const existingTags = await this.prisma.blogTag.findMany({
+      where: { slug: { in: slugs } },
+      select: { id: true, slug: true }
+    });
+    
+    const existingSlugs = new Set(existingTags.map(t => t.slug));
+    const newTags = processed.filter(p => !existingSlugs.has(p.slug));
+    
+    if (newTags.length > 0) {
+      await this.prisma.blogTag.createMany({
+        data: newTags,
+        skipDuplicates: true,
+      });
+      
+      const allTags = await this.prisma.blogTag.findMany({
+        where: { slug: { in: slugs } },
+        select: { id: true }
+      });
+      return allTags.map(t => t.id);
+    }
+    
+    return existingTags.map(t => t.id);
   }
 
   delete(id: string) { return this.prisma.blogPost.delete({ where: { id } }); }

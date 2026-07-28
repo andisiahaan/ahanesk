@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 // ─── TOTP sub-form ─────────────────────────────────────────────────────────────
-const TotpSchema = z.object({ code: z.string().length(6, 'Code must be 6 digits') });
+const TotpSchema = z.object({ code: z.string().min(6).max(11, 'Invalid code format') });
 type TotpValues = z.infer<typeof TotpSchema>;
 
 interface TotpFormProps { partial: string; onBack: () => void; }
@@ -45,8 +45,8 @@ function TotpForm({ partial, onBack }: TotpFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div>
-        <Label>Authenticator Code</Label>
-        <Input placeholder="000000" maxLength={6} autoFocus {...register('code')} />
+        <Label>Authenticator or Recovery Code</Label>
+        <Input placeholder="000000 or XXXXX-YYYYY" maxLength={11} autoFocus {...register('code')} />
         {errors.code && <p className="text-xs text-destructive mt-1">{errors.code.message}</p>}
       </div>
       <Button type="submit" loading={isSubmitting} className="w-full">Verify</Button>

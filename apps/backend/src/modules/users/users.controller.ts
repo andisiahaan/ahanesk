@@ -8,6 +8,8 @@ import { UsersService } from './users.service';
 import { BanService } from './ban.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { StorageUploadInterceptor } from '../../infrastructure/storage/upload.interceptor';
+import { UPLOAD_CONFIGS } from '@ahansk/shared';
 
 import { messages } from '@ahansk/shared';
 import type { AuthUser } from '@ahansk/shared';
@@ -29,7 +31,7 @@ export class UsersController {
   }
 
   @Patch('me')
-  @UseInterceptors(FileInterceptor('avatar'))
+  @StorageUploadInterceptor('avatar')
   async updateMe(
     @CurrentUser() user: AuthUser,
     @Body() dto: UpdateProfileDto,

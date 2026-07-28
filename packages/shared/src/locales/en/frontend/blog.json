@@ -1,4 +1,9 @@
 {
+  "nav": {
+    "home": "Home",
+    "categories": "All Categories",
+    "tags": "All Tags"
+  },
   "list": {
     "heading": "Blog",
     "description": "Articles, updates, and insights.",

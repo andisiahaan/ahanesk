@@ -11,8 +11,11 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/cn';
 
 const NAV_LINKS = [
+  { key: 'features', href: '/#features' },
+  { key: 'pricing', href: '/#pricing' },
   { key: 'blog',  href: '/blog' },
-  { key: 'pages', href: '/pages/about' },
+  { key: 'about', href: '/pages/about' },
+  { key: 'contact', href: '/pages/contact' },
 ] as const;
 
 export function PublicNavbar() {

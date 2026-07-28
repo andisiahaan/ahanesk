@@ -24,6 +24,7 @@ export const NOTIFICATION_TYPE_REGISTRY = {
   'account.email_changed':      { securityCritical: true,  adminOnly: false },
   'account.2fa_enabled':        { securityCritical: true,  adminOnly: false },
   'account.2fa_disabled':       { securityCritical: true,  adminOnly: false },
+  'account.2fa_recovery_codes_regenerated': { securityCritical: true,  adminOnly: false },
   'account.banned':             { securityCritical: true,  adminOnly: false },
   'account.unbanned':           { securityCritical: true,  adminOnly: false },
 

@@ -4,8 +4,8 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import type { StorageDriver, UploadedFile } from '../storage.service';
-import type { DiskContext } from '../../../config/filesystem';
-import { DISK_CONFIGS } from '../../../config/filesystem';
+import type { UploadContext } from '../../../config/filesystem';
+import { UPLOAD_CONFIGS } from '../../../config/filesystem';
 
 @Injectable()
 export class LocalDriver implements StorageDriver {
@@ -15,21 +15,19 @@ export class LocalDriver implements StorageDriver {
     return this.config.get<string>('app.storage.localPath', './uploads');
   }
 
-  async upload(file: UploadedFile, context: DiskContext): Promise<string> {
-    const diskConfig = DISK_CONFIGS[context];
-    const ext = path.extname(file.originalname).toLowerCase();
-    const filename = `${crypto.randomUUID()}${ext}`;
-    const dir = path.join(this.basePath, diskConfig.prefix);
+  async upload(file: UploadedFile, context: UploadContext): Promise<string> {
+    const { prefix } = UPLOAD_CONFIGS[context];
+    const ext        = path.extname(file.originalname).toLowerCase();
+    const filename   = `${crypto.randomUUID()}${ext}`;
+    const dir        = path.join(this.basePath, prefix);
 
     await fs.mkdir(dir, { recursive: true });
-    const fullPath = path.join(dir, filename);
-    await fs.writeFile(fullPath, file.buffer);
+    await fs.writeFile(path.join(dir, filename), file.buffer);
 
-    return `${diskConfig.prefix}/${filename}`;
+    return `${prefix}/${filename}`;
   }
 
   async delete(filePath: string): Promise<void> {
-    const fullPath = path.join(this.basePath, filePath);
-    await fs.rm(fullPath, { force: true });
+    await fs.rm(path.join(this.basePath, filePath), { force: true });
   }
 }

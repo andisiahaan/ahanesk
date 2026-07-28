@@ -115,6 +115,14 @@ export class AuthController {
     return this.totpService.enableTotp(user.id, dto);
   }
 
+  @Post('2fa/recovery-codes/regenerate')
+  async regenerateRecoveryCodes(
+    @CurrentUser() user: AuthUser,
+    @Body() dto: DisableTotpDto,
+  ) {
+    return this.totpService.regenerateRecoveryCodes(user.id, dto);
+  }
+
   @Post('2fa/disable')
   async disableTotp(
     @CurrentUser() user: AuthUser,

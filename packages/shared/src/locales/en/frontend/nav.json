@@ -1,7 +1,10 @@
 {
   "home": "Home",
+  "features": "Features",
+  "pricing": "Pricing",
+  "about": "About Us",
+  "contact": "Contact",
   "blog": "Blog",
-  "pages": "Pages",
   "login": "Login",
   "signIn": "Sign In",
   "getStarted": "Get Started",

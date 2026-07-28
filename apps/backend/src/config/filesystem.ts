@@ -1,33 +1,17 @@
-export interface DiskConfig {
-  fieldName: string;
-  allowedMimeTypes: readonly string[];
-  allowedExtensions: readonly string[];
-  maxSizeBytes: number;
-  prefix: string;
-}
+/**
+ * Disk driver configuration — backend only.
+ *
+ * File ini HANYA bertanggung jawab untuk:
+ *  - DEFAULT_DISK : driver global dari env DISK=local|s3 (divalidasi Zod di startup)
+ *
+ * Semua upload config (fieldName, prefix, constraints, disk override per-context)
+ * ada di: packages/shared/src/upload-configs.ts → UPLOAD_CONFIGS
+ */
+import { UPLOAD_CONFIGS } from '@ahansk/shared';
+export { UPLOAD_CONFIGS };
+export type { UploadContext } from '@ahansk/shared';
 
-export const DISK_CONFIGS = {
-  avatar: {
-    fieldName: 'avatar',
-    allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
-    allowedExtensions: ['.jpg', '.jpeg', '.png', '.webp'],
-    maxSizeBytes: 2 * 1024 * 1024, // 2 MB
-    prefix: 'avatars',
-  },
-  blog_cover: {
-    fieldName: 'cover_image',
-    allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
-    allowedExtensions: ['.jpg', '.jpeg', '.png', '.webp', '.gif'],
-    maxSizeBytes: 5 * 1024 * 1024, // 5 MB
-    prefix: 'blog',
-  },
-  ticket_attachment: {
-    fieldName: 'attachment',
-    allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'application/pdf', 'text/plain'],
-    allowedExtensions: ['.jpg', '.jpeg', '.png', '.webp', '.pdf', '.txt'],
-    maxSizeBytes: 10 * 1024 * 1024, // 10 MB
-    prefix: 'tickets',
-  },
-} as const satisfies Record<string, DiskConfig>;
+export type DiskDriver = 'local' | 's3';
 
-export type DiskContext = keyof typeof DISK_CONFIGS;
+/** Driver disk global — dari env DISK=local|s3. */
+export const DEFAULT_DISK: DiskDriver = (process.env['DISK'] ?? 'local') as DiskDriver;

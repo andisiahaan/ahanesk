@@ -1,59 +1,46 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { apiFetch, getImageUrl } from '@/lib/api';
-import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  title: 'Blog',
-  description: 'Read our latest articles, updates, and insights.',
-};
+type Props = { params: Promise<{ slug: string }> };
 
-interface Post {
-  id: string; title: string; slug: string; excerpt: string | null;
-  cover_image: string | null; is_featured: boolean;
-  published_at: string | null; view_count: number;
-  author: { name: string };
-  categories: { id: string; name: string; slug: string }[];
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  return { title: `Category: ${slug} | Blog` };
 }
 
-async function getPosts(search?: string): Promise<Post[]> {
+async function getCategoryPosts(slug: string) {
   try {
-    const query = new URLSearchParams({ limit: '20' });
-    if (search) query.append('search', search);
-    
-    const res = await apiFetch(`/blog/posts?${query.toString()}`);
+    const res = await apiFetch(`/blog/posts?category=${slug}&limit=20`);
     if (!res.ok) return [];
     const data = await res.json();
     return data.data?.posts ?? [];
   } catch { return []; }
 }
 
-export default async function BlogPage({ searchParams }: { searchParams: Promise<{ search?: string }> }) {
-  const { search } = await searchParams;
-  const posts = await getPosts(search);
-  const t = await getTranslations('blog.list');
+export default async function BlogCategoryPage({ params }: Props) {
+  const { slug } = await params;
+  const posts = await getCategoryPosts(slug);
 
   return (
     <div className="w-full">
       <header className="mb-10">
-        <h1 className="text-4xl font-extrabold text-foreground tracking-tight mb-2">
-          {search ? `Search Results for "${search}"` : t('heading') || 'Latest Articles'}
-        </h1>
-        {!search && <p className="text-muted-foreground text-lg">{t('description') || 'Discover our most recent stories and updates.'}</p>}
+        <div className="flex items-center gap-2 text-sm text-primary font-bold uppercase tracking-widest mb-2">
+          <Link href="/blog/categories" className="hover:underline">Categories</Link>
+          <span>/</span>
+        </div>
+        <h1 className="text-4xl font-extrabold text-foreground tracking-tight mb-2 capitalize">{slug.replace(/-/g, ' ')}</h1>
+        <p className="text-muted-foreground text-lg">Posts filed under this category.</p>
       </header>
 
       {posts.length === 0 ? (
         <div className="py-20 text-center border border-dashed border-border rounded-2xl bg-muted/30">
-          <p className="text-muted-foreground">{t('noPosts') || 'No posts found.'}</p>
-          {search && (
-            <Link href="/blog" className="text-primary hover:underline mt-2 inline-block">
-              Clear search
-            </Link>
-          )}
+          <p className="text-muted-foreground">No posts found in this category.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {posts.map((post) => (
+          {posts.map((post: any) => (
             <Link key={post.id} href={`/blog/${post.slug}`}
               className="group flex flex-col border border-border rounded-2xl overflow-hidden bg-card hover:border-primary/40 hover:shadow-md transition-all duration-300">
               {post.cover_image && (
@@ -63,13 +50,6 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
                 </div>
               )}
               <div className="p-6 flex flex-col flex-1">
-                {post.categories.length > 0 && (
-                  <div className="flex gap-2 flex-wrap mb-3">
-                    {post.categories.map((c) => (
-                      <span key={c.id} className="text-[0.65rem] font-bold uppercase tracking-widest text-primary">{c.name}</span>
-                    ))}
-                  </div>
-                )}
                 <h2 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors leading-snug mb-2 line-clamp-2">
                   {post.title}
                 </h2>

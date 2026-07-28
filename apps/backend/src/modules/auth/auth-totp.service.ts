@@ -61,6 +61,32 @@ export class AuthTotpService {
     return { recoveryCodes: codes };
   }
 
+  async regenerateRecoveryCodes(userId: string, dto: DisableTotpDto): Promise<{ recoveryCodes: string[] }> {
+    const user = await this.repo.findUserById(userId);
+    if (!user) throw new UnauthorizedException();
+    if (!user.totp_enabled) throw new BadRequestException(messages.auth.twoFactorNotEnabled);
+    if (!user.password) throw new BadRequestException('Password not set');
+
+    const valid = await argon2.verify(user.password, dto.password);
+    if (!valid) throw new BadRequestException(messages.auth.invalidPassword);
+
+    const codes = Array.from({ length: TOTP_RECOVERY_CODE_COUNT }, () =>
+      crypto.randomBytes(5).toString('hex').toUpperCase().match(/.{1,5}/g)!.join('-'),
+    );
+    const codeHashes = await Promise.all(codes.map((c) => argon2.hash(c)));
+
+    await this.repo.deleteAllRecoveryCodes(userId);
+    await this.repo.createTotpRecoveryCodes(userId, codeHashes);
+
+    void this.notifications.send({
+      type:    'account.2fa_recovery_codes_regenerated',
+      userId,
+      title:   '2FA Recovery Codes Regenerated',
+      message: 'Your two-factor authentication recovery codes have been regenerated. The old codes are no longer valid.',
+    });
+    return { recoveryCodes: codes };
+  }
+
   async disableTotp(userId: string, dto: DisableTotpDto): Promise<{ message: string }> {
     const user = await this.repo.findUserById(userId);
     if (!user) throw new UnauthorizedException();

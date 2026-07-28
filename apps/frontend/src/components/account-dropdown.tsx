@@ -74,12 +74,12 @@ export function AccountDropdown({ className }: AccountDropdownProps) {
           </div>
 
           <div className="py-1">
-            <Link href={`${dashboardPath}/settings`} onClick={() => setOpen(false)}
+            <Link href={`${dashboardPath}/account`} onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors">
               <Settings className="size-4 text-muted-foreground" />
-              {t('settings')}
+              {t('account')}
             </Link>
-            <Link href={`${dashboardPath}/settings/security`} onClick={() => setOpen(false)}
+            <Link href={`${dashboardPath}/account/security`} onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors">
               <Shield className="size-4 text-muted-foreground" />
               {t('security')}

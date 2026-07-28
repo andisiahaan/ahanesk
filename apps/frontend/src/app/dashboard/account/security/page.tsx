@@ -73,6 +73,7 @@ function TwoFactorSection() {
   const [secret, setSecret]                 = useState<string | null>(null);
   const [code, setCode]                     = useState('');
   const [disablePassword, setDisablePassword] = useState('');
+  const [recoveryCodes, setRecoveryCodes]   = useState<string[] | null>(null);
 
   const setup = async () => {
     setLoading(true);
@@ -88,11 +89,12 @@ function TwoFactorSection() {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.post('/auth/2fa/enable', { code });
+      const { data } = await api.post<{ data: { recoveryCodes: string[] } }>('/auth/2fa/enable', { code });
       toast.success('Two-factor authentication enabled!');
       await fetchMe();
       setQrUri(null);
       setCode('');
+      setRecoveryCodes(data.data.recoveryCodes);
     } catch { toast.error('Invalid code. Please try again.'); }
     finally { setLoading(false); }
   };
@@ -103,6 +105,17 @@ function TwoFactorSection() {
       await api.post('/auth/2fa/disable', { password: disablePassword });
       toast.success('Two-factor authentication disabled.');
       await fetchMe();
+      setDisablePassword('');
+    } catch { toast.error('Invalid password.'); }
+    finally { setLoading(false); }
+  };
+
+  const regenerateCodes = async () => {
+    setLoading(true);
+    try {
+      const { data } = await api.post<{ data: { recoveryCodes: string[] } }>('/auth/2fa/recovery-codes/regenerate', { password: disablePassword });
+      toast.success('Recovery codes regenerated successfully!');
+      setRecoveryCodes(data.data.recoveryCodes);
       setDisablePassword('');
     } catch { toast.error('Invalid password.'); }
     finally { setLoading(false); }
@@ -125,11 +138,11 @@ function TwoFactorSection() {
         </span>
       </div>
 
-      {!user?.totp_enabled && !qrUri && (
+      {!user?.totp_enabled && !qrUri && !recoveryCodes && (
         <Button variant="outline" loading={loading} onClick={setup}>Enable 2FA</Button>
       )}
 
-      {qrUri && (
+      {qrUri && !recoveryCodes && (
         <div className="space-y-4">
           <p className="text-xs text-muted-foreground">Scan this QR code with your authenticator app, then enter the 6-digit code.</p>
           <img src={qrUri} alt="2FA QR Code" className="rounded-xl border border-border w-44 h-44" />
@@ -141,13 +154,36 @@ function TwoFactorSection() {
         </div>
       )}
 
-      {user?.totp_enabled && (
-        <div className="flex items-center gap-2">
-          <Input type="password" placeholder="Enter current password to disable" value={disablePassword}
-            onChange={(e) => setDisablePassword(e.target.value)} className="w-64" />
-          <Button variant="outline" loading={loading} onClick={disable} className="text-destructive border-destructive hover:bg-destructive/10">
-            Disable 2FA
-          </Button>
+      {recoveryCodes && (
+        <div className="space-y-4">
+          <div className="p-4 rounded-xl border border-border bg-card">
+            <h3 className="text-sm font-semibold text-foreground mb-2">Save your Recovery Codes</h3>
+            <p className="text-xs text-muted-foreground mb-4">
+              If you lose access to your authenticator app, you can use these recovery codes to log in. 
+              Each code can only be used once. Keep them in a safe place.
+            </p>
+            <div className="grid grid-cols-2 gap-2 font-mono text-sm">
+              {recoveryCodes.map(c => <div key={c} className="p-2 bg-muted rounded text-center">{c}</div>)}
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={() => {
+                navigator.clipboard.writeText(recoveryCodes.join('\n'));
+                toast.success('Copied to clipboard');
+            }}>Copy Codes</Button>
+            <Button variant="outline" onClick={() => setRecoveryCodes(null)}>I have saved them</Button>
+          </div>
+        </div>
+      )}
+
+      {user?.totp_enabled && !recoveryCodes && (
+        <div className="space-y-4">
+          <p className="text-xs text-muted-foreground">Enter your current password to manage your 2FA settings.</p>
+          <div className="flex items-center gap-2">
+            <Input type="password" placeholder="Current password" value={disablePassword} onChange={(e) => setDisablePassword(e.target.value)} />
+            <Button variant="outline" loading={loading} onClick={regenerateCodes}>Regenerate Recovery Codes</Button>
+            <Button variant="destructive" loading={loading} onClick={disable}>Disable 2FA</Button>
+          </div>
         </div>
       )}
     </section>

@@ -176,8 +176,8 @@ export default async function DashboardPage() {
         <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-4">{t('quickActions')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
-            { label: t('actions.editProfile'),  href: `${dashboardPath}/settings/profile`,  icon: <LayoutDashboard className="size-4" /> },
-            { label: t('actions.security'),     href: `${dashboardPath}/settings/security`, icon: <Shield className="size-4" /> },
+            { label: t('actions.editProfile'),  href: `${dashboardPath}/account/profile`,  icon: <LayoutDashboard className="size-4" /> },
+            { label: t('actions.security'),     href: `${dashboardPath}/account/security`, icon: <Shield className="size-4" /> },
             { label: 'Support Tickets',         href: `${dashboardPath}/tickets`,           icon: <LifeBuoy className="size-4" /> },
           ].map((action) => (
             <Link

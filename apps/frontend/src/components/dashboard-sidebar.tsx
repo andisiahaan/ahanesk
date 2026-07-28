@@ -20,12 +20,6 @@ const useNavItems = (base: string): NavItem[] => [
   { key: 'dashboard', href: base,                       icon: <LayoutDashboard className="size-4" /> },
   { key: 'news',      href: `${base}/news`,             icon: <Newspaper className="size-4" /> },
   { key: 'tickets',   href: `${base}/tickets`,          icon: <LifeBuoy className="size-4" /> },
-  {
-    key: 'account', href: `${base}/account`, icon: <User2 className="size-4" />,
-    children: [
-      { key: 'personalAccessTokens', href: `${base}/account/personal-access-tokens` },
-    ],
-  },
 ];
 
 interface DashboardSidebarProps {

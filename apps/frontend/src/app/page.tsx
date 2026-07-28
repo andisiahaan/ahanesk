@@ -3,6 +3,7 @@ import { Logo } from '@ahansk/ui';
 import type { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ExternalLink, ShieldCheck, Zap, LayoutDashboard, Globe2 } from 'lucide-react';
+import { Footer } from '@/components/footer';
 
 export const metadata: Metadata = { title: 'Home - Ahansk Starter Kit' };
 
@@ -112,6 +113,9 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* Footer */}
+      <Footer />
     </main>
   );
 }

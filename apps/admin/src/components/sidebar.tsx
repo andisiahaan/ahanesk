@@ -10,7 +10,14 @@ const NAV = [
   { href: '/',            icon: '◈', label: 'Dashboard' },
   { href: '/users',       icon: '⊕', label: 'Users' },
   { href: '/tickets',     icon: '◷', label: 'Tickets' },
-  { href: '/blog',        icon: '✎', label: 'Blog' },
+  {
+    href: '/blog', icon: '✎', label: 'Blog',
+    sub: [
+      { href: '/blog',           label: 'Posts' },
+      { href: '/blog/categories',label: 'Categories' },
+      { href: '/blog/tags',      label: 'Tags' },
+    ]
+  },
   { href: '/news',        icon: '⚐', label: 'News' },
   { href: '/pages',       icon: '≡', label: 'Pages' },
   { href: '/help',        icon: '♡', label: 'Help Center' },
@@ -30,9 +37,32 @@ function SidebarContent({ onNav }: { onNav?: () => void }) {
 
       <nav className="flex flex-col gap-0.5 flex-1 overflow-y-auto p-2">
         {NAV.map((item) => {
+          const isBlog = item.href === '/blog';
           const active = item.href === '/'
             ? pathname === '/'
             : pathname.startsWith(item.href);
+
+          if (item.sub) {
+            return (
+              <div key={item.href} className="flex flex-col gap-0.5">
+                <div className={cn('flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors border-l-2', active ? 'border-primary bg-primary/10 text-primary' : 'border-transparent text-muted-foreground')}>
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-base leading-none">{item.icon}</span>
+                    {item.label}
+                  </div>
+                </div>
+                <div className="flex flex-col ml-6 pl-2 border-l border-border gap-0.5 my-1">
+                  {item.sub.map((sub) => (
+                    <Link key={sub.href} href={sub.href} onClick={onNav}
+                      className={cn('px-3 py-1.5 rounded-lg text-sm transition-colors', pathname === sub.href || (sub.href === '/blog' && pathname === '/blog/new') || (sub.href === '/blog/categories' && pathname.startsWith('/blog/categories')) || (sub.href === '/blog/tags' && pathname.startsWith('/blog/tags')) ? 'text-primary font-medium bg-primary/5' : 'text-muted-foreground hover:bg-muted hover:text-foreground')}>
+                      {sub.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            );
+          }
+
           return (
             <Link key={item.href} href={item.href} onClick={onNav}
               className={cn(

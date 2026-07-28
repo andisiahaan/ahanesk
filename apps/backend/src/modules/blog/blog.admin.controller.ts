@@ -6,6 +6,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { BlogService } from './blog.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { UPLOAD_CONFIGS } from '@ahansk/shared';
+import { StorageUploadInterceptor } from '../../infrastructure/storage/upload.interceptor';
 
 
 import {
@@ -30,7 +32,7 @@ export class BlogAdminController {
   getPost(@Param('id') id: string) { return this.svc.getById(id); }
 
   @Post('posts')
-  @UseInterceptors(FileInterceptor('cover_image'))
+  @StorageUploadInterceptor('blog_cover')
   createPost(
     @CurrentUser() user: AuthUser,
     @Body() dto: CreatePostDto,
@@ -40,7 +42,7 @@ export class BlogAdminController {
   }
 
   @Patch('posts/:id')
-  @UseInterceptors(FileInterceptor('cover_image'))
+  @StorageUploadInterceptor('blog_cover')
   updatePost(
     @Param('id') id: string,
     @Body() dto: UpdatePostDto,
@@ -60,13 +62,13 @@ export class BlogAdminController {
   listCategories() { return this.svc.listAllCategories(); }
 
   @Post('categories')
-  @UseInterceptors(FileInterceptor('cover_image'))
+  @StorageUploadInterceptor('blog_cover')
   createCategory(@Body() dto: CreateCategoryDto, @UploadedFile() file?: Express.Multer.File) {
     return this.svc.createCategory(dto, file as unknown as StorageFile);
   }
 
   @Patch('categories/:id')
-  @UseInterceptors(FileInterceptor('cover_image'))
+  @StorageUploadInterceptor('blog_cover')
   updateCategory(@Param('id') id: string, @Body() dto: UpdateCategoryDto, @UploadedFile() file?: Express.Multer.File) {
     return this.svc.updateCategory(id, dto, file as unknown as StorageFile);
   }

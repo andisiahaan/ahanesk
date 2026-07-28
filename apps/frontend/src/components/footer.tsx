@@ -2,17 +2,27 @@ import Link from 'next/link';
 import { Logo } from '@ahansk/ui';
 
 const FOOTER_LINKS = {
-  Product: [
+  Features: [
     { label: 'Blog', href: '/blog' },
-    { label: 'Changelog', href: '/pages/changelog' },
+    { label: 'Categories', href: '/blog/categories' },
+    { label: 'Tags', href: '/blog/tags' },
+    { label: 'Help Center', href: '/help' },
   ],
-  Resources: [
-    { label: 'Documentation', href: '/pages/about' },
-    { label: 'GitHub', href: 'https://github.com' },
+  Account: [
+    { label: 'Dashboard', href: '/dashboard/account' },
+    { label: 'Profile Settings', href: '/dashboard/account/profile' },
+    { label: 'Security', href: '/dashboard/account/security' },
+    { label: 'Sign In', href: '/login' },
+  ],
+  Company: [
+    { label: 'About', href: '/pages/about' },
+    { label: 'Contact', href: '/pages/contact' },
+    { label: 'Changelog', href: '/pages/changelog' },
   ],
   Legal: [
     { label: 'Privacy Policy', href: '/pages/privacy' },
     { label: 'Terms of Service', href: '/pages/terms' },
+    { label: 'Cookie Policy', href: '/pages/cookie' },
   ],
 };
 
@@ -20,9 +30,9 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-background">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-6">
           {/* Brand */}
-          <div className="col-span-2 sm:col-span-1">
+          <div className="col-span-2 md:col-span-4 lg:col-span-2">
             <Link href="/" className="inline-flex">
               <Logo height={32} />
             </Link>

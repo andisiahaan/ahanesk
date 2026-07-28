@@ -44,6 +44,7 @@ export const ListPostsQuerySchema = z.object({
   tag:      z.string().optional(),
   featured: z.preprocess((v) => v === 'true', z.boolean()).optional(),
   search:   z.string().optional(),
+  sort:     z.enum(['latest', 'popular']).optional().default('latest'),
 });
 
 import { createZodDto } from '../../common/utils/zod.dto';

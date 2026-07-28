@@ -40,7 +40,7 @@ export type GoogleAuthDto = z.infer<typeof GoogleAuthSchema>;
 
 export const VerifyTotpSchema = z.object({
   partialToken: z.string().min(1),
-  code: z.string().length(6),
+  code: z.string().min(6).max(11),
 });
 export type VerifyTotpDto = z.infer<typeof VerifyTotpSchema>;
 

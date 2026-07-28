@@ -44,6 +44,7 @@ export default getRequestConfig(async () => {
       // ── Frontend-specific ──────────────────────────────────────────────
       nav:       frontend.nav,
       dashboard: frontend.dashboard,
+      account:   frontend.account,
     },
   };
 });

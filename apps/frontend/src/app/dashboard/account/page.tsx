@@ -19,7 +19,7 @@ export default async function AccountPage() {
 
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Link href={`${dashboardPath}/settings/profile`}
+        <Link href={`${dashboardPath}/account/profile`}
           className="group flex items-start gap-4 rounded-2xl border border-border bg-card p-5 hover:border-primary/40 hover:bg-primary/5 transition-all">
           <div className="size-11 rounded-xl bg-violet-500/10 flex items-center justify-center flex-shrink-0">
             <User className="size-5 text-violet-500" />
@@ -30,7 +30,7 @@ export default async function AccountPage() {
           </div>
         </Link>
 
-        <Link href={`${dashboardPath}/settings/security`}
+        <Link href={`${dashboardPath}/account/security`}
           className="group flex items-start gap-4 rounded-2xl border border-border bg-card p-5 hover:border-emerald-500/40 hover:bg-emerald-500/5 transition-all">
           <div className="size-11 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
             <Shield className="size-5 text-emerald-500" />
@@ -41,7 +41,7 @@ export default async function AccountPage() {
           </div>
         </Link>
 
-        <Link href={`${dashboardPath}/settings/notifications`}
+        <Link href={`${dashboardPath}/account/notification-preferences`}
           className="group flex items-start gap-4 rounded-2xl border border-border bg-card p-5 hover:border-blue-500/40 hover:bg-blue-500/5 transition-all">
           <div className="size-11 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
             <Bell className="size-5 text-blue-500" />

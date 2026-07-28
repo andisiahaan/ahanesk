@@ -5,15 +5,15 @@ import { BlogV1Controller } from './blog.v1.controller';
 import { BlogAdminController } from './blog.admin.controller';
 import { BlogService } from './blog.service';
 import { BlogRepository } from './blog.repository';
-import { DISK_CONFIGS } from '../../config/filesystem';
+import { UPLOAD_CONFIGS } from '@ahansk/shared';
 
 @Module({
   imports: [
     MulterModule.register({
       storage: undefined,
-      limits: { fileSize: DISK_CONFIGS.blog_cover.maxSizeBytes },
+      limits: { fileSize: UPLOAD_CONFIGS.blog_cover.maxSizeBytes },
       fileFilter: (_req, file, cb) => {
-        cb(null, (DISK_CONFIGS.blog_cover.allowedMimeTypes as readonly string[]).includes(file.mimetype));
+        cb(null, (UPLOAD_CONFIGS.blog_cover.allowedMimeTypes as readonly string[]).includes(file.mimetype));
       },
     }),
   ],

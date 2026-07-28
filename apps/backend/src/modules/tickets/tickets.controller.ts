@@ -2,6 +2,8 @@ import { Controller, Get, Post, Patch, Param, Body, Query, UseInterceptors, Uplo
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { TicketsService } from './tickets.service';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { UPLOAD_CONFIGS } from '@ahansk/shared';
+import { StorageUploadInterceptor } from '../../infrastructure/storage/upload.interceptor';
 
 import { CreateTicketDto, CreateReplyDto } from './tickets.dto';
 import type { AuthUser } from '@ahansk/shared';
@@ -34,7 +36,7 @@ export class TicketsController {
   }
 
   @Post(':id/reply')
-  @UseInterceptors(FilesInterceptor('attachments', 5))
+  @StorageUploadInterceptor('ticket_attachment', true)
   reply(
     @CurrentUser() user: AuthUser,
     @Param('id') id: string,

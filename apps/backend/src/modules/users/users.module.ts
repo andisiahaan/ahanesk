@@ -5,7 +5,7 @@ import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
 import { BanService } from './ban.service';
 import { BanRepository } from './ban.repository';
-import { DISK_CONFIGS } from '../../config/filesystem';
+import { UPLOAD_CONFIGS } from '@ahansk/shared';
 import { NotificationModule } from '../notifications/notification.module';
 import { AuthRepository } from '../auth/auth.repository';
 
@@ -14,9 +14,9 @@ import { AuthRepository } from '../auth/auth.repository';
     NotificationModule,
     MulterModule.register({
       storage: undefined, // use memory storage — StorageService handles persistence
-      limits: { fileSize: DISK_CONFIGS.avatar.maxSizeBytes },
+      limits: { fileSize: UPLOAD_CONFIGS.avatar.maxSizeBytes },
       fileFilter: (_req, file, cb) => {
-        const allowed = DISK_CONFIGS.avatar.allowedMimeTypes as readonly string[];
+        const allowed = UPLOAD_CONFIGS.avatar.allowedMimeTypes as readonly string[];
         cb(null, allowed.includes(file.mimetype));
       },
     }),

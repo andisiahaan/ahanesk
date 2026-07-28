@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LocalDriver } from './drivers/local.driver';
 import { S3Driver } from './drivers/s3.driver';
-import type { DiskContext } from '../../config/filesystem';
+import { UPLOAD_CONFIGS, DEFAULT_DISK } from '../../config/filesystem';
+import type { UploadContext } from '../../config/filesystem';
+import type { DiskDriver } from '../../config/filesystem';
 
 export interface UploadedFile {
   fieldname: string;
@@ -13,28 +15,37 @@ export interface UploadedFile {
 }
 
 export interface StorageDriver {
-  upload(file: UploadedFile, context: DiskContext): Promise<string>;
+  upload(file: UploadedFile, context: UploadContext): Promise<string>;
   delete(filePath: string): Promise<void>;
 }
 
 @Injectable()
 export class StorageService {
-  private readonly driver: StorageDriver;
-
   constructor(
-    private readonly config: ConfigService,
+    // ConfigService dipakai oleh LocalDriver & S3Driver untuk path/credentials.
+    private readonly _config: ConfigService,
     private readonly localDriver: LocalDriver,
     private readonly s3Driver: S3Driver,
-  ) {
-    const disk = this.config.get<string>('app.storage.disk', 'local');
-    this.driver = disk === 's3' ? this.s3Driver : this.localDriver;
+  ) {}
+
+  /**
+   * Pilih driver:
+   *  1. UPLOAD_CONFIGS[context].disk jika diset (override per-context)
+   *  2. DEFAULT_DISK dari env (global default)
+   *
+   * UPLOAD_CONFIGS adalah SSOT — bukan DISK_CONFIGS terpisah.
+   */
+  private resolveDriver(context: UploadContext): StorageDriver {
+    const disk: DiskDriver = (UPLOAD_CONFIGS[context] as { disk?: DiskDriver }).disk ?? DEFAULT_DISK;
+    return disk === 's3' ? this.s3Driver : this.localDriver;
   }
 
-  async upload(file: UploadedFile, context: DiskContext): Promise<string> {
-    return this.driver.upload(file, context);
+  async upload(file: UploadedFile, context: UploadContext): Promise<string> {
+    return this.resolveDriver(context).upload(file, context);
   }
 
   async delete(filePath: string): Promise<void> {
-    return this.driver.delete(filePath);
+    // Path relatif tidak membawa info disk — coba local dulu, fallback s3.
+    await this.localDriver.delete(filePath).catch(() => this.s3Driver.delete(filePath));
   }
 }
