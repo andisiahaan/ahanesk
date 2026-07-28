@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 import type { ListTicketsQueryDto } from './tickets.dto';
+import { buildPaginationMeta } from '@ahansk/shared';
 
 const TICKET_INCLUDE = {
   user:     { select: { id: true, name: true, email: true } },
@@ -20,23 +21,29 @@ export class TicketsRepository {
     if (q.category) where['category'] = q.category;
     if (q.search)   where['OR'] = [{ subject: { contains: q.search } }, { description: { contains: q.search } }];
 
-    const [tickets, total] = await Promise.all([
+    const [items, total] = await Promise.all([
       this.prisma.ticket.findMany({
         where, skip, take: q.limit, orderBy: { created_at: 'desc' },
         include: { user: { select: { id: true, name: true, email: true } }, assignee: { select: { id: true, name: true } }, _count: { select: { replies: true } } },
       }),
       this.prisma.ticket.count({ where }),
     ]);
-    return { tickets, pagination: { page: q.page, limit: q.limit, total, pages: Math.ceil(total / q.limit) } };
+    return { items, meta: buildPaginationMeta(total, q.page, q.limit) };
   }
 
-  listForUser(userId: string, page: number, limit: number) {
-    return this.prisma.ticket.findMany({
-      where: { user_id: userId },
-      skip: (page - 1) * limit, take: limit,
-      orderBy: { created_at: 'desc' },
-      select: { id: true, ticket_number: true, subject: true, status: true, priority: true, created_at: true, _count: { select: { replies: true } } },
-    });
+  async listForUser(userId: string, page: number, limit: number) {
+    const skip = (page - 1) * limit;
+    const [items, total] = await Promise.all([
+      this.prisma.ticket.findMany({
+        where: { user_id: userId },
+        skip, take: limit,
+        orderBy: { created_at: 'desc' },
+        select: { id: true, ticket_number: true, subject: true, status: true, priority: true, created_at: true, _count: { select: { replies: true } } },
+      }),
+      this.prisma.ticket.count({ where: { user_id: userId } })
+    ]);
+    
+    return { items, meta: buildPaginationMeta(total, page, limit) };
   }
 
   findById(id: string) {

@@ -107,6 +107,35 @@ Semua perintah di bawah dapat dijalankan dari root monorepo untuk mengeksekusi s
 
 ---
 
+## 🛡️ Pengujian (Testing) & Keamanan
+
+Starter Kit ini dibangun dengan prioritas tinggi pada pengujian (skala *mid-to-high*), mencakup tes berlapis dari Unit hingga Load/Penetration Testing.
+
+### 1. Unit & Integration Test
+Digunakan untuk menguji *business logic* (Service) dan kueri database (Repository) secara terisolasi.
+```bash
+# Menjalankan test di seluruh workspaces
+pnpm run test
+```
+
+### 2. End-to-End (E2E) Test API
+Setiap modul di Backend (Auth, User, Blog, Settings, dll) dilengkapi dengan E2E spec penuh, memastikan integrasi controller, interceptor, validasi Zod, dan pengiriman email bekerja sempurna.
+```bash
+# Menjalankan spesifikasi E2E API di backend
+pnpm --filter backend run test:e2e
+```
+*(Proses ini menggunakan setup global test environment, membersihkan data yang terisolasi, dan menggunakan otentikasi Cookie-based secara transparan).*
+
+### 3. Load & Security Penetration Testing (CSRF)
+Aplikasi diamankan menggunakan **Double-Submit Cookie** (header `x-csrf-token` vs cookie `csrf_token`).
+Sebuah script pembuktian dan pengujian beban disiapkan untuk menguji ketahanan server.
+```bash
+# Lakukan bombard test & verifikasi keamanan mutasi secara live (opsional)
+node apps/backend/scripts/bombard.mjs
+```
+
+---
+
 ## 📦 Panduan Deployment Produksi (PM2)
 
 Project ini telah dilengkapi dengan file konfigurasi produksi `ecosystem.config.js` untuk dieksekusi oleh **PM2**.

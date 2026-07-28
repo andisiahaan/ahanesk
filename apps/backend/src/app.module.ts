@@ -25,6 +25,9 @@ import { OtpModule } from './modules/otp/otp.module';
 import { EmailProcessor } from './jobs/email.processor';
 import { QUEUE_EMAIL } from '@ahansk/shared';
 
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+
 @Module({
   imports: [
     // ─── Config ───────────────────────────────────────────────────────────────
@@ -54,7 +57,7 @@ import { QUEUE_EMAIL } from '@ahansk/shared';
     // ─── Queue (BullMQ + Redis) ───────────────────────────────────────────────
     BullModule.forRootAsync({
       useFactory: () => ({
-        connection: { url: process.env.REDIS_URL },
+        connection: { url: process.env.REDIS_URL || 'redis://127.0.0.1:6379' },
       }),
     }),
     BullModule.registerQueue({ name: QUEUE_EMAIL }),
@@ -98,6 +101,7 @@ import { QUEUE_EMAIL } from '@ahansk/shared';
     HelpModule,
     OtpModule,
   ],
-  providers: [EmailProcessor],
+  controllers: [AppController],
+  providers: [AppService, EmailProcessor],
 })
 export class AppModule {}

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
+import { buildPaginationMeta } from '@ahansk/shared';
 import type { ListNewsQueryDto } from './news.dto';
 
 @Injectable()
@@ -27,7 +28,7 @@ export class NewsRepository {
       this.prisma.newsItem.count({ where }),
     ]);
 
-    return { items, pagination: { page: q.page, limit: q.limit, total, pages: Math.ceil(total / q.limit) } };
+    return { items, meta: buildPaginationMeta(total, q.page, q.limit) };
   }
 
   findBySlug(slug: string, published = true) {

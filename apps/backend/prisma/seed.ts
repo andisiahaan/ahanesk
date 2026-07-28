@@ -66,6 +66,7 @@ async function seedUsers() {
       email_verified_at: new Date(),
     },
     update: {
+      password: adminPw,
       role: 'ADMIN',
       email_verified_at: new Date(),
     },
@@ -82,9 +83,11 @@ async function seedUsers() {
       is_active: true,
       email_verified_at: new Date(),
     },
-    update: {},
+    update: {
+      password: userPw,
+    },
   });
-  log(`  ✅ user@example.com   (role: USER, pw: ahandev)`);
+  log(`  ✅ user@ahandev.com   (role: USER, pw: ahandev)`);
 
   return { admin, user };
 }
