@@ -222,6 +222,6 @@ export type CreateReplyDto = z.infer<typeof CreateReplySchema>;
 // ─── Personal Access Tokens ────────────────────────────────────────────────────
 export const CreatePatSchema = z.object({
   name:       z.string().min(1).max(100),
-  expires_at: z.string().datetime().optional(),
+  expires_at: z.union([z.string().datetime(), z.literal('')]).optional().transform(v => v === '' ? undefined : v),
 });
 export type CreatePatDto = z.infer<typeof CreatePatSchema>;
