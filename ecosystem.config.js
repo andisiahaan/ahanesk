@@ -30,7 +30,7 @@ module.exports = {
       max_memory_restart: '512M',
       env_production: {
         NODE_ENV: 'production',
-        PORT: backendEnv.PORT || 10311,
+        PORT: backendEnv.PORT || 10321,
       },
     },
 
@@ -46,7 +46,7 @@ module.exports = {
       max_memory_restart: '512M',
       env_production: {
         NODE_ENV: 'production',
-        PORT: frontendEnv.PORT || 10312,
+        PORT: frontendEnv.PORT || 10322,
       },
     },
 
@@ -62,7 +62,7 @@ module.exports = {
       max_memory_restart: '512M',
       env_production: {
         NODE_ENV: 'production',
-        PORT: adminEnv.PORT || 10313,
+        PORT: adminEnv.PORT || 10323,
       },
     },
   ],

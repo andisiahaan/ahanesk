@@ -1,9 +1,9 @@
-# AhanSK — Backend API Server (`apps/backend`)
+# AhanESK — Backend API Server (`apps/backend`)
 
-Server API NestJS (TypeScript) dari **AhanSK Monorepo**.
+Server API NestJS (TypeScript) dari **AhanESK Monorepo**.
 
 ## 🚀 Fitur & Arsitektur Utama
-- **Port Pengembangan**: `10311` (`turbo run dev`). Endpoint tidak menggunakan prefix `/api`.
+- **Port Pengembangan**: `10321` (`turbo run dev`). Endpoint tidak menggunakan prefix `/api`.
 - **Health Check Endpoint**: `GET /` (bersifat `@Public()`) mengembalikan `{ name: 'ahanesk-backend', status: 'running', version: '1.0.0' }`.
 - **ORM & Database**: Prisma ORM untuk akses database MySQL/MariaDB. Seluruh migrasi SQL di `prisma/migrations` wajib di-commit ke Git.
 - **Validasi Zod v4**: Menggunakan `ZodValidationPipe` (`common/pipes/zod-validation.pipe.ts`) dengan `ZodType` (bukan class-validator).

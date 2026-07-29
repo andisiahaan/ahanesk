@@ -28,7 +28,7 @@ export class AuthTotpService {
     if (user.totp_enabled) throw new BadRequestException(messages.auth.twoFactorAlreadyEnabled);
 
     const secret = authenticator.generateSecret(20);
-    const otpauthUrl = authenticator.keyuri(user.email, 'AhanSK', secret);
+    const otpauthUrl = authenticator.keyuri(user.email, 'AhanESK', secret);
     const qrCodeDataUrl = await qrcode.toDataURL(otpauthUrl);
 
     await this.repo.updateUser(userId, { totp_secret: secret });
