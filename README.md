@@ -1,4 +1,4 @@
-# AhanSK — Ahandev Starter Kit
+# Ahanesk — Ahandev Enterprise Starter Kit
 
 A mid-to-high scale Monorepo Starter Kit based on **NestJS**, **Next.js App Router**, and **Turborepo**, designed with **SSOT, DRY, Modular, and Separation of Concerns (SOC)** principles.
 
@@ -7,7 +7,7 @@ A mid-to-high scale Monorepo Starter Kit based on **NestJS**, **Next.js App Rout
 ## 🏛️ Architecture & Monorepo Structure
 
 ```
-ahansk/
+ahanesk/
 ├── apps/
 │   ├── backend/    → NestJS API Server (Port 10311)
 │   ├── frontend/   → Next.js User-Facing App Router (Port 10312)
@@ -72,7 +72,7 @@ cp apps/admin/.env.example apps/admin/.env.local
 
 > **Important Backend Note (`apps/backend/.env`)**:
 > Ensure `DATABASE_URL` points to an active MySQL/MariaDB database:
-> `DATABASE_URL="mysql://root:@localhost:3306/ahansk"`
+> `DATABASE_URL="mysql://root:@localhost:3306/ahanesk_extended"`
 
 ### 3. Migrate & Seed Database (Prisma)
 Run database schema migrations and initial seeding directly from the monorepo root:
@@ -155,7 +155,7 @@ pm2 reload ecosystem.config.js --env production
 
 # Check status and application logs
 pm2 status
-pm2 logs ahansk-backend
+pm2 logs ahanesk-backend
 ```
 
 ---

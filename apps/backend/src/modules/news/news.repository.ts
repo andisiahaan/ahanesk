@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
-import { buildPaginationMeta } from '@ahansk/shared';
+import { buildPaginationMeta } from '@ahanesk/shared';
 import type { ListNewsQueryDto } from './news.dto';
 
 @Injectable()

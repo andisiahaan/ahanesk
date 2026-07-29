@@ -33,7 +33,7 @@ describe('SettingsController (e2e)', () => {
     // Create test setting
     await prisma.setting.deleteMany({ where: { key: 'site_title' } });
     await prisma.setting.create({
-      data: { key: 'site_title', settings: { value: 'Ahansk Admin Panel' } }
+      data: { key: 'site_title', settings: { value: 'Ahanesk Admin Panel' } }
     });
 
     adminAgent = request.agent(app.getHttpServer());
@@ -90,17 +90,17 @@ describe('SettingsController (e2e)', () => {
       const res = await adminAgent
         .patch('/settings/site_title')
         .set('x-csrf-token', adminCsrfToken)
-        .send({ settings: { value: 'Ahansk Admin Panel Updated' } })
+        .send({ settings: { value: 'Ahanesk Admin Panel Updated' } })
         .expect(200);
 
       expect(res.body.success).toBe(true);
-      expect(res.body.data.settings.value).toBe('Ahansk Admin Panel Updated');
+      expect(res.body.data.settings.value).toBe('Ahanesk Admin Panel Updated');
       
       // Clean up / revert
       await adminAgent
         .patch('/settings/site_title')
         .set('x-csrf-token', adminCsrfToken)
-        .send({ settings: { value: 'Ahansk Admin Panel' } })
+        .send({ settings: { value: 'Ahanesk Admin Panel' } })
         .expect(200);
     });
   });

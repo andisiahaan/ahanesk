@@ -1,8 +1,8 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
 import api from '@/lib/api';
-import { SETTING_KEYS } from '@ahansk/shared';
-import type { AuthSettings, AppGeneralSettings } from '@ahansk/shared';
+import { SETTING_KEYS } from '@ahanesk/shared';
+import type { AuthSettings, AppGeneralSettings } from '@ahanesk/shared';
 import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

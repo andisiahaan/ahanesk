@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { HelpRepository } from './help.repository';
-import { buildPaginationMeta } from '@ahansk/shared';
+import { buildPaginationMeta } from '@ahanesk/shared';
 import type {
   CreateHelpCategoryDto, UpdateHelpCategoryDto,
   CreateHelpArticleDto, UpdateHelpArticleDto,
-} from '@ahansk/shared';
+} from '@ahanesk/shared';
 
 @Injectable()
 export class HelpService {

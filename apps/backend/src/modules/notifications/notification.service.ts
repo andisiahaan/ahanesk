@@ -11,9 +11,9 @@ import {
   isSecurityCritical,
   NOTIFICATION_CHANNELS,
   REQUIRED_CHANNELS,
-} from '@ahansk/shared';
+} from '@ahanesk/shared';
 import { NotificationRepository } from './notification.repository';
-import { buildPaginationMeta } from '@ahansk/shared';
+import { buildPaginationMeta } from '@ahanesk/shared';
 
 interface SendInput {
   type:    NotificationType;

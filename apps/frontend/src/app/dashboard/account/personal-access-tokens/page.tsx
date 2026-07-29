@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { KeyRound, Plus, Copy, Check, Trash2, Clock, AlertTriangle } from 'lucide-react';
 import api from '@/lib/api';
 import { z } from 'zod';
-import { CreatePatSchema, type CreatePatDto } from '@ahansk/shared';
+import { CreatePatSchema, type CreatePatDto } from '@ahanesk/shared';
 import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

@@ -25,7 +25,7 @@
     "db:seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
-    "@ahansk/shared": "workspace:*",
+    "@ahanesk/shared": "workspace:*",
     "@aws-sdk/client-s3": "^3.1085.0",
     "@keyv/redis": "^4.3.2",
     "@nestjs-modules/mailer": "^2.3.7",

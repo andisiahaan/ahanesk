@@ -8,8 +8,8 @@ import {
   DEFAULT_APP_SETTINGS,
   DEFAULT_AUTH_SETTINGS,
   CACHE_KEY_SETTINGS,
-} from '@ahansk/shared';
-import type { SettingKey, SettingValueMap } from '@ahansk/shared';
+} from '@ahanesk/shared';
+import type { SettingKey, SettingValueMap } from '@ahanesk/shared';
 
 @Injectable()
 export class SettingsCache {

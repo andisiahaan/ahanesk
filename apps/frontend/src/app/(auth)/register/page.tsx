@@ -5,13 +5,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import api from '@/lib/api';
-import { Logo } from '@ahansk/ui';
+import { Logo } from '@ahanesk/ui';
 import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { RegisterSchema, type RegisterDto } from '@ahansk/shared';
+import { RegisterSchema, type RegisterDto } from '@ahanesk/shared';
 
 function RegisterForm() {
   const router = useRouter();

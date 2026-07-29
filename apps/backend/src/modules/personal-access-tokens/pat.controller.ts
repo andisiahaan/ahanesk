@@ -2,7 +2,7 @@ import { Controller, Get, Post, Delete, Param, Body, HttpCode, HttpStatus } from
 import { PatService } from './pat.service';
 import { CreatePatDto } from './pat.dto';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import type { AuthUser } from '@ahansk/shared';
+import type { AuthUser } from '@ahanesk/shared';
 
 @Controller('personal-access-tokens')
 export class PatController {

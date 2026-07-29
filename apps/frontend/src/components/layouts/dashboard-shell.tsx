@@ -8,7 +8,7 @@ import { DashboardSidebar } from '@/components/dashboard-sidebar';
 import { AccountDropdown } from '@/components/account-dropdown';
 import { NotificationBell } from '@/components/notification-bell';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { Logo } from '@ahansk/ui';
+import { Logo } from '@ahanesk/ui';
 import { cn } from '@/lib/cn';
 
 interface DashboardShellProps {

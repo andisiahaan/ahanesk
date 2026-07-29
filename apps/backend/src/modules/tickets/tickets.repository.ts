@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 import type { ListTicketsQueryDto } from './tickets.dto';
-import { buildPaginationMeta } from '@ahansk/shared';
+import { buildPaginationMeta } from '@ahanesk/shared';
 
 const TICKET_INCLUDE = {
   user:     { select: { id: true, name: true, email: true } },

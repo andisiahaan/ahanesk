@@ -3,7 +3,7 @@ import { Job } from 'bullmq';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
-import { QUEUE_EMAIL } from '@ahansk/shared';
+import { QUEUE_EMAIL } from '@ahanesk/shared';
 import type { EmailJob } from '../infrastructure/email/email.service';
 
 @Processor(QUEUE_EMAIL)

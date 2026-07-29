@@ -13,7 +13,7 @@ async function runPenetrationTest() {
   const loginResNoCsrf = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: 'admin@ahansk.com', password: 'password123' })
+    body: JSON.stringify({ email: 'admin@ahanesk.com', password: 'password123' })
   });
   
   console.log(`POST /auth/login without CSRF -> Status: ${loginResNoCsrf.status}`);
@@ -34,7 +34,7 @@ async function runPenetrationTest() {
   
   console.log(`Obtained CSRF Token: ${csrfToken ? csrfToken.substring(0, 10) : 'null'}...`);
 
-  const tempEmail = `test_${Date.now()}@ahansk.com`;
+  const tempEmail = `test_${Date.now()}@ahanesk.com`;
   const tempPass = 'Password123!';
 
   // A request WITH CSRF to register

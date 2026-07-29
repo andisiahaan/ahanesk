@@ -11,7 +11,7 @@ import {
   isSecurityCritical, NOTIFICATION_CATEGORIES,
   NOTIFICATION_CHANNELS, REQUIRED_CHANNELS,
   type NotificationPreferences, type NotificationCategory, type NotificationType
-} from '@ahansk/shared';
+} from '@ahanesk/shared';
 
 async function fetchPrefs(): Promise<NotificationPreferences> {
   const res = await api.get<{ data: NotificationPreferences }>('/notifications/preferences');

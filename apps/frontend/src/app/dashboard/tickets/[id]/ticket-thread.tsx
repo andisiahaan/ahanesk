@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, MessageSquare, Shield, XCircle, Clock, Paperclip, X } from 'lucide-react';
-import { UPLOAD_CONFIGS, CreateReplySchema, type CreateReplyDto } from '@ahansk/shared';
+import { UPLOAD_CONFIGS, CreateReplySchema, type CreateReplyDto } from '@ahanesk/shared';
 import api from '@/lib/api';
 import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';

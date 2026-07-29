@@ -3,12 +3,12 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { TicketsService } from './tickets.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { UPLOAD_CONFIGS } from '@ahansk/shared';
+import { UPLOAD_CONFIGS } from '@ahanesk/shared';
 
 import {
   UpdateTicketAdminDto, CreateReplyDto, ListTicketsQueryDto,
 } from './tickets.dto';
-import type { AuthUser } from '@ahansk/shared';
+import type { AuthUser } from '@ahanesk/shared';
 import type { UploadedFile as StorageFile } from '../../infrastructure/storage/storage.service';
 
 @Controller('admin/tickets')

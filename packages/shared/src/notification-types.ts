@@ -1,6 +1,6 @@
 /**
  * Notification System — SSOT Type Definitions
- * @package @ahansk/shared
+ * @package @ahanesk/shared
  *
  * Konsep category otomatis dari prefix type:
  *   'ticket.replied' → category = 'ticket'

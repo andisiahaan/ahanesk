@@ -5,7 +5,7 @@ import { BlogV1Controller } from './blog.v1.controller';
 import { BlogAdminController } from './blog.admin.controller';
 import { BlogService } from './blog.service';
 import { BlogRepository } from './blog.repository';
-import { UPLOAD_CONFIGS } from '@ahansk/shared';
+import { UPLOAD_CONFIGS } from '@ahanesk/shared';
 
 @Module({
   imports: [

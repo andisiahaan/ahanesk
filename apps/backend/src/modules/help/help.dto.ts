@@ -3,7 +3,7 @@ import {
   CreateHelpCategorySchema, UpdateHelpCategorySchema,
   CreateHelpArticleSchema, UpdateHelpArticleSchema,
   VoteHelpfulSchema
-} from '@ahansk/shared';
+} from '@ahanesk/shared';
 
 export class CreateHelpCategoryDto extends createZodDto(CreateHelpCategorySchema) {}
 export class UpdateHelpCategoryDto extends createZodDto(UpdateHelpCategorySchema) {}

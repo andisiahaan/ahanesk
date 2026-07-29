@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { messages } from '@ahansk/shared';
+import { messages } from '@ahanesk/shared';
 
 interface RecaptchaResponse {
   success: boolean;

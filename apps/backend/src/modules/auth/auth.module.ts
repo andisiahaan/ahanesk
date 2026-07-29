@@ -11,7 +11,7 @@ import { EmailService } from '../../infrastructure/email/email.service';
 import { NotificationModule } from '../notifications/notification.module';
 import { OtpModule } from '../otp/otp.module';
 import { UsersModule } from '../users/users.module';
-import { QUEUE_EMAIL } from '@ahansk/shared';
+import { QUEUE_EMAIL } from '@ahanesk/shared';
 
 @Module({
   imports: [

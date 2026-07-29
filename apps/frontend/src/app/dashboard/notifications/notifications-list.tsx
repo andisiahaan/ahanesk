@@ -6,8 +6,8 @@ import { useTranslations } from 'next-intl';
 import { Bell, Check, Inbox } from 'lucide-react';
 import { format } from 'date-fns';
 import api from '@/lib/api';
-import type { NotificationItem, NotificationCategory } from '@ahansk/shared';
-import { NOTIFICATION_CATEGORIES } from '@ahansk/shared';
+import type { NotificationItem, NotificationCategory } from '@ahanesk/shared';
+import { NOTIFICATION_CATEGORIES } from '@ahanesk/shared';
 
 interface NotifPage { items: NotificationItem[]; meta: { total: number; hasNext: boolean } }
 

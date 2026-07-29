@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { OtpRepository } from './otp.repository';
 import { EmailService } from '../../infrastructure/email/email.service';
-import type { OTP_PURPOSE } from '@ahansk/shared';
+import type { OTP_PURPOSE } from '@ahanesk/shared';
 
 @Injectable()
 export class OtpService {

@@ -4,7 +4,7 @@ import {
   ForgotPasswordSchema, ResetPasswordSchema,
   EnableTotpSchema, DisableTotpSchema, VerifyTotpSchema,
   RequestEmailChangeSchema, VerifyEmailChangeOtpSchema
-} from '@ahansk/shared';
+} from '@ahanesk/shared';
 
 export class RegisterDto extends createZodDto(RegisterSchema) {}
 export class LoginDto extends createZodDto(LoginSchema) {}

@@ -3,9 +3,9 @@ import * as argon2 from 'argon2';
 import { UsersRepository } from './users.repository';
 import { AuthRepository } from '../auth/auth.repository';
 import { StorageService } from '../../infrastructure/storage/storage.service';
-import { messages } from '@ahansk/shared';
-import type { CreateUserDto, UpdateUserDto, UpdateProfileDto, ChangePasswordDto } from '@ahansk/shared';
-import { buildPaginationMeta } from '@ahansk/shared';
+import { messages } from '@ahanesk/shared';
+import type { CreateUserDto, UpdateUserDto, UpdateProfileDto, ChangePasswordDto } from '@ahanesk/shared';
+import { buildPaginationMeta } from '@ahanesk/shared';
 import type { UploadedFile } from '../../infrastructure/storage/storage.service';
 
 @Injectable()

@@ -24,10 +24,10 @@ importers:
 
   apps/admin:
     dependencies:
-      '@ahansk/shared':
+      '@ahanesk/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-      '@ahansk/ui':
+      '@ahanesk/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@hookform/resolvers':
@@ -124,7 +124,7 @@ importers:
 
   apps/backend:
     dependencies:
-      '@ahansk/shared':
+      '@ahanesk/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       '@aws-sdk/client-s3':
@@ -338,10 +338,10 @@ importers:
 
   apps/frontend:
     dependencies:
-      '@ahansk/shared':
+      '@ahanesk/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-      '@ahansk/ui':
+      '@ahanesk/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@hookform/resolvers':

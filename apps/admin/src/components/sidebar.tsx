@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Logo } from '@ahansk/ui';
+import { Logo } from '@ahanesk/ui';
 import { useAdminAuthStore } from '@/stores/auth.store';
 import { cn } from '@/lib/cn';
 

@@ -6,7 +6,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { BlogService } from './blog.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { UPLOAD_CONFIGS } from '@ahansk/shared';
+import { UPLOAD_CONFIGS } from '@ahanesk/shared';
 import { StorageUploadInterceptor } from '../../infrastructure/storage/upload.interceptor';
 
 
@@ -14,7 +14,7 @@ import {
   CreatePostDto, UpdatePostDto, CreateCategoryDto, UpdateCategoryDto,
   CreateTagDto, UpdateTagDto, ListPostsQueryDto,
 } from './blog.dto';
-import type { AuthUser } from '@ahansk/shared';
+import type { AuthUser } from '@ahanesk/shared';
 import type { UploadedFile as StorageFile } from '../../infrastructure/storage/storage.service';
 
 @Controller('admin/blog')

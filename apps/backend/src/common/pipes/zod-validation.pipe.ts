@@ -1,5 +1,5 @@
 import { PipeTransform, Injectable, UnprocessableEntityException, ArgumentMetadata, Optional } from '@nestjs/common';
-import { messages } from '@ahansk/shared';
+import { messages } from '@ahanesk/shared';
 import type { ZodType } from 'zod';
 
 // Minimal structural type compatible with any Zod v4 schema.

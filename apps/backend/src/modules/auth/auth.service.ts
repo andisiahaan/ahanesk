@@ -19,12 +19,12 @@ import { SettingsCache } from '../../infrastructure/settings/settings-cache.serv
 import { NotificationService } from '../notifications/notification.service';
 import { OtpService } from '../otp/otp.service';
 import { BanService } from '../users/ban.service';
-import { messages, SETTING_KEYS } from '@ahansk/shared';
+import { messages, SETTING_KEYS } from '@ahanesk/shared';
 import type {
   RegisterDto, LoginDto, GoogleAuthDto,
   ForgotPasswordDto, ResetPasswordDto, AuthUser,
   RequestEmailChangeDto, VerifyEmailChangeOtpDto
-} from '@ahansk/shared';
+} from '@ahanesk/shared';
 
 const COOKIE_DEFAULTS = {
   httpOnly: true,

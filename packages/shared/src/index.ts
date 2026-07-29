@@ -1,4 +1,4 @@
-// Main entry point for @ahansk/shared
+// Main entry point for @ahanesk/shared
 export * from './constants';
 export * from './schemas/index';
 export * from './i18n/en';

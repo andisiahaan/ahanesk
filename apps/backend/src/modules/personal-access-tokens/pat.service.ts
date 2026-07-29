@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { randomBytes, createHash } from 'crypto';
 import { PatRepository } from './pat.repository';
-import { buildPaginationMeta } from '@ahansk/shared';
+import { buildPaginationMeta } from '@ahanesk/shared';
 import type { CreatePatDto } from './pat.dto';
 
 @Injectable()

@@ -1,5 +1,5 @@
 /**
- * PM2 Ecosystem Config — Ahansk Monorepo
+ * PM2 Ecosystem Config — Ahanesk Monorepo
  *
  * Usage:
  *   First deploy  : pm2 start ecosystem.config.js --env production
@@ -19,10 +19,10 @@ const adminEnv = dotenv.config({ path: './apps/admin/.env' }).parsed || {};
 module.exports = {
   apps: [
     // ─────────────────────────────────────────────────────────────
-    // Backend API  →  api.ahansk.com
+    // Backend API  →  api.ahanesk.com
     // ─────────────────────────────────────────────────────────────
     {
-      name:               'ahansk-backend',
+      name:               'ahanesk-backend',
       cwd:                './apps/backend',
       script:             'dist/main.js',
       instances:          2,
@@ -35,10 +35,10 @@ module.exports = {
     },
 
     // ─────────────────────────────────────────────────────────────
-    // Frontend  →  ahansk.com  (or your domain)
+    // Frontend  →  ahanesk.com  (or your domain)
     // ─────────────────────────────────────────────────────────────
     {
-      name:               'ahansk-frontend',
+      name:               'ahanesk-frontend',
       cwd:                './apps/frontend',
       script:             'node_modules/next/dist/bin/next',
       args:               'start',
@@ -51,10 +51,10 @@ module.exports = {
     },
 
     // ─────────────────────────────────────────────────────────────
-    // Admin Panel  →  admin.ahansk.com
+    // Admin Panel  →  admin.ahanesk.com
     // ─────────────────────────────────────────────────────────────
     {
-      name:               'ahansk-admin',
+      name:               'ahanesk-admin',
       cwd:                './apps/admin',
       script:             'node_modules/next/dist/bin/next',
       args:               'start',

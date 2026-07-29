@@ -4,7 +4,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 import { CreateNewsDto, UpdateNewsDto, ListNewsQueryDto } from './news.dto';
-import type { AuthUser } from '@ahansk/shared';
+import type { AuthUser } from '@ahanesk/shared';
 
 @Controller('admin/news')
 @Roles('ADMIN')

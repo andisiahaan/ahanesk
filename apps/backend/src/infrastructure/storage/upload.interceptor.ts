@@ -1,7 +1,7 @@
 import { UseInterceptors, applyDecorators, BadRequestException } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { UPLOAD_CONFIGS } from '@ahansk/shared';
-import type { UploadContext } from '@ahansk/shared';
+import { UPLOAD_CONFIGS } from '@ahanesk/shared';
+import type { UploadContext } from '@ahanesk/shared';
 import type { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 
 export function StorageUploadInterceptor(context: UploadContext, multiple = false) {

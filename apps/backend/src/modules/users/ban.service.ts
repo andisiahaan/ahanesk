@@ -2,7 +2,7 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { BanRepository } from './ban.repository';
 import { NotificationService } from '../notifications/notification.service';
 import { UsersRepository } from './users.repository';
-import type { BanUserDto } from '@ahansk/shared';
+import type { BanUserDto } from '@ahanesk/shared';
 
 @Injectable()
 export class BanService {

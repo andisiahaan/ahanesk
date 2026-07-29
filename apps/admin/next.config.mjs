@@ -13,7 +13,7 @@ const securityHeaders = [
 /** @type {import('next').NextConfig} */
 const config = {
   basePath: process.env.NEXT_BASE_PATH || '',
-  transpilePackages: ['@ahansk/ui', '@ahansk/shared'],
+  transpilePackages: ['@ahanesk/ui', '@ahanesk/shared'],
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**' },

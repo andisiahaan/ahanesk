@@ -4,7 +4,7 @@ import {
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
 import { NotificationService } from './notification.service';
-import { NOTIFICATION_TYPE_REGISTRY, type NotificationType } from '@ahansk/shared';
+import { NOTIFICATION_TYPE_REGISTRY, type NotificationType } from '@ahanesk/shared';
 import { z } from 'zod';
 
 const notificationTypes = Object.keys(NOTIFICATION_TYPE_REGISTRY) as [NotificationType, ...NotificationType[]];

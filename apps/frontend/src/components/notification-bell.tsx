@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { Bell, X } from 'lucide-react';
 import api from '@/lib/api';
-import type { NotificationItem } from '@ahansk/shared';
+import type { NotificationItem } from '@ahanesk/shared';
 
 interface UnreadCountResponse { count: number }
 interface NotifListResponse   { items: NotificationItem[] }

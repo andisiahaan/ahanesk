@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CacheService } from '../../infrastructure/cache/cache.service';
 import { SettingsRepository } from './settings.repository';
-import { messages, CACHE_KEY_SETTINGS } from '@ahansk/shared';
-import type { UpdateSettingDto } from '@ahansk/shared';
+import { messages, CACHE_KEY_SETTINGS } from '@ahanesk/shared';
+import type { UpdateSettingDto } from '@ahanesk/shared';
 
 @Injectable()
 export class SettingsService {

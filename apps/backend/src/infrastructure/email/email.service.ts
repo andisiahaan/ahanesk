@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-import { QUEUE_EMAIL } from '@ahansk/shared';
+import { QUEUE_EMAIL } from '@ahanesk/shared';
 
 export interface EmailVerificationJob {
   type: 'email-verification';

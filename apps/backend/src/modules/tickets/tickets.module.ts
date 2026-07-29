@@ -4,7 +4,7 @@ import { TicketsController } from './tickets.controller';
 import { TicketsAdminController } from './tickets.admin.controller';
 import { TicketsService } from './tickets.service';
 import { TicketsRepository } from './tickets.repository';
-import { UPLOAD_CONFIGS } from '@ahansk/shared';
+import { UPLOAD_CONFIGS } from '@ahanesk/shared';
 import { NotificationModule } from '../notifications/notification.module';
 
 @Module({

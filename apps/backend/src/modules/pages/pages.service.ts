@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PagesRepository } from './pages.repository';
-import { messages } from '@ahansk/shared';
-import type { CreatePageDto, UpdatePageDto } from '@ahansk/shared';
+import { messages } from '@ahanesk/shared';
+import type { CreatePageDto, UpdatePageDto } from '@ahanesk/shared';
 
 @Injectable()
 export class PagesService {

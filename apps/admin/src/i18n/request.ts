@@ -1,6 +1,6 @@
 import { getRequestConfig } from 'next-intl/server';
 import { cookies } from 'next/headers';
-import { localeRegistry, type SupportedLocale } from '@ahansk/shared';
+import { localeRegistry, type SupportedLocale } from '@ahanesk/shared';
 
 export const SUPPORTED_LOCALES = Object.keys(localeRegistry) as SupportedLocale[];
 export const DEFAULT_LOCALE: SupportedLocale = 'en';

@@ -9,8 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@ahansk/shared": "workspace:*",
-    "@ahansk/ui": "workspace:*",
+    "@ahanesk/shared": "workspace:*",
+    "@ahanesk/ui": "workspace:*",
     "@hookform/resolvers": "^5.4.3",
     "@tanstack/react-query": "^5.101.2",
     "axios": "^1.9.0",

@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { format } from 'date-fns';
 import { Send } from 'lucide-react';
 import api from '@/lib/api';
-import { NOTIFICATION_TYPE_REGISTRY, type NotificationType } from '@ahansk/shared';
+import { NOTIFICATION_TYPE_REGISTRY, type NotificationType } from '@ahanesk/shared';
 
 interface AdminNotif { id: string; type: string; category: string; title: string; message: string; is_read: boolean; created_at: string; user: { id: string; name: string; email: string } }
 interface AdminNotifPage { items: AdminNotif[]; meta: { total: number } }

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
 import { getTranslations } from 'next-intl/server';
-import { Logo } from '@ahansk/ui';
+import { Logo } from '@ahanesk/ui';
 import { BlogNavbarActions } from './blog-navbar-actions';
 
 async function getCategories() {

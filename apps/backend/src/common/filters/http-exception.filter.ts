@@ -7,7 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { messages } from '@ahansk/shared';
+import { messages } from '@ahanesk/shared';
 
 interface ErrorResponse {
   success: false;

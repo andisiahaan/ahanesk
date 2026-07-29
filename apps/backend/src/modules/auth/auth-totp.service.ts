@@ -9,8 +9,8 @@ import type { Response } from 'express';
 import { AuthRepository } from './auth.repository';
 import { AuthService } from './auth.service';
 import { NotificationService } from '../notifications/notification.service';
-import { messages, TOTP_RECOVERY_CODE_COUNT } from '@ahansk/shared';
-import type { EnableTotpDto, DisableTotpDto, VerifyTotpDto } from '@ahansk/shared';
+import { messages, TOTP_RECOVERY_CODE_COUNT } from '@ahanesk/shared';
+import type { EnableTotpDto, DisableTotpDto, VerifyTotpDto } from '@ahanesk/shared';
 
 @Injectable()
 export class AuthTotpService {

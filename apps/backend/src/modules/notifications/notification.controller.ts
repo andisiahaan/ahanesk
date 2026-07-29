@@ -4,9 +4,9 @@ import {
 import { NotificationService } from './notification.service';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe';
-import type { AuthUser, PushSubscriptionPayload, NotificationPreferences } from '@ahansk/shared';
+import type { AuthUser, PushSubscriptionPayload, NotificationPreferences } from '@ahanesk/shared';
 import { z } from 'zod';
-import { buildPaginationMeta } from '@ahansk/shared';
+import { buildPaginationMeta } from '@ahanesk/shared';
 
 const PushSubSchema = z.object({
   endpoint:  z.string().url(),

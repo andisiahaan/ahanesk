@@ -7,9 +7,9 @@
  * Semua upload config (fieldName, prefix, constraints, disk override per-context)
  * ada di: packages/shared/src/upload-configs.ts → UPLOAD_CONFIGS
  */
-import { UPLOAD_CONFIGS } from '@ahansk/shared';
+import { UPLOAD_CONFIGS } from '@ahanesk/shared';
 export { UPLOAD_CONFIGS };
-export type { UploadContext } from '@ahansk/shared';
+export type { UploadContext } from '@ahanesk/shared';
 
 export type DiskDriver = 'local' | 's3';
 

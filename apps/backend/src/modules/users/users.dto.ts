@@ -1,7 +1,7 @@
 import { createZodDto } from '../../common/utils/zod.dto';
 import {
   CreateUserSchema, UpdateUserSchema, UpdateProfileSchema, BanUserSchema, ChangePasswordSchema
-} from '@ahansk/shared';
+} from '@ahanesk/shared';
 
 export class CreateUserDto extends createZodDto(CreateUserSchema) {}
 export class UpdateUserDto extends createZodDto(UpdateUserSchema) {}

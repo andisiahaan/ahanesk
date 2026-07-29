@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { getQueueToken } from '@nestjs/bullmq';
-import { QUEUE_EMAIL } from '@ahansk/shared';
+import { QUEUE_EMAIL } from '@ahanesk/shared';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service';
 import cookieParser from 'cookie-parser';

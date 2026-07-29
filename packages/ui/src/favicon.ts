@@ -3,7 +3,7 @@
  * SSOT: favicon lives only in apps/frontend/public/favicon.png
  *
  * Usage in layout.tsx:
- *   import { getBrandIcons } from '@ahansk/ui';
+ *   import { getBrandIcons } from '@ahanesk/ui';
  *   export const metadata: Metadata = {
  *     ...getBrandIcons(process.env.NEXT_PUBLIC_FRONTEND_URL),
  *   };

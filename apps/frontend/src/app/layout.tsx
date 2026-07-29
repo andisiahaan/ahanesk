@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist } from 'next/font/google';
-import { getBrandIcons } from '@ahansk/ui';
+import { getBrandIcons } from '@ahanesk/ui';
 import { getLocale, getMessages } from 'next-intl/server';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { AuthProvider } from '@/providers/auth-provider';

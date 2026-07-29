@@ -23,7 +23,7 @@ import { NotificationModule } from './modules/notifications/notification.module'
 import { HelpModule } from './modules/help/help.module';
 import { OtpModule } from './modules/otp/otp.module';
 import { EmailProcessor } from './jobs/email.processor';
-import { QUEUE_EMAIL } from '@ahansk/shared';
+import { QUEUE_EMAIL } from '@ahanesk/shared';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';

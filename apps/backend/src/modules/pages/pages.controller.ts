@@ -5,7 +5,7 @@ import {
 import { PagesService } from './pages.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Public } from '../../common/decorators/public.decorator';
-import { messages } from '@ahansk/shared';
+import { messages } from '@ahanesk/shared';
 import { CreatePageDto, UpdatePageDto } from './pages.dto';
 
 @Controller('pages')

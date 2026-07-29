@@ -2,7 +2,7 @@ import { Controller, Get, Patch, Param, Body } from '@nestjs/common';
 import { SettingsService } from './settings.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Public } from '../../common/decorators/public.decorator';
-import { messages } from '@ahansk/shared';
+import { messages } from '@ahanesk/shared';
 import { UpdateSettingDto } from './settings.dto';
 
 @Controller('settings')

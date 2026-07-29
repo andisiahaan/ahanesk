@@ -1,5 +1,5 @@
 {
-  "name": "ahansk",
+  "name": "ahanesk",
   "private": true,
   "scripts": {
     "dev": "turbo run dev",

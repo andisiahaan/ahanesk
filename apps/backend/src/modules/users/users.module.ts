@@ -5,7 +5,7 @@ import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
 import { BanService } from './ban.service';
 import { BanRepository } from './ban.repository';
-import { UPLOAD_CONFIGS } from '@ahansk/shared';
+import { UPLOAD_CONFIGS } from '@ahanesk/shared';
 import { NotificationModule } from '../notifications/notification.module';
 import { AuthRepository } from '../auth/auth.repository';
 

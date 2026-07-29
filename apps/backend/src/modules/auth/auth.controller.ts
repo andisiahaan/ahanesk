@@ -7,8 +7,8 @@ import { Public } from '../../common/decorators/public.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 
-import { messages } from '@ahansk/shared';
-import type { AuthUser } from '@ahansk/shared';
+import { messages } from '@ahanesk/shared';
+import type { AuthUser } from '@ahanesk/shared';
 import {
   RegisterDto, LoginDto, GoogleAuthDto,
   ForgotPasswordDto, ResetPasswordDto,

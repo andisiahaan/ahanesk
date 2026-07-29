@@ -4,7 +4,7 @@ import {
   SETTING_KEYS,
   DEFAULT_APP_SETTINGS,
   DEFAULT_AUTH_SETTINGS,
-} from '@ahansk/shared';
+} from '@ahanesk/shared';
 import { hash } from 'argon2';
 import 'dotenv/config';
 

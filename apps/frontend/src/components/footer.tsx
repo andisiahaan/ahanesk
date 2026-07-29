@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Logo } from '@ahansk/ui';
+import { Logo } from '@ahanesk/ui';
 
 const FOOTER_LINKS = {
   Features: [
@@ -64,7 +64,7 @@ export function Footer() {
         </div>
 
         <div className="mt-10 border-t border-border pt-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} Ahansk. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Ahanesk. All rights reserved.</p>
           <p>Built with NestJS, Next.js & Prisma.</p>
         </div>
       </div>
