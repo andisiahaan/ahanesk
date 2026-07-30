@@ -37,8 +37,9 @@ function TotpForm({ partial, onBack }: TotpFormProps) {
       await fetchMe();
       toast.success('Welcome back!');
       router.push(nextUrl);
-    } catch {
-      toast.error('Invalid 2FA code.');
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      toast.error(msg ?? 'Invalid 2FA code. Please try again.');
     }
   };
 

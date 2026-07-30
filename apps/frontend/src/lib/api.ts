@@ -9,9 +9,18 @@ const api = axios.create({
 });
 
 // ─── CSRF Interceptor ─────────────────────────────────────────────────────────
-api.interceptors.request.use((config) => {
+api.interceptors.request.use(async (config) => {
   if (['post', 'put', 'patch', 'delete'].includes(config.method ?? '')) {
-    const match = document.cookie.match(new RegExp('(^| )csrf_token=([^;]+)'));
+    let match = document.cookie.match(new RegExp('(^| )csrf_token=([^;]+)'));
+    if (!match) {
+      try {
+        const baseURL = config.baseURL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10311';
+        await axios.get(`${baseURL.replace(/\/$/, '')}/`, { withCredentials: true });
+        match = document.cookie.match(new RegExp('(^| )csrf_token=([^;]+)'));
+      } catch (e) {
+        // ignore
+      }
+    }
     if (match) {
       config.headers['X-CSRF-Token'] = match[2];
     }
@@ -27,7 +36,10 @@ api.interceptors.response.use(
   (res) => res,
   async (err) => {
     const original = err.config as typeof err.config & { _retry?: boolean };
-    if (err.response?.status !== 401 || original._retry) return Promise.reject(err);
+    // Skip auto-refresh for auth endpoints — let the error propagate to the caller
+    const skipRefreshUrls = ['/auth/login', '/auth/register', '/auth/refresh'];
+    const isAuthEndpoint = skipRefreshUrls.some((u) => original.url?.includes(u));
+    if (err.response?.status !== 401 || original._retry || isAuthEndpoint) return Promise.reject(err);
 
     if (isRefreshing) {
       return new Promise((resolve, reject) => {

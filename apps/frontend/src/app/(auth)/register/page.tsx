@@ -28,8 +28,11 @@ function RegisterForm() {
       toast.success('Account created! Please check your email to verify.');
       setTimeout(() => router.push(`/login?next=${nextUrl}`), 2000);
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      toast.error(msg ?? 'Registration failed.');
+      const e = err as { response?: { status?: number; data?: { message?: string } } };
+      const status = e?.response?.status;
+      const msg = e?.response?.data?.message;
+      if (status === 409) toast.error(msg ?? 'This email is already registered. Try logging in.');
+      else toast.error(msg ?? 'Registration failed. Please try again.');
     }
   };
 

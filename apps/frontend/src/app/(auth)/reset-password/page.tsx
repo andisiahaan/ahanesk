@@ -1,5 +1,6 @@
 'use client';
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,6 +22,22 @@ const ResetPasswordFormSchema = z.object({
 });
 type ResetPasswordFormValues = z.infer<typeof ResetPasswordFormSchema>;
 
+// ─── Guard: no token ───────────────────────────────────────────────────────────
+function NoTokenState() {
+  return (
+    <div className="flex flex-col items-center gap-4 text-center">
+      <p className="text-destructive font-medium">Invalid or missing reset link.</p>
+      <p className="text-sm text-muted-foreground">
+        This link may have expired or is malformed.
+      </p>
+      <Link href="/forgot-password" className="text-primary hover:underline text-sm font-medium">
+        Request a new reset link →
+      </Link>
+    </div>
+  );
+}
+
+// ─── Form ──────────────────────────────────────────────────────────────────────
 function ResetPasswordForm() {
   const params = useSearchParams();
   const router = useRouter();
@@ -30,14 +47,22 @@ function ResetPasswordForm() {
     resolver: zodResolver(ResetPasswordFormSchema),
   });
 
+  if (!token) return <NoTokenState />;
+
   const onSubmit = async ({ password }: ResetPasswordFormValues) => {
     try {
       await api.post('/auth/reset-password', { token, password });
       toast.success('Password reset! Redirecting to login…');
       setTimeout(() => router.push('/login'), 1500);
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      toast.error(msg ?? 'Reset failed. Token may have expired.');
+      const e = err as { response?: { status?: number; data?: { message?: string } } };
+      const status = e?.response?.status;
+      const msg = e?.response?.data?.message;
+      if (status === 400 || status === 404) {
+        toast.error(msg ?? 'This reset link is invalid or has expired. Please request a new one.');
+      } else {
+        toast.error(msg ?? 'Reset failed. Please try again.');
+      }
     }
   };
 
@@ -54,6 +79,7 @@ function ResetPasswordForm() {
         {errors.confirm && <p className="text-xs text-destructive">{errors.confirm.message}</p>}
       </div>
       <Button type="submit" loading={isSubmitting} className="w-full">Reset Password</Button>
+      <Link href="/login" className="text-center text-sm text-primary hover:underline">← Back to login</Link>
     </form>
   );
 }

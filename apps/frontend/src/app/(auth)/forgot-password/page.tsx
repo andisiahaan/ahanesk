@@ -23,8 +23,9 @@ function ForgotPasswordForm() {
       await api.post('/auth/forgot-password', { ...data, recaptchaToken: 'bypass-dev' });
       toast.success("Check your inbox! If that email exists, a reset link has been sent.");
       router.push('/login');
-    } catch {
-      toast.error('Something went wrong. Please try again.');
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      toast.error(msg ?? 'Something went wrong. Please try again.');
     }
   };
 
