@@ -6,7 +6,7 @@ export interface HelpFilter {
   page?:        number;
   limit?:       number;
   isPublished?: boolean;
-  categoryId?:  string;
+  categoryId?:  number | bigint;
   search?:      string;
 }
 
@@ -35,12 +35,12 @@ export class HelpRepository {
     return this.prisma.helpCategory.create({ data });
   }
 
-  async updateCategory(id: string, data: Prisma.HelpCategoryUpdateInput) {
-    return this.prisma.helpCategory.update({ where: { id }, data });
+  async updateCategory(id: number | bigint, data: Prisma.HelpCategoryUpdateInput) {
+    return this.prisma.helpCategory.update({ where: { id: BigInt(id) }, data });
   }
 
-  async deleteCategory(id: string) {
-    return this.prisma.helpCategory.delete({ where: { id } });
+  async deleteCategory(id: number | bigint) {
+    return this.prisma.helpCategory.delete({ where: { id: BigInt(id) } });
   }
 
   // ─── Articles ──────────────────────────────────────────────────────────────
@@ -51,7 +51,7 @@ export class HelpRepository {
     const skip  = (page - 1) * limit;
     const where: Prisma.HelpArticleWhereInput = {
       ...(filter.isPublished !== undefined && { is_published: filter.isPublished }),
-      ...(filter.categoryId && { category_id: filter.categoryId }),
+      ...(filter.categoryId && { category_id: BigInt(filter.categoryId) }),
       ...(filter.search && { OR: [
         { title:   { contains: filter.search } },
         { content: { contains: filter.search } },
@@ -68,25 +68,25 @@ export class HelpRepository {
     return this.prisma.helpArticle.findUnique({ where: { slug }, include: { category: true } });
   }
 
-  async findArticleById(id: string) {
-    return this.prisma.helpArticle.findUnique({ where: { id }, include: { category: { select: { id: true, title: true, slug: true } } } });
+  async findArticleById(id: number | bigint) {
+    return this.prisma.helpArticle.findUnique({ where: { id: BigInt(id) }, include: { category: { select: { id: true, title: true, slug: true } } } });
   }
 
   async createArticle(data: Prisma.HelpArticleCreateInput) {
     return this.prisma.helpArticle.create({ data, include: { category: { select: { id: true, title: true } } } });
   }
 
-  async updateArticle(id: string, data: Prisma.HelpArticleUpdateInput) {
-    return this.prisma.helpArticle.update({ where: { id }, data, include: { category: { select: { id: true, title: true } } } });
+  async updateArticle(id: number | bigint, data: Prisma.HelpArticleUpdateInput) {
+    return this.prisma.helpArticle.update({ where: { id: BigInt(id) }, data, include: { category: { select: { id: true, title: true } } } });
   }
 
-  async deleteArticle(id: string) {
-    return this.prisma.helpArticle.delete({ where: { id } });
+  async deleteArticle(id: number | bigint) {
+    return this.prisma.helpArticle.delete({ where: { id: BigInt(id) } });
   }
 
-  async voteHelpful(id: string, helpful: boolean) {
+  async voteHelpful(id: number | bigint, helpful: boolean) {
     return this.prisma.helpArticle.update({
-      where: { id },
+      where: { id: BigInt(id) },
       data:  helpful ? { helpful_yes: { increment: 1 } } : { helpful_no: { increment: 1 } },
     });
   }

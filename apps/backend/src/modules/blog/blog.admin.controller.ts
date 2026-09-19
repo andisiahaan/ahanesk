@@ -1,15 +1,11 @@
 import {
   Controller, Get, Post, Patch, Delete,
-  Param, Body, Query, UploadedFile, UseInterceptors, HttpCode, HttpStatus,
+  Param, Body, Query, UploadedFile, HttpCode, HttpStatus, ParseIntPipe,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { BlogService } from './blog.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { UPLOAD_CONFIGS } from '@ahanesk/shared';
 import { StorageUploadInterceptor } from '../../infrastructure/storage/upload.interceptor';
-
-
 import {
   CreatePostDto, UpdatePostDto, CreateCategoryDto, UpdateCategoryDto,
   CreateTagDto, UpdateTagDto, ListPostsQueryDto,
@@ -29,7 +25,7 @@ export class BlogAdminController {
   }
 
   @Get('posts/:id')
-  getPost(@Param('id') id: string) { return this.svc.getById(id); }
+  getPost(@Param('id', ParseIntPipe) id: number) { return this.svc.getById(id); }
 
   @Post('posts')
   @StorageUploadInterceptor('blog_cover')
@@ -44,7 +40,7 @@ export class BlogAdminController {
   @Patch('posts/:id')
   @StorageUploadInterceptor('blog_cover')
   updatePost(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdatePostDto,
     @UploadedFile() file?: Express.Multer.File,
   ) {
@@ -53,7 +49,7 @@ export class BlogAdminController {
 
   @Delete('posts/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deletePost(@Param('id') id: string): Promise<void> {
+  async deletePost(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.svc.deletePost(id);
   }
 
@@ -69,13 +65,13 @@ export class BlogAdminController {
 
   @Patch('categories/:id')
   @StorageUploadInterceptor('blog_cover')
-  updateCategory(@Param('id') id: string, @Body() dto: UpdateCategoryDto, @UploadedFile() file?: Express.Multer.File) {
+  updateCategory(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateCategoryDto, @UploadedFile() file?: Express.Multer.File) {
     return this.svc.updateCategory(id, dto, file as unknown as StorageFile);
   }
 
   @Delete('categories/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteCategory(@Param('id') id: string): Promise<void> { await this.svc.deleteCategory(id); }
+  async deleteCategory(@Param('id', ParseIntPipe) id: number): Promise<void> { await this.svc.deleteCategory(id); }
 
   // ─── Tags ────────────────────────────────────────────────────
   @Get('tags')
@@ -87,11 +83,11 @@ export class BlogAdminController {
   createTag(@Body() dto: CreateTagDto) { return this.svc.createTag(dto); }
 
   @Patch('tags/:id')
-  updateTag(@Param('id') id: string, @Body() dto: UpdateTagDto) {
+  updateTag(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateTagDto) {
     return this.svc.updateTag(id, dto);
   }
 
   @Delete('tags/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteTag(@Param('id') id: string): Promise<void> { await this.svc.deleteTag(id); }
+  async deleteTag(@Param('id', ParseIntPipe) id: number): Promise<void> { await this.svc.deleteTag(id); }
 }

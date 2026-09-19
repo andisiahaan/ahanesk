@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 interface PAT {
-  id: string; name: string; token_prefix: string;
+  id: number; name: string; token_prefix: string;
   last_used_at: string | null; expires_at: string | null;
   created_at: string; revoked_at: string | null;
 }
@@ -48,7 +48,7 @@ export default function PersonalAccessTokensPage() {
     }
   };
 
-  const onRevoke = async (id: string, name: string) => {
+  const onRevoke = async (id: number, name: string) => {
     if (!confirm(`Revoke token "${name}"? This cannot be undone.`)) return;
     try {
       await api.delete(`/personal-access-tokens/${id}`);

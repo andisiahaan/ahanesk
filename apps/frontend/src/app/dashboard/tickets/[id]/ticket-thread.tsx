@@ -11,15 +11,15 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/cn';
 
 interface Reply {
-  id: string; message: string; is_staff_reply: boolean; created_at: string;
+  id: number; message: string; is_staff_reply: boolean; created_at: string;
   attachments?: string[];
-  user: { id: string; name: string; role: string };
+  user: { id: number; name: string; role: string };
 }
 interface Ticket {
-  id: string; ticket_number: string; subject: string; description: string;
+  id: number; ticket_number: string; subject: string; description: string;
   category: string | null; status: string; priority: string;
   created_at: string; closed_at: string | null;
-  user: { id: string; name: string; email: string };
+  user: { id: number; name: string; email: string };
   replies: Reply[];
 }
 

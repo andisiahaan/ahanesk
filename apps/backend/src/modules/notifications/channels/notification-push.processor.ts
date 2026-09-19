@@ -6,7 +6,7 @@ import * as webpush from 'web-push';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 
 export interface NotificationPushJob {
-  userId:  string;
+  userId:  number | bigint;
   title:   string;
   message: string;
   url?:    string;
@@ -37,7 +37,7 @@ export class NotificationPushProcessor extends WorkerHost {
   async process(job: Job<NotificationPushJob>): Promise<void> {
     const { userId, title, message, url } = job.data;
 
-    const subscriptions = await this.prisma.pushSubscription.findMany({ where: { user_id: userId } });
+    const subscriptions = await this.prisma.pushSubscription.findMany({ where: { user_id: BigInt(userId) } });
     if (!subscriptions.length) return;
 
     const payload = JSON.stringify({ title, body: message, url: url ?? '/' });

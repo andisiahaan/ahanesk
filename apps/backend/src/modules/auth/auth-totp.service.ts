@@ -22,7 +22,7 @@ export class AuthTotpService {
     private readonly notifications: NotificationService,
   ) {}
 
-  async setupTotp(userId: string): Promise<{ secret: string; qrCodeDataUrl: string }> {
+  async setupTotp(userId: number | bigint): Promise<{ secret: string; qrCodeDataUrl: string }> {
     const user = await this.repo.findUserById(userId);
     if (!user) throw new UnauthorizedException();
     if (user.totp_enabled) throw new BadRequestException(messages.auth.twoFactorAlreadyEnabled);
@@ -35,7 +35,7 @@ export class AuthTotpService {
     return { secret, qrCodeDataUrl };
   }
 
-  async enableTotp(userId: string, dto: EnableTotpDto): Promise<{ recoveryCodes: string[] }> {
+  async enableTotp(userId: number | bigint, dto: EnableTotpDto): Promise<{ recoveryCodes: string[] }> {
     const user = await this.repo.findUserById(userId);
     if (!user?.totp_secret) throw new BadRequestException('TOTP setup not initiated');
     if (user.totp_enabled) throw new BadRequestException(messages.auth.twoFactorAlreadyEnabled);
@@ -54,14 +54,14 @@ export class AuthTotpService {
 
     void this.notifications.send({
       type:    'account.2fa_enabled',
-      userId,
+      userId:  Number(userId),
       title:   'Two-Factor Authentication Enabled',
       message: 'Two-factor authentication has been enabled on your account.',
     });
     return { recoveryCodes: codes };
   }
 
-  async regenerateRecoveryCodes(userId: string, dto: DisableTotpDto): Promise<{ recoveryCodes: string[] }> {
+  async regenerateRecoveryCodes(userId: number | bigint, dto: DisableTotpDto): Promise<{ recoveryCodes: string[] }> {
     const user = await this.repo.findUserById(userId);
     if (!user) throw new UnauthorizedException();
     if (!user.totp_enabled) throw new BadRequestException(messages.auth.twoFactorNotEnabled);
@@ -80,14 +80,14 @@ export class AuthTotpService {
 
     void this.notifications.send({
       type:    'account.2fa_recovery_codes_regenerated',
-      userId,
+      userId:  Number(userId),
       title:   '2FA Recovery Codes Regenerated',
       message: 'Your two-factor authentication recovery codes have been regenerated. The old codes are no longer valid.',
     });
     return { recoveryCodes: codes };
   }
 
-  async disableTotp(userId: string, dto: DisableTotpDto): Promise<{ message: string }> {
+  async disableTotp(userId: number | bigint, dto: DisableTotpDto): Promise<{ message: string }> {
     const user = await this.repo.findUserById(userId);
     if (!user) throw new UnauthorizedException();
     if (!user.totp_enabled) throw new BadRequestException(messages.auth.twoFactorNotEnabled);
@@ -100,7 +100,7 @@ export class AuthTotpService {
     await this.repo.deleteAllRecoveryCodes(userId);
     void this.notifications.send({
       type:    'account.2fa_disabled',
-      userId,
+      userId:  Number(userId),
       title:   'Two-Factor Authentication Disabled',
       message: 'Two-factor authentication has been disabled on your account. If you did not do this, secure your account immediately.',
     });
@@ -108,9 +108,9 @@ export class AuthTotpService {
   }
 
   async verifyTotpLogin(dto: VerifyTotpDto, res: Response, ip?: string, ua?: string) {
-    let payload: { sub: string; type: string };
+    let payload: { sub: number | string; type: string };
     try {
-      payload = this.jwt.verify<{ sub: string; type: string }>(dto.partialToken, {
+      payload = this.jwt.verify<{ sub: number | string; type: string }>(dto.partialToken, {
         secret: this.config.get('app.jwt.accessSecret'),
       });
     } catch {
@@ -118,7 +118,7 @@ export class AuthTotpService {
     }
     if (payload.type !== 'partial') throw new UnauthorizedException(messages.auth.invalidToken);
 
-    const user = await this.repo.findUserById(payload.sub);
+    const user = await this.repo.findUserById(Number(payload.sub));
     if (!user?.totp_secret) throw new UnauthorizedException();
 
     if (dto.code.length === 6 && /^\d+$/.test(dto.code)) {

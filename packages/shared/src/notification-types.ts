@@ -88,7 +88,7 @@ export function getUserNotificationTypes(): NotificationType[] {
 /** Payload yang dikirim dari service ke NotificationService.send() */
 export interface NotificationPayload {
   type: NotificationType;
-  userId: string;
+  userId: number;
   title: string;
   message: string;
   data?: Record<string, unknown>;
@@ -96,7 +96,7 @@ export interface NotificationPayload {
 
 /** Shape data notifikasi yang dikembalikan ke frontend */
 export interface NotificationItem {
-  id: string;
+  id: number;
   type: NotificationType;
   category: NotificationCategory;
   title: string;

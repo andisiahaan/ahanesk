@@ -31,34 +31,34 @@ export class TicketsRepository {
     return { items, meta: buildPaginationMeta(total, q.page, q.limit) };
   }
 
-  async listForUser(userId: string, page: number, limit: number) {
+  async listForUser(userId: number | bigint, page: number, limit: number) {
     const skip = (page - 1) * limit;
     const [items, total] = await Promise.all([
       this.prisma.ticket.findMany({
-        where: { user_id: userId },
+        where: { user_id: BigInt(userId) },
         skip, take: limit,
         orderBy: { created_at: 'desc' },
         select: { id: true, ticket_number: true, subject: true, status: true, priority: true, created_at: true, _count: { select: { replies: true } } },
       }),
-      this.prisma.ticket.count({ where: { user_id: userId } })
+      this.prisma.ticket.count({ where: { user_id: BigInt(userId) } }),
     ]);
     
     return { items, meta: buildPaginationMeta(total, page, limit) };
   }
 
-  findById(id: string) {
-    return this.prisma.ticket.findUnique({ where: { id }, include: TICKET_INCLUDE });
+  findById(id: number | bigint) {
+    return this.prisma.ticket.findUnique({ where: { id: BigInt(id) }, include: TICKET_INCLUDE });
   }
 
   create(data: Record<string, unknown>) {
     return this.prisma.ticket.create({ data: data as never, include: TICKET_INCLUDE });
   }
 
-  update(id: string, data: Record<string, unknown>) {
-    return this.prisma.ticket.update({ where: { id }, data: data as never, include: TICKET_INCLUDE });
+  update(id: number | bigint, data: Record<string, unknown>) {
+    return this.prisma.ticket.update({ where: { id: BigInt(id) }, data: data as never, include: TICKET_INCLUDE });
   }
 
-  delete(id: string) { return this.prisma.ticket.delete({ where: { id } }); }
+  delete(id: number | bigint) { return this.prisma.ticket.delete({ where: { id: BigInt(id) } }); }
 
   createReply(data: Record<string, unknown>) {
     return this.prisma.ticketReply.create({ data: data as never, include: { user: { select: { id: true, name: true, role: true } } } });

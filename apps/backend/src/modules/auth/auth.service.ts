@@ -136,7 +136,7 @@ export class AuthService {
     await this.repo.updateUser(user.id, { failed_login_attempts: 0, locked_until: null });
 
     if (user.totp_enabled) {
-      const partialToken = this.jwt.sign({ sub: user.id, type: 'partial' }, { expiresIn: '10m', secret: this.config.get('app.jwt.accessSecret') });
+      const partialToken = this.jwt.sign({ sub: Number(user.id), type: 'partial' }, { expiresIn: '10m', secret: this.config.get('app.jwt.accessSecret') });
       return { requiresTwoFactor: true, partialToken };
     }
 
@@ -232,7 +232,7 @@ export class AuthService {
 
   // ─── Email Change ─────────────────────────────────────────────────────────
 
-  async requestEmailChange(userId: string, dto: RequestEmailChangeDto) {
+  async requestEmailChange(userId: number | bigint, dto: RequestEmailChangeDto) {
     const user = await this.repo.findUserById(userId);
     if (!user || !user.password) throw new BadRequestException('User not found or no password set.');
 
@@ -260,7 +260,7 @@ export class AuthService {
     return { message: 'OTP sent to your new email.' };
   }
 
-  async verifyEmailChange(userId: string, dto: VerifyEmailChangeOtpDto) {
+  async verifyEmailChange(userId: number | bigint, dto: VerifyEmailChangeOtpDto) {
     const user = await this.repo.findUserById(userId);
     if (!user || !user.password) throw new BadRequestException('User not found or no password set.');
 
@@ -282,7 +282,7 @@ export class AuthService {
 
     void this.notifications.send({
       type:    'account.email_changed',
-      userId:  userId,
+      userId:  Number(userId),
       title:   'Email Address Changed',
       message: `Your account email address was changed to ${pending.new_email}.`,
     });
@@ -315,7 +315,7 @@ export class AuthService {
     await this.repo.revokeAllUserRefreshTokens(record.user_id);
     void this.notifications.send({
       type:    'account.password_changed',
-      userId:  record.user_id,
+      userId:  Number(record.user_id),
       title:   'Password Changed',
       message: 'Your account password has been changed. If you did not do this, please contact support immediately.',
     });
@@ -324,8 +324,8 @@ export class AuthService {
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
 
-  private signAccessToken(userId: string): string {
-    return this.jwt.sign({ sub: userId, type: 'access' }, { expiresIn: this.config.get('app.jwt.accessExpires', '15m'), secret: this.config.get('app.jwt.accessSecret') });
+  private signAccessToken(userId: number | bigint): string {
+    return this.jwt.sign({ sub: Number(userId), type: 'access' }, { expiresIn: this.config.get('app.jwt.accessExpires', '15m'), secret: this.config.get('app.jwt.accessSecret') });
   }
 
   setAuthCookies(res: Response, accessToken: string, refreshToken: string, refreshExpiresAt: Date): void {
@@ -338,7 +338,7 @@ export class AuthService {
     res.clearCookie('refresh_token', { ...COOKIE_DEFAULTS, path: '/auth/refresh' });
   }
 
-  async issueTokens(userId: string, res: Response, ip?: string, ua?: string) {
+  async issueTokens(userId: number | bigint, res: Response, ip?: string, ua?: string) {
     const accessToken = this.signAccessToken(userId);
     const raw = crypto.randomBytes(40).toString('hex');
     const tokenHash = crypto.createHash('sha256').update(raw).digest('hex');
@@ -348,7 +348,7 @@ export class AuthService {
     this.setAuthCookies(res, accessToken, raw, expiresAt);
     void this.notifications.send({
       type:    'account.login_alert',
-      userId,
+      userId:  Number(userId),
       title:   'New Login Detected',
       message: `Your account was accessed from${ip ? ` IP ${ip}` : ' a new device'}.`,
       data:    { ip, userAgent: ua },

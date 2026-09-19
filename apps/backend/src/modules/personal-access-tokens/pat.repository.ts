@@ -5,9 +5,9 @@ import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 export class PatRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAllByUser(userId: string) {
+  findAllByUser(userId: number | bigint) {
     return this.prisma.personalAccessToken.findMany({
-      where: { user_id: userId, revoked_at: null },
+      where: { user_id: BigInt(userId), revoked_at: null },
       orderBy: { created_at: 'desc' },
       select: {
         id: true, name: true, token_prefix: true,
@@ -36,20 +36,25 @@ export class PatRepository {
     return this.prisma.personalAccessToken.findUnique({ where: { token_hash: tokenHash } });
   }
 
-  create(data: { user_id: string; name: string; token_hash: string; token_prefix: string; expires_at?: Date | null }) {
-    return this.prisma.personalAccessToken.create({ data });
+  create(data: { user_id: number | bigint; name: string; token_hash: string; token_prefix: string; expires_at?: Date | null }) {
+    return this.prisma.personalAccessToken.create({
+      data: {
+        ...data,
+        user_id: BigInt(data.user_id),
+      },
+    });
   }
 
-  revoke(id: string) {
+  revoke(id: number | bigint) {
     return this.prisma.personalAccessToken.update({
-      where: { id },
+      where: { id: BigInt(id) },
       data: { revoked_at: new Date() },
     });
   }
 
-  touchLastUsed(id: string) {
+  touchLastUsed(id: number | bigint) {
     return this.prisma.personalAccessToken.update({
-      where: { id },
+      where: { id: BigInt(id) },
       data: { last_used_at: new Date() },
     }).catch(() => {});
   }

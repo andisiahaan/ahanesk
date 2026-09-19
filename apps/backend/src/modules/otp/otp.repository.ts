@@ -18,28 +18,28 @@ export class OtpRepository {
 
   /** Hapus OTP lama untuk purpose yang sama, lalu buat yang baru */
   async generate(
-    userId: string,
+    userId: number | bigint,
     purpose: string,
     identifier?: string,
     ttlMinutes = 10,
   ): Promise<OtpResult> {
-    await this.prisma.otp.deleteMany({ where: { user_id: userId, purpose } });
+    await this.prisma.otp.deleteMany({ where: { user_id: BigInt(userId), purpose } });
 
     const code      = String(Math.floor(100000 + Math.random() * 900000));
     const expiresAt = new Date(Date.now() + ttlMinutes * 60_000);
 
     await this.prisma.otp.create({
-      data: { user_id: userId, purpose, identifier: identifier ?? null, code_hash: this.hashCode(code), expires_at: expiresAt },
+      data: { user_id: BigInt(userId), purpose, identifier: identifier ?? null, code_hash: this.hashCode(code), expires_at: expiresAt },
     });
 
     return { code, expiresAt, cooldownSeconds: 0 };
   }
 
   /** Verify OTP — hapus setelah berhasil (delete-on-use) */
-  async verify(userId: string, purpose: string, code: string, identifier?: string): Promise<boolean> {
+  async verify(userId: number | bigint, purpose: string, code: string, identifier?: string): Promise<boolean> {
     const hash = this.hashCode(code.trim());
     const otp  = await this.prisma.otp.findFirst({
-      where: { user_id: userId, purpose, code_hash: hash, expires_at: { gt: new Date() } },
+      where: { user_id: BigInt(userId), purpose, code_hash: hash, expires_at: { gt: new Date() } },
     });
     if (!otp) return false;
     if (identifier && otp.identifier !== identifier) return false;
@@ -49,9 +49,9 @@ export class OtpRepository {
   }
 
   /** Kembalikan sisa cooldown (detik). 0 = bisa kirim ulang */
-  async cooldownSeconds(userId: string, purpose: string, cooldown = 60): Promise<number> {
+  async cooldownSeconds(userId: number | bigint, purpose: string, cooldown = 60): Promise<number> {
     const latest = await this.prisma.otp.findFirst({
-      where: { user_id: userId, purpose, created_at: { gt: new Date(Date.now() - cooldown * 1000) } },
+      where: { user_id: BigInt(userId), purpose, created_at: { gt: new Date(Date.now() - cooldown * 1000) } },
       orderBy: { created_at: 'desc' },
     });
     if (!latest) return 0;
@@ -59,7 +59,7 @@ export class OtpRepository {
     return Math.max(0, cooldown - elapsed);
   }
 
-  async deleteAllForUser(userId: string, purpose: string): Promise<void> {
-    await this.prisma.otp.deleteMany({ where: { user_id: userId, purpose } });
+  async deleteAllForUser(userId: number | bigint, purpose: string): Promise<void> {
+    await this.prisma.otp.deleteMany({ where: { user_id: BigInt(userId), purpose } });
   }
 }

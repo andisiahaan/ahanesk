@@ -45,11 +45,11 @@ export class NewsRepository {
     });
   }
 
-  findById(id: string) {
-    return this.prisma.newsItem.findUnique({ where: { id }, include: { author: { select: { id: true, name: true } } } });
+  findById(id: number | bigint) {
+    return this.prisma.newsItem.findUnique({ where: { id: BigInt(id) }, include: { author: { select: { id: true, name: true } } } });
   }
 
   create(data: Record<string, unknown>) { return this.prisma.newsItem.create({ data: data as never }); }
-  update(id: string, data: Record<string, unknown>) { return this.prisma.newsItem.update({ where: { id }, data: data as never }); }
-  delete(id: string) { return this.prisma.newsItem.delete({ where: { id } }); }
+  update(id: number | bigint, data: Record<string, unknown>) { return this.prisma.newsItem.update({ where: { id: BigInt(id) }, data: data as never }); }
+  delete(id: number | bigint) { return this.prisma.newsItem.delete({ where: { id: BigInt(id) } }); }
 }

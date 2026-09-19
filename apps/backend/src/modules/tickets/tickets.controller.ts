@@ -1,10 +1,7 @@
-import { Controller, Get, Post, Patch, Param, Body, Query, UseInterceptors, UploadedFiles } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { Controller, Get, Post, Patch, Param, Body, Query, UploadedFiles, ParseIntPipe } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { UPLOAD_CONFIGS } from '@ahanesk/shared';
 import { StorageUploadInterceptor } from '../../infrastructure/storage/upload.interceptor';
-
 import { CreateTicketDto, CreateReplyDto } from './tickets.dto';
 import type { AuthUser } from '@ahanesk/shared';
 import type { UploadedFile as StorageFile } from '../../infrastructure/storage/storage.service';
@@ -23,7 +20,7 @@ export class TicketsController {
   }
 
   @Get(':id')
-  get(@CurrentUser() user: AuthUser, @Param('id') id: string) {
+  get(@CurrentUser() user: AuthUser, @Param('id', ParseIntPipe) id: number) {
     return this.svc.getById(id, user.id, false);
   }
 
@@ -39,7 +36,7 @@ export class TicketsController {
   @StorageUploadInterceptor('ticket_attachment', true)
   reply(
     @CurrentUser() user: AuthUser,
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: CreateReplyDto,
     @UploadedFiles() files?: Express.Multer.File[],
   ) {
@@ -47,7 +44,7 @@ export class TicketsController {
   }
 
   @Patch(':id/close')
-  close(@CurrentUser() user: AuthUser, @Param('id') id: string) {
+  close(@CurrentUser() user: AuthUser, @Param('id', ParseIntPipe) id: number) {
     return this.svc.close(id, user.id);
   }
 }

@@ -18,12 +18,15 @@ async function fetchNotifications(category?: string, isRead?: boolean): Promise<
   const res = await api.get<{ data: NotifPage }>(`/notifications?${params}`);
   const payload = res.data.data;
   if (payload?.items) {
-    payload.items = payload.items.map((n: any) => ({
-      ...n,
-      isRead: n.isRead ?? n.is_read,
-      createdAt: n.createdAt ?? n.created_at,
-      readAt: n.readAt ?? n.read_at,
-    }));
+    payload.items = payload.items.map((n: unknown) => {
+      const item = n as Record<string, unknown>;
+      return {
+        ...item,
+        isRead: (item.isRead ?? item.is_read) as boolean,
+        createdAt: (item.createdAt ?? item.created_at) as string,
+        readAt: (item.readAt ?? item.read_at) as string | null,
+      } as unknown as NotificationItem;
+    });
   }
   return payload;
 }
@@ -49,7 +52,7 @@ export function NotificationsList() {
   });
 
   const markOneMutation = useMutation({
-    mutationFn: (id: string) => api.patch(`/notifications/${id}/read`),
+    mutationFn: (id: number) => api.patch(`/notifications/${id}/read`),
     onSuccess:  () => void qc.invalidateQueries({ queryKey: ['notifications'] }),
   });
 

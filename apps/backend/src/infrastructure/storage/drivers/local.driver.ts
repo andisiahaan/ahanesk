@@ -18,7 +18,7 @@ export class LocalDriver implements StorageDriver {
   async upload(file: UploadedFile, context: UploadContext): Promise<string> {
     const { prefix } = UPLOAD_CONFIGS[context];
     const ext        = path.extname(file.originalname).toLowerCase();
-    const filename   = `${crypto.randomUUID()}${ext}`;
+    const filename   = `${crypto.randomBytes(16).toString('hex')}${ext}`;
     const dir        = path.join(this.basePath, prefix);
 
     await fs.mkdir(dir, { recursive: true });

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Param, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body, HttpCode, HttpStatus, ParseIntPipe } from '@nestjs/common';
 import { PatService } from './pat.service';
 import { CreatePatDto } from './pat.dto';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -23,7 +23,7 @@ export class PatController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async revoke(@CurrentUser() user: AuthUser, @Param('id') id: string): Promise<void> {
+  async revoke(@CurrentUser() user: AuthUser, @Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.svc.revoke(id, user.id);
   }
 }

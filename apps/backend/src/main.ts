@@ -8,6 +8,12 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { ZodValidationPipe } from './common/pipes/zod-validation.pipe';
 import helmet from 'helmet';
+import type { Request, Response, NextFunction } from 'express';
+import * as crypto from 'crypto';
+
+(BigInt.prototype as unknown as { toJSON: () => number }).toJSON = function () {
+  return Number(this);
+};
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -23,10 +29,10 @@ async function bootstrap(): Promise<void> {
   app.use(cookieParser());
 
   // ─── CSRF Token Middleware (Double Submit Cookie) ───────────────────────────
-  app.use((req: any, res: any, next: () => void) => {
-    let csrfToken = req.cookies['csrf_token'];
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    let csrfToken = req.cookies['csrf_token'] as string | undefined;
     if (!csrfToken) {
-      csrfToken = require('crypto').randomBytes(32).toString('hex');
+      csrfToken = crypto.randomBytes(32).toString('hex');
       res.cookie('csrf_token', csrfToken, {
         httpOnly: false, // Must be readable by frontend JS
         secure: process.env.NODE_ENV === 'production',

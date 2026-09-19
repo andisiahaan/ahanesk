@@ -7,7 +7,7 @@ import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
 import type { AuthUser } from '@ahanesk/shared';
 
 interface JwtPayload {
-  sub: string;
+  sub: number | string;
   email: string;
   role: string;
   twoFactorEnabled: boolean;
@@ -39,18 +39,19 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
 
     const user = await this.prisma.user.findUnique({
-      where: { id: payload.sub, is_active: true },
-      select: { id: true, email: true, name: true, role: true, totp_enabled: true },
+      where: { id: BigInt(payload.sub), is_active: true },
+      select: { id: true, email: true, name: true, role: true, totp_enabled: true, avatar: true },
     });
 
     if (!user) throw new UnauthorizedException('User not found or inactive');
 
     return {
-      id: user.id,
+      id: Number(user.id),
       email: user.email,
       name: user.name,
       role: user.role,
       twoFactorEnabled: user.totp_enabled,
+      avatar: user.avatar,
     };
   }
 }

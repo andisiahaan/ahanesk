@@ -5,13 +5,13 @@ import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Monitor, Globe, Trash2, ShieldOff } from 'lucide-react';
 
-interface Session { id: string; user_agent: string | null; ip_address: string | null; created_at: string; expires_at: string | null }
-interface Activity { id: string; type: string; ip_address: string | null; success: boolean; created_at: string }
+interface Session { id: number; user_agent: string | null; ip_address: string | null; created_at: string; expires_at: string | null }
+interface Activity { id: number; type: string; ip_address: string | null; success: boolean; created_at: string }
 
-export function UserSessionsPanel({ userId }: { userId: string }) {
+export function UserSessionsPanel({ userId }: { userId: number | string }) {
   const [sessions, setSessions]   = useState<Session[]>([]);
   const [activity, setActivity]   = useState<Activity[]>([]);
-  const [revoking, setRevoking]   = useState<string | null>(null);
+  const [revoking, setRevoking]   = useState<number | null>(null);
   const [revokingAll, setRevokingAll] = useState(false);
   const [tab, setTab]             = useState<'sessions' | 'activity'>('sessions');
 
@@ -26,7 +26,7 @@ export function UserSessionsPanel({ userId }: { userId: string }) {
 
   useEffect(() => { load(); }, [load]);
 
-  const revoke = async (tokenId: string) => {
+  const revoke = async (tokenId: number) => {
     setRevoking(tokenId);
     try {
       await api.delete(`/users/${userId}/sessions/${tokenId}`);

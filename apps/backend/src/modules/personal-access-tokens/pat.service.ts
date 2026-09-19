@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomBytes, createHash } from 'crypto';
 import { PatRepository } from './pat.repository';
 import { buildPaginationMeta } from '@ahanesk/shared';
@@ -8,7 +8,7 @@ import type { CreatePatDto } from './pat.dto';
 export class PatService {
   constructor(private readonly repo: PatRepository) {}
 
-  listForUser(userId: string) {
+  listForUser(userId: number | bigint) {
     return this.repo.findAllByUser(userId);
   }
 
@@ -18,7 +18,7 @@ export class PatService {
   }
 
   /** Creates a PAT. Returns the plaintext token — stored ONCE, never again. */
-  async create(userId: string, dto: CreatePatDto) {
+  async create(userId: number | bigint, dto: CreatePatDto) {
     const rawToken  = `sk_${randomBytes(32).toString('hex')}`;
     const tokenHash = createHash('sha256').update(rawToken).digest('hex');
     const prefix    = rawToken.slice(0, 10); // "sk_" + 7 chars
@@ -34,9 +34,9 @@ export class PatService {
     return { ...token, token: rawToken }; // plaintext returned ONCE
   }
 
-  async revoke(id: string, userId: string, isAdmin = false) {
+  async revoke(id: number | bigint, userId: number | bigint, isAdmin = false) {
     const tokens = await this.repo.findAllByUser(userId);
-    const found  = tokens.find((t: { id: string }) => t.id === id);
+    const found  = tokens.find((t: { id: bigint | number }) => Number(t.id) === Number(id));
     if (!found && !isAdmin) throw new NotFoundException('Token not found');
     return this.repo.revoke(id);
   }

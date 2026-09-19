@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, Query, HttpCode, HttpStatus, ParseIntPipe } from '@nestjs/common';
 import { HelpService } from './help.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import {
@@ -25,7 +25,7 @@ export class HelpAdminController {
 
   @Patch('categories/:id')
   async updateCategory(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateHelpCategoryDto,
   ) {
     return this.service.updateCategory(id, dto);
@@ -33,7 +33,7 @@ export class HelpAdminController {
 
   @Delete('categories/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteCategory(@Param('id') id: string): Promise<void> {
+  async deleteCategory(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.service.deleteCategory(id);
   }
 
@@ -45,11 +45,11 @@ export class HelpAdminController {
     @Query('limit') limit = '20',
     @Query('category_id') categoryId?: string,
   ) {
-    return this.service.adminListArticles(Number(page), Number(limit), categoryId);
+    return this.service.adminListArticles(Number(page), Number(limit), categoryId ? Number(categoryId) : undefined);
   }
 
   @Get('articles/:id')
-  async getArticle(@Param('id') id: string) {
+  async getArticle(@Param('id', ParseIntPipe) id: number) {
     return this.service.adminGetArticle(id);
   }
 
@@ -60,7 +60,7 @@ export class HelpAdminController {
 
   @Patch('articles/:id')
   async updateArticle(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateHelpArticleDto,
   ) {
     return this.service.updateArticle(id, dto);
@@ -68,7 +68,7 @@ export class HelpAdminController {
 
   @Delete('articles/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteArticle(@Param('id') id: string): Promise<void> {
+  async deleteArticle(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.service.deleteArticle(id);
   }
 }

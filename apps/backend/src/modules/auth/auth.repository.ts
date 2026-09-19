@@ -12,8 +12,8 @@ export class AuthRepository {
     return this.prisma.user.findUnique({ where: { email } });
   }
 
-  async findUserById(id: string): Promise<User | null> {
-    return this.prisma.user.findUnique({ where: { id } });
+  async findUserById(id: number | bigint): Promise<User | null> {
+    return this.prisma.user.findUnique({ where: { id: BigInt(id) } });
   }
 
   async createUser(data: {
@@ -25,8 +25,8 @@ export class AuthRepository {
     return this.prisma.user.create({ data });
   }
 
-  async updateUser(id: string, data: Prisma.UserUpdateInput): Promise<User> {
-    return this.prisma.user.update({ where: { id }, data });
+  async updateUser(id: number | bigint, data: Prisma.UserUpdateInput): Promise<User> {
+    return this.prisma.user.update({ where: { id: BigInt(id) }, data });
   }
 
   // ─── OAuth ────────────────────────────────────────────────────────────────
@@ -37,22 +37,27 @@ export class AuthRepository {
     });
   }
 
-  async createOAuthAccount(userId: string, provider: string, providerId: string): Promise<void> {
+  async createOAuthAccount(userId: number | bigint, provider: string, providerId: string): Promise<void> {
     await this.prisma.oAuthAccount.create({
-      data: { user_id: userId, provider, provider_id: providerId },
+      data: { user_id: BigInt(userId), provider, provider_id: providerId },
     });
   }
 
   // ─── Refresh Tokens ───────────────────────────────────────────────────────
 
   async createRefreshToken(data: {
-    user_id: string;
+    user_id: number | bigint;
     token_hash: string;
     expires_at: Date;
     user_agent?: string;
     ip_address?: string;
   }): Promise<void> {
-    await this.prisma.refreshToken.create({ data });
+    await this.prisma.refreshToken.create({
+      data: {
+        ...data,
+        user_id: BigInt(data.user_id),
+      },
+    });
   }
 
   async findRefreshToken(tokenHash: string): Promise<RefreshToken | null> {
@@ -60,6 +65,9 @@ export class AuthRepository {
   }
 
   async rotateRefreshToken(oldHash: string, newHash: string, newExpiresAt: Date): Promise<void> {
+    const old = await this.prisma.refreshToken.findUnique({ where: { token_hash: oldHash } });
+    if (!old) return;
+
     await this.prisma.$transaction([
       this.prisma.refreshToken.update({
         where: { token_hash: oldHash },
@@ -67,7 +75,7 @@ export class AuthRepository {
       }),
       this.prisma.refreshToken.create({
         data: {
-          user_id: (await this.prisma.refreshToken.findUnique({ where: { token_hash: oldHash } }))!.user_id,
+          user_id: old.user_id,
           token_hash: newHash,
           expires_at: newExpiresAt,
         },
@@ -82,18 +90,18 @@ export class AuthRepository {
     });
   }
 
-  async revokeAllUserRefreshTokens(userId: string): Promise<void> {
+  async revokeAllUserRefreshTokens(userId: number | bigint): Promise<void> {
     await this.prisma.refreshToken.updateMany({
-      where: { user_id: userId, revoked_at: null },
+      where: { user_id: BigInt(userId), revoked_at: null },
       data: { revoked_at: new Date() },
     });
   }
 
   // ─── Email Verification ───────────────────────────────────────────────────
 
-  async createEmailVerificationToken(userId: string, tokenHash: string, expiresAt: Date): Promise<void> {
+  async createEmailVerificationToken(userId: number | bigint, tokenHash: string, expiresAt: Date): Promise<void> {
     await this.prisma.emailVerificationToken.create({
-      data: { user_id: userId, token_hash: tokenHash, expires_at: expiresAt },
+      data: { user_id: BigInt(userId), token_hash: tokenHash, expires_at: expiresAt },
     });
   }
 
@@ -101,15 +109,15 @@ export class AuthRepository {
     return this.prisma.emailVerificationToken.findUnique({ where: { token_hash: tokenHash }, include: { user: true } });
   }
 
-  async consumeEmailVerificationToken(id: string): Promise<void> {
-    await this.prisma.emailVerificationToken.update({ where: { id }, data: { used_at: new Date() } });
+  async consumeEmailVerificationToken(id: number | bigint): Promise<void> {
+    await this.prisma.emailVerificationToken.update({ where: { id: BigInt(id) }, data: { used_at: new Date() } });
   }
 
   // ─── Password Reset ───────────────────────────────────────────────────────
 
-  async createPasswordResetToken(userId: string, tokenHash: string, expiresAt: Date): Promise<void> {
+  async createPasswordResetToken(userId: number | bigint, tokenHash: string, expiresAt: Date): Promise<void> {
     await this.prisma.passwordResetToken.create({
-      data: { user_id: userId, token_hash: tokenHash, expires_at: expiresAt },
+      data: { user_id: BigInt(userId), token_hash: tokenHash, expires_at: expiresAt },
     });
   }
 
@@ -117,34 +125,34 @@ export class AuthRepository {
     return this.prisma.passwordResetToken.findUnique({ where: { token_hash: tokenHash }, include: { user: true } });
   }
 
-  async consumePasswordResetToken(id: string): Promise<void> {
-    await this.prisma.passwordResetToken.update({ where: { id }, data: { used_at: new Date() } });
+  async consumePasswordResetToken(id: number | bigint): Promise<void> {
+    await this.prisma.passwordResetToken.update({ where: { id: BigInt(id) }, data: { used_at: new Date() } });
   }
 
   // ─── TOTP ─────────────────────────────────────────────────────────────────
 
-  async createTotpRecoveryCodes(userId: string, codeHashes: string[]): Promise<void> {
+  async createTotpRecoveryCodes(userId: number | bigint, codeHashes: string[]): Promise<void> {
     await this.prisma.totpRecoveryCode.createMany({
-      data: codeHashes.map((code_hash) => ({ user_id: userId, code_hash })),
+      data: codeHashes.map((code_hash) => ({ user_id: BigInt(userId), code_hash })),
     });
   }
 
-  async findUnusedRecoveryCodes(userId: string) {
-    return this.prisma.totpRecoveryCode.findMany({ where: { user_id: userId, used_at: null } });
+  async findUnusedRecoveryCodes(userId: number | bigint) {
+    return this.prisma.totpRecoveryCode.findMany({ where: { user_id: BigInt(userId), used_at: null } });
   }
 
-  async consumeRecoveryCode(id: string): Promise<void> {
-    await this.prisma.totpRecoveryCode.update({ where: { id }, data: { used_at: new Date() } });
+  async consumeRecoveryCode(id: number | bigint): Promise<void> {
+    await this.prisma.totpRecoveryCode.update({ where: { id: BigInt(id) }, data: { used_at: new Date() } });
   }
 
-  async deleteAllRecoveryCodes(userId: string): Promise<void> {
-    await this.prisma.totpRecoveryCode.deleteMany({ where: { user_id: userId } });
+  async deleteAllRecoveryCodes(userId: number | bigint): Promise<void> {
+    await this.prisma.totpRecoveryCode.deleteMany({ where: { user_id: BigInt(userId) } });
   }
 
   // ─── User Activity ────────────────────────────────────────────────────────
 
   async createUserActivity(data: {
-    user_id?: string;
+    user_id?: number | bigint;
     type: 'LOGIN';
     email: string;
     success: boolean;
@@ -157,7 +165,7 @@ export class AuthRepository {
     await this.prisma.userActivity.create({
       data: {
         ...rest,
-        ...(user_id ? { user: { connect: { id: user_id } } } : {}),
+        ...(user_id ? { user: { connect: { id: BigInt(user_id) } } } : {}),
         ...(metadata ? { metadata: metadata as object } : {}),
       },
     });
@@ -165,22 +173,22 @@ export class AuthRepository {
 
   // ─── Pending Email Change ───────────────────────────────────────────────────
 
-  async createPendingEmailChange(userId: string, newEmail: string, expiresAt: Date) {
-    await this.prisma.pendingEmailChange.deleteMany({ where: { user_id: userId } });
-    const dummyHash = Date.now().toString() + userId; // satisfy unique constraint temporarily
+  async createPendingEmailChange(userId: number | bigint, newEmail: string, expiresAt: Date) {
+    await this.prisma.pendingEmailChange.deleteMany({ where: { user_id: BigInt(userId) } });
+    const dummyHash = Date.now().toString() + String(userId); // satisfy unique constraint temporarily
     return this.prisma.pendingEmailChange.create({
-      data: { user_id: userId, new_email: newEmail, token_hash: dummyHash, expires_at: expiresAt },
+      data: { user_id: BigInt(userId), new_email: newEmail, token_hash: dummyHash, expires_at: expiresAt },
     });
   }
 
-  async findPendingEmailChangeByUserId(userId: string) {
+  async findPendingEmailChangeByUserId(userId: number | bigint) {
     return this.prisma.pendingEmailChange.findFirst({
-      where: { user_id: userId },
+      where: { user_id: BigInt(userId) },
       include: { user: true },
     });
   }
 
-  async deletePendingEmailChange(id: string) {
-    await this.prisma.pendingEmailChange.delete({ where: { id } });
+  async deletePendingEmailChange(id: number | bigint) {
+    await this.prisma.pendingEmailChange.delete({ where: { id: BigInt(id) } });
   }
 }

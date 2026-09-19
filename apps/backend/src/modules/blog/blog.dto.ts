@@ -14,7 +14,7 @@ export const CreatePostSchema = z.object({
   meta_title:       z.string().max(255).optional().nullable(),
   meta_description: z.string().max(500).optional().nullable(),
   meta_keywords:    z.string().max(255).optional().nullable(),
-  categories:       z.preprocess((v) => (typeof v === 'string' ? JSON.parse(v) : v), z.array(z.string()).default([])),
+  categories:       z.preprocess((v) => (typeof v === 'string' ? JSON.parse(v) : v), z.array(z.coerce.number().int().positive()).default([])),
   tags:             z.preprocess((v) => (typeof v === 'string' ? JSON.parse(v) : v), z.array(z.string()).default([])),
 });
 
@@ -24,7 +24,7 @@ export const CreateCategorySchema = z.object({
   name:        z.string().min(2).max(100),
   slug:        z.string().min(2).max(100).regex(slug),
   description: z.string().optional().nullable(),
-  parent_id:   z.string().uuid().optional().nullable(),
+  parent_id:   z.coerce.number().int().positive().optional().nullable(),
   order:       z.coerce.number().int().default(0),
   is_active:   z.preprocess((v) => v === 'true' || v === true, z.boolean()).default(true),
 });

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { RichEditor } from '@/components/rich-editor';
 import { cn } from '@/lib/cn';
 
-interface NewsItem { id: string; title: string; slug: string; type: string; is_published: boolean; is_pinned: boolean; published_at: string | null; expires_at: string | null; }
+interface NewsItem { id: number; title: string; slug: string; type: string; is_published: boolean; is_pinned: boolean; published_at: string | null; expires_at: string | null; }
 interface Form { title: string; slug: string; content: string; type: string; is_published: boolean; is_pinned: boolean; published_at: string; expires_at: string; }
 const EMPTY: Form = { title: '', slug: '', content: '', type: 'ANNOUNCEMENT', is_published: false, is_pinned: false, published_at: '', expires_at: '' };
 
@@ -20,7 +20,7 @@ const TYPE_COLORS: Record<string, string> = {
 
 export default function NewsPage() {
   const [items, setItems]   = useState<NewsItem[]>([]);
-  const [editing, setEditing] = useState<string | null>(null);
+  const [editing, setEditing] = useState<number | 'new' | null>(null);
   const [form, setForm]     = useState<Form>(EMPTY);
   const [saving, setSaving] = useState(false);
 
@@ -31,7 +31,7 @@ export default function NewsPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  const startEdit = async (id: string) => {
+  const startEdit = async (id: number) => {
     const { data } = await api.get(`/admin/news/${id}`);
     const n = data.data;
     setForm({ ...EMPTY, ...n, published_at: n.published_at ? n.published_at.slice(0, 16) : '', expires_at: n.expires_at ? n.expires_at.slice(0, 16) : '' });
@@ -49,7 +49,7 @@ export default function NewsPage() {
     finally { setSaving(false); }
   };
 
-  const del = async (id: string) => {
+  const del = async (id: number) => {
     if (!confirm('Delete this news item?')) return;
     await api.delete(`/admin/news/${id}`);
     setItems((p) => p.filter((n) => n.id !== id));

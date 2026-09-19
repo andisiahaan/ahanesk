@@ -12,7 +12,7 @@ import { apiFetch } from '@/lib/api';
 export const metadata = { title: 'Dashboard' };
 
 interface Me { name: string; email: string; role: string; createdAt: string; }
-interface NewsItem { id: string; title: string; slug: string; type: string; published_at: string | null; }
+interface NewsItem { id: number; title: string; slug: string; type: string; published_at: string | null; }
 
 async function getMe(): Promise<Me | null> {
   try {

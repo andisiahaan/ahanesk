@@ -23,7 +23,7 @@ export class PagesService {
     return page;
   }
 
-  async findById(id: string) {
+  async findById(id: number | bigint) {
     const page = await this.repo.findById(id);
     if (!page) throw new NotFoundException(messages.pages.notFound);
     return page;
@@ -34,14 +34,14 @@ export class PagesService {
     return this.repo.create({ ...dto, published_at: publishedAt });
   }
 
-  async update(id: string, dto: UpdatePageDto) {
+  async update(id: number | bigint, dto: UpdatePageDto) {
     const existing = await this.repo.findById(id);
     if (!existing) throw new NotFoundException(messages.pages.notFound);
     const publishedAt = dto.is_published && !existing.published_at ? new Date() : existing.published_at ?? undefined;
     return this.repo.update(id, { ...dto, published_at: publishedAt });
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: number | bigint): Promise<void> {
     const page = await this.repo.findById(id);
     if (!page) throw new NotFoundException(messages.pages.notFound);
     await this.repo.deleteById(id);

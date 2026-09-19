@@ -10,7 +10,7 @@ export const CreateTicketSchema = z.object({
 export const UpdateTicketAdminSchema = z.object({
   status:      z.enum(['OPEN', 'IN_PROGRESS', 'ON_HOLD', 'RESOLVED', 'CLOSED']).optional(),
   priority:    z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional(),
-  assigned_to: z.string().uuid().optional().nullable(),
+  assigned_to: z.coerce.number().int().positive().optional().nullable(),
   category:    z.string().max(100).optional().nullable(),
 });
 

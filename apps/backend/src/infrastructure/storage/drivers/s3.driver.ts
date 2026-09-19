@@ -32,7 +32,7 @@ export class S3Driver implements StorageDriver {
   async upload(file: UploadedFile, context: UploadContext): Promise<string> {
     const { prefix } = UPLOAD_CONFIGS[context];
     const ext        = path.extname(file.originalname).toLowerCase();
-    const key        = `${prefix}/${crypto.randomUUID()}${ext}`;
+    const key        = `${prefix}/${crypto.randomBytes(16).toString('hex')}${ext}`;
 
     await this.client.send(new PutObjectCommand({
       Bucket:      this.bucket,

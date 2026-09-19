@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import api from '@/lib/api';
 
-interface AdminUser { id: string; name: string; email: string; role: string; }
+interface AdminUser { id: number; name: string; email: string; role: string; }
 
 interface AdminAuthState {
   user: AdminUser | null;

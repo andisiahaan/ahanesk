@@ -15,7 +15,7 @@ export class OtpService {
    * @returns cooldownSeconds — 0 jika berhasil dikirim, >0 jika masih cooldown
    */
   async sendOtp(opts: {
-    userId: string;
+    userId: number | bigint;
     purpose: OTP_PURPOSE;
     toEmail: string;
     toName: string;
@@ -39,7 +39,7 @@ export class OtpService {
    * @returns true jika valid (auto delete-on-use)
    */
   async verifyOtp(opts: {
-    userId: string;
+    userId: number | bigint;
     purpose: OTP_PURPOSE;
     code: string;
     identifier?: string;
@@ -47,7 +47,7 @@ export class OtpService {
     return this.repo.verify(opts.userId, opts.purpose, opts.code, opts.identifier);
   }
 
-  async getCooldown(userId: string, purpose: OTP_PURPOSE, cooldownSec = 60): Promise<number> {
+  async getCooldown(userId: number | bigint, purpose: OTP_PURPOSE, cooldownSec = 60): Promise<number> {
     return this.repo.cooldownSeconds(userId, purpose, cooldownSec);
   }
 }

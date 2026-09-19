@@ -27,7 +27,7 @@ export class HelpService {
     return result.items;
   }
 
-  async voteHelpful(id: string, helpful: boolean) {
+  async voteHelpful(id: number | bigint, helpful: boolean) {
     const article = await this.repo.findArticleById(id);
     if (!article) throw new NotFoundException('Article not found');
     return this.repo.voteHelpful(id, helpful);
@@ -39,12 +39,12 @@ export class HelpService {
     return this.repo.findAllCategories(false);
   }
 
-  async adminListArticles(page = 1, limit = 20, categoryId?: string) {
+  async adminListArticles(page = 1, limit = 20, categoryId?: number | bigint) {
     const result = await this.repo.findAllArticles({ page, limit, categoryId });
     return { items: result.items, meta: buildPaginationMeta(result.total, page, limit) };
   }
 
-  async adminGetArticle(id: string) {
+  async adminGetArticle(id: number | bigint) {
     const article = await this.repo.findArticleById(id);
     if (!article) throw new NotFoundException('Article not found');
     return article;
@@ -58,18 +58,18 @@ export class HelpService {
     });
   }
 
-  async updateCategory(id: string, dto: UpdateHelpCategoryDto) {
+  async updateCategory(id: number | bigint, dto: UpdateHelpCategoryDto) {
     return this.repo.updateCategory(id, dto);
   }
 
-  async deleteCategory(id: string) {
+  async deleteCategory(id: number | bigint) {
     await this.repo.deleteCategory(id);
   }
 
   async createArticle(dto: CreateHelpArticleDto) {
     const publishedAt = dto.is_published ? new Date() : null;
     return this.repo.createArticle({
-      category:        { connect: { id: dto.category_id } },
+      category:        { connect: { id: BigInt(dto.category_id) } },
       slug:            dto.slug, title: dto.title, content: dto.content,
       meta_description: dto.meta_description ?? null,
       sort_order:      dto.sort_order ?? 0,
@@ -78,15 +78,20 @@ export class HelpService {
     });
   }
 
-  async updateArticle(id: string, dto: UpdateHelpArticleDto) {
+  async updateArticle(id: number | bigint, dto: UpdateHelpArticleDto) {
     const article = await this.repo.findArticleById(id);
     if (!article) throw new NotFoundException('Article not found');
 
     const publishedAt = dto.is_published && !article.published_at ? new Date() : article.published_at;
-    return this.repo.updateArticle(id, { ...dto, published_at: publishedAt });
+    const { category_id, ...rest } = dto;
+    return this.repo.updateArticle(id, {
+      ...rest,
+      ...(category_id ? { category: { connect: { id: BigInt(category_id) } } } : {}),
+      published_at: publishedAt,
+    });
   }
 
-  async deleteArticle(id: string) {
+  async deleteArticle(id: number | bigint) {
     await this.repo.deleteArticle(id);
   }
 }

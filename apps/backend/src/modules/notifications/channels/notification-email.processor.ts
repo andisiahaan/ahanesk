@@ -5,7 +5,7 @@ import type { Job } from 'bullmq';
 import * as nodemailer from 'nodemailer';
 
 export interface NotificationEmailJob {
-  userId:  string;
+  userId:  number | bigint;
   type:    string;
   title:   string;
   message: string;

@@ -1,10 +1,9 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, Query, UseInterceptors, UploadedFiles, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, Query, UseInterceptors, UploadedFiles, HttpCode, HttpStatus, ParseIntPipe } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { TicketsService } from './tickets.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { UPLOAD_CONFIGS } from '@ahanesk/shared';
-
 import {
   UpdateTicketAdminDto, CreateReplyDto, ListTicketsQueryDto,
 } from './tickets.dto';
@@ -22,11 +21,11 @@ export class TicketsAdminController {
   }
 
   @Get(':id')
-  get(@Param('id') id: string) { return this.svc.getById(id, undefined, true); }
+  get(@Param('id', ParseIntPipe) id: number) { return this.svc.getById(id, undefined, true); }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateTicketAdminDto,
   ) {
     return this.svc.adminUpdate(id, dto);
@@ -36,7 +35,7 @@ export class TicketsAdminController {
   @UseInterceptors(FilesInterceptor(UPLOAD_CONFIGS.ticket_attachment.fieldName, UPLOAD_CONFIGS.ticket_attachment.maxFiles))
   reply(
     @CurrentUser() user: AuthUser,
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: CreateReplyDto,
     @UploadedFiles() files?: Express.Multer.File[],
   ) {
@@ -45,5 +44,5 @@ export class TicketsAdminController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Param('id') id: string): Promise<void> { await this.svc.delete(id); }
+  async delete(@Param('id', ParseIntPipe) id: number): Promise<void> { await this.svc.delete(id); }
 }

@@ -1,6 +1,6 @@
 import {
   Controller, Get, Post, Patch, Delete,
-  Param, Body, Query, HttpCode, HttpStatus,
+  Param, Body, Query, HttpCode, HttpStatus, ParseIntPipe,
 } from '@nestjs/common';
 import { PagesService } from './pages.service';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -21,7 +21,7 @@ export class PagesController {
 
   @Get('id/:id')
   @Roles('ADMIN')
-  async findById(@Param('id') id: string) {
+  async findById(@Param('id', ParseIntPipe) id: number) {
     const data = await this.pagesService.findById(id);
     return { success: true, message: messages.pages.fetched, data };
   }
@@ -46,7 +46,7 @@ export class PagesController {
   @Patch(':id')
   @Roles('ADMIN')
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdatePageDto,
   ) {
     const data = await this.pagesService.update(id, dto);
@@ -56,7 +56,7 @@ export class PagesController {
   @Delete(':id')
   @Roles('ADMIN')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string): Promise<void> {
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.pagesService.delete(id);
   }
 }

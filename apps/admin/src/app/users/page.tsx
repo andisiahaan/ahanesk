@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/cn';
 
 interface User {
-  id: string; name: string; email: string; role: string;
+  id: number; name: string; email: string; role: string;
   is_active: boolean; email_verified_at: string | null;
 }
 
@@ -33,16 +33,20 @@ export default function UsersPage() {
 
   const fetchUsers = useCallback(async () => {
     try {
-      const res = await api.get<{ data: any }>('/users');
+      const res = await api.get<{ data: { items?: User[] } | User[] }>('/users');
       const payload = res.data.data;
-      setUsers(payload?.items ?? (Array.isArray(payload) ? payload : []));
+      if (Array.isArray(payload)) {
+        setUsers(payload);
+      } else {
+        setUsers(payload?.items ?? []);
+      }
     } catch { toast.error(t('messages.loadFailed')); }
     finally { setLoading(false); }
   }, [t]);
 
   useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
-  const toggleActive = async (id: string, is_active: boolean) => {
+  const toggleActive = async (id: number, is_active: boolean) => {
     try {
       await api.patch(`/users/${id}`, { is_active: !is_active });
       setUsers((p) => p.map((u) => u.id === id ? { ...u, is_active: !is_active } : u));
@@ -50,7 +54,7 @@ export default function UsersPage() {
     } catch { toast.error(t('messages.updateFailed')); }
   };
 
-  const deleteUser = async (id: string) => {
+  const deleteUser = async (id: number) => {
     if (!confirm(t('details.confirmDelete'))) return;
     try {
       await api.delete(`/users/${id}`);

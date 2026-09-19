@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import api from '@/lib/api';
 
 interface AuthUser {
-  id: string;
+  id: number;
   name: string;
   email: string;
   role: string;

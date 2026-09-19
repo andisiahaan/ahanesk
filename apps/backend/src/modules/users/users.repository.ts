@@ -17,9 +17,9 @@ export class UsersRepository {
     return { data, total };
   }
 
-  async findById(id: string): Promise<UserSelect | null> {
+  async findById(id: number | bigint): Promise<UserSelect | null> {
     return this.prisma.user.findUnique({ 
-      where: { id }, 
+      where: { id: BigInt(id) }, 
       omit: { password: true, totp_secret: true },
       include: { bans: { orderBy: { created_at: 'desc' } } } 
     });
@@ -33,39 +33,39 @@ export class UsersRepository {
     return this.prisma.user.create({ data, omit: { password: true, totp_secret: true } });
   }
 
-  async updateUser(id: string, data: Prisma.UserUpdateInput): Promise<UserSelect> {
-    return this.prisma.user.update({ where: { id }, data, omit: { password: true, totp_secret: true } });
+  async updateUser(id: number | bigint, data: Prisma.UserUpdateInput): Promise<UserSelect> {
+    return this.prisma.user.update({ where: { id: BigInt(id) }, data, omit: { password: true, totp_secret: true } });
   }
 
-  async deleteById(id: string): Promise<void> {
-    await this.prisma.user.delete({ where: { id } });
+  async deleteById(id: number | bigint): Promise<void> {
+    await this.prisma.user.delete({ where: { id: BigInt(id) } });
   }
 
-  findActiveSessions(userId: string) {
+  findActiveSessions(userId: number | bigint) {
     return this.prisma.refreshToken.findMany({
-      where: { user_id: userId, revoked_at: null },
+      where: { user_id: BigInt(userId), revoked_at: null },
       orderBy: { created_at: 'desc' },
       select: { id: true, user_agent: true, ip_address: true, created_at: true, expires_at: true },
     });
   }
 
-  async revokeSession(tokenId: string): Promise<void> {
+  async revokeSession(tokenId: number | bigint): Promise<void> {
     await this.prisma.refreshToken.update({
-      where: { id: tokenId },
+      where: { id: BigInt(tokenId) },
       data: { revoked_at: new Date() },
     });
   }
 
-  async revokeAllSessions(userId: string): Promise<void> {
+  async revokeAllSessions(userId: number | bigint): Promise<void> {
     await this.prisma.refreshToken.updateMany({
-      where: { user_id: userId, revoked_at: null },
+      where: { user_id: BigInt(userId), revoked_at: null },
       data: { revoked_at: new Date() },
     });
   }
 
-  findActivityByUser(userId: string, limit = 20) {
+  findActivityByUser(userId: number | bigint, limit = 20) {
     return this.prisma.userActivity.findMany({
-      where: { user_id: userId },
+      where: { user_id: BigInt(userId) },
       orderBy: { created_at: 'desc' },
       take: limit,
       select: { id: true, type: true, ip_address: true, user_agent: true, created_at: true, success: true },

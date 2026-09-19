@@ -9,7 +9,7 @@ import { getPushSubscription, registerServiceWorker } from '@/lib/push';
 import { cn } from '@/lib/cn';
 
 interface PushSubscription {
-  id: string;
+  id: number;
   endpoint: string;
   user_agent: string | null;
   created_at: string;
@@ -64,7 +64,7 @@ export function PushDevicesModal({ onClose, pushEnabled }: Props) {
   }, []);
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => api.delete(`/notifications/push/subscriptions/${id}`),
+    mutationFn: (id: number) => api.delete(`/notifications/push/subscriptions/${id}`),
     onSuccess: async (_, id) => {
       // If deleted subscription is current device, unregister SW subscription too
       const deleted = subscriptions.find((s) => s.id === id);

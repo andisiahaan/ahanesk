@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Param, Body, Query } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Query, ParseIntPipe } from '@nestjs/common';
 import { HelpService } from './help.service';
 import { Public } from '../../common/decorators/public.decorator';
 import { VoteHelpfulDto } from './help.dto';
@@ -27,7 +27,7 @@ export class HelpController {
 
   @Post('articles/:id/vote')
   async vote(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: VoteHelpfulDto,
   ) {
     return this.service.voteHelpful(id, dto.helpful);

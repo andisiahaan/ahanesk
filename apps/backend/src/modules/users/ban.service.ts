@@ -7,12 +7,12 @@ import type { BanUserDto } from '@ahanesk/shared';
 @Injectable()
 export class BanService {
   constructor(
-    private readonly banRepo:      BanRepository,
-    private readonly usersRepo:    UsersRepository,
+    private readonly banRepo:       BanRepository,
+    private readonly usersRepo:     UsersRepository,
     private readonly notifications: NotificationService,
   ) {}
 
-  async banUser(userId: string, adminId: string, dto: BanUserDto): Promise<void> {
+  async banUser(userId: number | bigint, adminId: number | bigint, dto: BanUserDto): Promise<void> {
     const user = await this.usersRepo.findById(userId);
     if (!user) throw new NotFoundException('User not found');
     if (user.role === 'ADMIN') throw new BadRequestException('Cannot ban an admin');
@@ -22,13 +22,13 @@ export class BanService {
 
     void this.notifications.send({
       type:    'account.banned',
-      userId,
+      userId:  Number(userId),
       title:   'Account Suspended',
       message: `Your account has been suspended. Reason: ${dto.reason}`,
     });
   }
 
-  async unbanUser(userId: string, adminId: string): Promise<void> {
+  async unbanUser(userId: number | bigint, adminId: number | bigint): Promise<void> {
     const user = await this.usersRepo.findById(userId);
     if (!user) throw new NotFoundException('User not found');
 
@@ -37,21 +37,21 @@ export class BanService {
 
     void this.notifications.send({
       type:    'account.unbanned',
-      userId,
+      userId:  Number(userId),
       title:   'Account Restored',
       message: 'Your account suspension has been lifted.',
     });
   }
 
-  async getActiveBan(userId: string) {
+  async getActiveBan(userId: number | bigint) {
     return this.banRepo.getActiveBan(userId);
   }
 
-  async getBanHistory(userId: string) {
+  async getBanHistory(userId: number | bigint) {
     return this.banRepo.getBanHistory(userId);
   }
 
-  async isUserBanned(userId: string): Promise<boolean> {
+  async isUserBanned(userId: number | bigint): Promise<boolean> {
     const ban = await this.banRepo.getActiveBan(userId);
     return ban !== null;
   }

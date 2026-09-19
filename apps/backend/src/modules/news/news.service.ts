@@ -15,21 +15,21 @@ export class NewsService {
     return item;
   }
 
-  async getById(id: string) {
+  async getById(id: number | bigint) {
     const item = await this.repo.findById(id);
     if (!item) throw new NotFoundException('News item not found');
     return item;
   }
 
-  create(dto: CreateNewsDto, authorId: string) {
-    return this.repo.create({ ...dto, author_id: authorId });
+  create(dto: CreateNewsDto, authorId: number | bigint) {
+    return this.repo.create({ ...dto, author_id: BigInt(authorId) });
   }
 
-  update(id: string, dto: UpdateNewsDto) {
+  update(id: number | bigint, dto: UpdateNewsDto) {
     return this.repo.update(id, dto as Record<string, unknown>);
   }
 
-  async delete(id: string) {
+  async delete(id: number | bigint) {
     await this.getById(id);
     return this.repo.delete(id);
   }

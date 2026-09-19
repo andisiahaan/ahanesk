@@ -74,11 +74,12 @@ export type ChangePasswordDto = z.infer<typeof ChangePasswordSchema>;
 
 // ─── Auth User (JWT payload shape) ───────────────────────────────────────────
 export const AuthUserSchema = z.object({
-  id: z.string().uuid(),
+  id: z.number().int().positive(),
   email: z.string().email(),
   name: z.string(),
   role: z.enum(['ADMIN', 'USER']),
   twoFactorEnabled: z.boolean(),
+  avatar: z.string().nullable().optional(),
 });
 export type AuthUser = z.infer<typeof AuthUserSchema>;
 
@@ -185,7 +186,7 @@ export const UpdateHelpCategorySchema = CreateHelpCategorySchema.partial();
 export type UpdateHelpCategoryDto = z.infer<typeof UpdateHelpCategorySchema>;
 
 export const CreateHelpArticleSchema = z.object({
-  category_id:      z.string().uuid(),
+  category_id:      z.number().int().positive(),
   slug:             z.string().min(1).max(255).regex(slugPattern),
   title:            z.string().min(1).max(255),
   content:          z.string().min(1),

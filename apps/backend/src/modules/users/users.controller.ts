@@ -1,17 +1,12 @@
 import {
   Controller, Get, Post, Patch, Delete,
-  Param, Body, Query, UploadedFile, UseInterceptors, HttpCode, HttpStatus,
+  Param, Body, Query, UploadedFile, HttpCode, HttpStatus, ParseIntPipe,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import type { Multer } from 'multer';
 import { UsersService } from './users.service';
 import { BanService } from './ban.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { StorageUploadInterceptor } from '../../infrastructure/storage/upload.interceptor';
-import { UPLOAD_CONFIGS } from '@ahanesk/shared';
-
-import { messages } from '@ahanesk/shared';
 import type { AuthUser } from '@ahanesk/shared';
 import { CreateUserDto, UpdateUserDto, UpdateProfileDto, BanUserDto, ChangePasswordDto } from './users.dto';
 import type { UploadedFile as StorageFile } from '../../infrastructure/storage/storage.service';
@@ -59,7 +54,7 @@ export class UsersController {
 
   @Get(':id')
   @Roles('ADMIN')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findById(id);
   }
 
@@ -71,21 +66,21 @@ export class UsersController {
 
   @Patch(':id')
   @Roles('ADMIN')
-  async update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto) {
     return this.usersService.update(id, dto);
   }
 
   @Delete(':id')
   @Roles('ADMIN')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string): Promise<void> {
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.usersService.delete(id);
   }
 
   @Post(':id/ban')
   @Roles('ADMIN')
   async banUser(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: BanUserDto,
     @CurrentUser() admin: AuthUser,
   ) {
@@ -94,7 +89,7 @@ export class UsersController {
 
   @Post(':id/unban')
   @Roles('ADMIN')
-  async unbanUser(@Param('id') id: string, @CurrentUser() admin: AuthUser) {
+  async unbanUser(@Param('id', ParseIntPipe) id: number, @CurrentUser() admin: AuthUser) {
     return this.banService.unbanUser(id, admin.id);
   }
 
@@ -102,27 +97,30 @@ export class UsersController {
 
   @Get(':id/sessions')
   @Roles('ADMIN')
-  async getSessions(@Param('id') id: string) {
+  async getSessions(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.getActiveSessions(id);
   }
 
   @Delete(':id/sessions')
   @Roles('ADMIN')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async revokeAllSessions(@Param('id') id: string): Promise<void> {
+  async revokeAllSessions(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.usersService.revokeAllSessions(id);
   }
 
   @Delete(':id/sessions/:tokenId')
   @Roles('ADMIN')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async revokeSession(@Param('id') id: string, @Param('tokenId') tokenId: string): Promise<void> {
+  async revokeSession(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('tokenId', ParseIntPipe) tokenId: number,
+  ): Promise<void> {
     await this.usersService.revokeSession(id, tokenId);
   }
 
   @Get(':id/activity')
   @Roles('ADMIN')
-  async getActivity(@Param('id') id: string) {
+  async getActivity(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.getActivityLog(id);
   }
 }

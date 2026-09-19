@@ -26,19 +26,19 @@ export class BlogService {
   // ─── Admin ───────────────────────────────────────────────────
   listAll(q: ListPostsQueryDto) { return this.repo.listPosts(q, true); }
 
-  async getById(id: string) {
+  async getById(id: number | bigint) {
     const post = await this.repo.findById(id);
     if (!post) throw new NotFoundException('Post not found');
     return post;
   }
 
-  async createPost(dto: CreatePostDto, authorId: string, file?: UploadedFile) {
+  async createPost(dto: CreatePostDto, authorId: number | bigint, file?: UploadedFile) {
     let cover_image: string | undefined;
     if (file) cover_image = await this.storage.upload(file, 'blog_cover');
     return this.repo.create({ ...dto, author_id: authorId, cover_image });
   }
 
-  async updatePost(id: string, dto: UpdatePostDto, file?: UploadedFile) {
+  async updatePost(id: number | bigint, dto: UpdatePostDto, file?: UploadedFile) {
     const post = await this.getById(id);
     let cover_image = post.cover_image ?? undefined;
     if (file) {
@@ -48,7 +48,7 @@ export class BlogService {
     return this.repo.update(id, { ...dto, cover_image });
   }
 
-  async deletePost(id: string) {
+  async deletePost(id: number | bigint) {
     const post = await this.getById(id);
     if (post.cover_image) await this.storage.delete(post.cover_image).catch(() => {});
     return this.repo.delete(id);
@@ -63,7 +63,7 @@ export class BlogService {
     return this.repo.createCategory({ ...dto, cover_image });
   }
 
-  async updateCategory(id: string, dto: UpdateCategoryDto, file?: UploadedFile) {
+  async updateCategory(id: number | bigint, dto: UpdateCategoryDto, file?: UploadedFile) {
     if (file) {
       const cover_image = await this.storage.upload(file, 'blog_cover');
       return this.repo.updateCategory(id, { ...dto, cover_image });
@@ -71,10 +71,10 @@ export class BlogService {
     return this.repo.updateCategory(id, dto as unknown as Record<string, unknown>);
   }
 
-  deleteCategory(id: string) { return this.repo.deleteCategory(id); }
+  deleteCategory(id: number | bigint) { return this.repo.deleteCategory(id); }
 
   // Tags
   createTag(dto: CreateTagDto) { return this.repo.createTag(dto as unknown as Record<string, unknown>); }
-  updateTag(id: string, dto: UpdateTagDto) { return this.repo.updateTag(id, dto as unknown as Record<string, unknown>); }
-  deleteTag(id: string) { return this.repo.deleteTag(id); }
+  updateTag(id: number | bigint, dto: UpdateTagDto) { return this.repo.updateTag(id, dto as unknown as Record<string, unknown>); }
+  deleteTag(id: number | bigint) { return this.repo.deleteTag(id); }
 }

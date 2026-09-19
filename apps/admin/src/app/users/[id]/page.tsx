@@ -11,7 +11,7 @@ import { UserSessionsPanel } from './user-sessions-panel';
 import { Trash2 } from 'lucide-react';
 
 interface UserDetail {
-  id: string;
+  id: number;
   name: string;
   email: string;
   role: string;
@@ -19,9 +19,9 @@ interface UserDetail {
   email_verified_at: string | null;
   created_at: string;
   bans: Array<{
-    id: string;
+    id: number;
     reason: string;
-    banned_by: string;
+    banned_by: number;
     expires_at: string | null;
     unbanned_at: string | null;
     created_at: string;

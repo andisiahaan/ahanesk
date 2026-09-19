@@ -40,43 +40,55 @@ export class BlogRepository {
     });
   }
 
-  findById(id: string) {
+  findById(id: number | bigint) {
     return this.prisma.blogPost.findUnique({
-      where: { id },
+      where: { id: BigInt(id) },
       include: { author: { select: { id: true, name: true, avatar: true } }, categories: true, tags: true },
     });
   }
 
   async create(data: Record<string, unknown>) {
-    const { categories, tags, ...rest } = data as { categories: string[]; tags: string[]; [key: string]: unknown };
+    const { categories, tags, author_id, ...rest } = data as {
+      categories?: (number | string)[];
+      tags?: string[];
+      author_id?: number | bigint;
+      [key: string]: unknown;
+    };
     
     const tagIds = await this.ensureTagsExist(tags || []);
 
     return this.prisma.blogPost.create({
       data: Object.assign({}, rest, {
-        categories: { connect: (categories || []).map((id) => ({ id })) },
-        tags:       { connect: tagIds.map((id) => ({ id })) },
+        ...(author_id ? { author: { connect: { id: BigInt(author_id) } } } : {}),
+        categories: { connect: (categories || []).map((id) => ({ id: BigInt(id) })) },
+        tags:       { connect: tagIds.map((id) => ({ id: BigInt(id) })) },
       }) as never,
       include: { categories: true, tags: true },
     });
   }
 
-  async update(id: string, data: Record<string, unknown>) {
-    const { categories, tags, ...rest } = data as { categories?: string[]; tags?: string[]; [key: string]: unknown };
+  async update(id: number | bigint, data: Record<string, unknown>) {
+    const { categories, tags, author_id, ...rest } = data as {
+      categories?: (number | string)[];
+      tags?: string[];
+      author_id?: number | bigint;
+      [key: string]: unknown;
+    };
     
     const tagIds = tags ? await this.ensureTagsExist(tags) : undefined;
 
     return this.prisma.blogPost.update({
-      where: { id },
+      where: { id: BigInt(id) },
       data: Object.assign({}, rest, {
-        ...(categories ? { categories: { set: categories.map((cid) => ({ id: cid })) } } : {}),
-        ...(tags       ? { tags:       { set: tagIds!.map((tid) => ({ id: tid })) } }       : {}),
+        ...(author_id ? { author: { connect: { id: BigInt(author_id) } } } : {}),
+        ...(categories ? { categories: { set: categories.map((cid) => ({ id: BigInt(cid) })) } } : {}),
+        ...(tags       ? { tags:       { set: tagIds!.map((tid) => ({ id: BigInt(tid) })) } }       : {}),
       }) as never,
       include: { categories: true, tags: true },
     });
   }
 
-  private async ensureTagsExist(tags: string[]): Promise<string[]> {
+  private async ensureTagsExist(tags: string[]): Promise<bigint[]> {
     if (!tags || tags.length === 0) return [];
     
     const processed = tags.map(t => {
@@ -110,7 +122,7 @@ export class BlogRepository {
     return existingTags.map(t => t.id);
   }
 
-  delete(id: string) { return this.prisma.blogPost.delete({ where: { id } }); }
+  delete(id: number | bigint) { return this.prisma.blogPost.delete({ where: { id: BigInt(id) } }); }
 
   // Categories
   listCategories(active?: boolean) {
@@ -121,14 +133,14 @@ export class BlogRepository {
     });
   }
   createCategory(data: Record<string, unknown>) { return this.prisma.blogCategory.create({ data: data as never }); }
-  updateCategory(id: string, data: Record<string, unknown>) { return this.prisma.blogCategory.update({ where: { id }, data: data as never }); }
-  deleteCategory(id: string) { return this.prisma.blogCategory.delete({ where: { id } }); }
+  updateCategory(id: number | bigint, data: Record<string, unknown>) { return this.prisma.blogCategory.update({ where: { id: BigInt(id) }, data: data as never }); }
+  deleteCategory(id: number | bigint) { return this.prisma.blogCategory.delete({ where: { id: BigInt(id) } }); }
 
   // Tags
   listTags(page: number, limit: number) {
     return this.prisma.blogTag.findMany({ skip: (page - 1) * limit, take: limit, orderBy: { name: 'asc' }, include: { _count: { select: { posts: true } } } });
   }
   createTag(data: Record<string, unknown>) { return this.prisma.blogTag.create({ data: data as never }); }
-  updateTag(id: string, data: Record<string, unknown>) { return this.prisma.blogTag.update({ where: { id }, data: data as never }); }
-  deleteTag(id: string) { return this.prisma.blogTag.delete({ where: { id } }); }
+  updateTag(id: number | bigint, data: Record<string, unknown>) { return this.prisma.blogTag.update({ where: { id: BigInt(id) }, data: data as never }); }
+  deleteTag(id: number | bigint) { return this.prisma.blogTag.delete({ where: { id: BigInt(id) } }); }
 }
