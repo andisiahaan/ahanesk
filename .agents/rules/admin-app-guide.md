@@ -37,6 +37,7 @@ Auth store (`useAdminAuthStore`) hanya menyimpan objek `user` — tidak ada `acc
 - Sama dengan frontend: axios instance `src/lib/api.ts` dengan `withCredentials: true`, auto-refresh on 401.
 - **Server state**: TanStack Query. **Client state**: Zustand.
 - **Dilarang fetch langsung di komponen UI**.
+- **Storage / Asset Image URL**: Gunakan `getImageUrl(path)` dari `src/lib/api.ts` yang membaca `NEXT_PUBLIC_STORAGE_URL`. Dilarang menggabungkan path storage secara manual dengan `NEXT_PUBLIC_API_URL`.
 
 ## i18n (Internasionalisasi)
 

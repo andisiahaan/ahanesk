@@ -9,6 +9,7 @@ Dashboard administrasi Next.js 16 App Router dari **AhanESK Monorepo**.
   1. **Layer 1 (`src/proxy.ts`)**: Server-side proxy yang memvalidasi keberadaan cookie `access_token` dan mengarahkan ke `/auth/login` jika tidak ada.
   2. **Layer 2 (`AdminShell`)**: Client-side verify role dengan memanggil `fetchMe()` dari backend (`api.ts`).
 - **State Management**: TanStack Query untuk server state dan Zustand untuk client state (`useAdminAuthStore` hanya menyimpan objek `user`).
+- **Storage / Asset Images**: Menggunakan helper `getImageUrl(path)` membaca `NEXT_PUBLIC_STORAGE_URL` (terhubung ke root monorepo `/storage` via web server atau S3).
 - **Internasionalisasi (`next-intl`)**: Kamus terjemahan tersentralisasi di `packages/shared/src/locales/en/admin`.
 
 ## 🛠️ Cara Menjalankan
@@ -22,6 +23,7 @@ Atau jalankan seluruh monorepo secara serentak via `pnpm run dev` dari root, lal
 Salin dari `.env.example`:
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:10321
+NEXT_PUBLIC_STORAGE_URL=http://ahansk.test/storage
 NEXT_PUBLIC_FRONTEND_URL=http://localhost:10322
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your-recaptcha-site-key
 ```

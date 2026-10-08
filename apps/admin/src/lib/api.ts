@@ -60,3 +60,18 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+// ─── Storage Image URL Helper ────────────────────────────────────────────────
+export function getImageUrl(path: string | null | undefined): string | null {
+  if (!path) return null;
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) return path;
+
+  const baseUrl = (process.env.NEXT_PUBLIC_STORAGE_URL ?? 'http://ahansk.test/storage').replace(/\/$/, '');
+  let cleanPath = path.startsWith('/') ? path.substring(1) : path;
+
+  if (baseUrl.endsWith('/storage') && cleanPath.startsWith('storage/')) {
+    cleanPath = cleanPath.substring(8);
+  }
+
+  return `${baseUrl}/${cleanPath}`;
+}

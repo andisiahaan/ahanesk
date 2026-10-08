@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs/promises';
+import * as fsSync from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import type { StorageDriver, UploadedFile } from '../storage.service';
@@ -12,7 +13,27 @@ export class LocalDriver implements StorageDriver {
   constructor(private readonly config: ConfigService) {}
 
   private get basePath(): string {
-    return this.config.get<string>('app.storage.localPath', './uploads');
+    const configured = this.config.get<string>('app.storage.localPath', '../../storage');
+    if (path.isAbsolute(configured)) return configured;
+
+    // Cari root monorepo (direktori yang memiliki pnpm-workspace.yaml)
+    let curr = process.cwd();
+    for (let i = 0; i < 5; i++) {
+      if (fsSync.existsSync(path.join(curr, 'pnpm-workspace.yaml'))) {
+        return path.resolve(curr, 'storage');
+      }
+      const parent = path.dirname(curr);
+      if (parent === curr) break;
+      curr = parent;
+    }
+
+    return path.resolve(process.cwd(), configured);
+  }
+
+  getUrl(filePath: string): string {
+    const baseUrl = this.config.get<string>('app.storage.url', 'http://ahansk.test/storage').replace(/\/$/, '');
+    const clean = filePath.replace(/^\//, '');
+    return `${baseUrl}/${clean}`;
   }
 
   async upload(file: UploadedFile, context: UploadContext): Promise<string> {
@@ -31,3 +52,4 @@ export class LocalDriver implements StorageDriver {
     await fs.rm(path.join(this.basePath, filePath), { force: true });
   }
 }
+

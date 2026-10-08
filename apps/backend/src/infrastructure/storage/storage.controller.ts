@@ -10,7 +10,7 @@ export class StorageController {
   constructor(private readonly config: ConfigService) {}
 
   private get basePath(): string {
-    return this.config.get<string>('app.storage.localPath', './uploads');
+    return this.config.get<string>('app.storage.localPath', '../../storage');
   }
 
   @Get(':context/:filename')

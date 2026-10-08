@@ -42,12 +42,14 @@ export const envSchema = z.object({
 
   // ─── Storage ──────────────────────────────────────────────────────────────
   DISK: z.enum(['local', 's3']).default('local'),
-  STORAGE_LOCAL_PATH: z.string().default('./uploads'),
+  STORAGE_LOCAL_PATH: z.string().default('../../storage'),
+  STORAGE_URL: z.string().url().default('http://ahansk.test/storage'),
   S3_ENDPOINT: z.string().url().optional(),
   S3_BUCKET: z.string().optional(),
   S3_REGION: z.string().optional(),
   S3_KEY: z.string().optional(),
   S3_SECRET: z.string().optional(),
+  S3_PUBLIC_URL: z.string().url().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

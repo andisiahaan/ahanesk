@@ -27,6 +27,7 @@ App: `apps/frontend` — domain `domain.com`
 - Server Components pakai `apiFetch` dari `src/lib/api.ts`.
 - **Server state**: TanStack Query. **Client state**: Zustand.
 - `api.ts` menggunakan `withCredentials: true` dan auto-refresh on 401.
+- **Storage / Asset Image URL**: Gunakan `getImageUrl(path)` dari `src/lib/api.ts` yang membaca `NEXT_PUBLIC_STORAGE_URL`. Dilarang menggabungkan path storage secara manual dengan `NEXT_PUBLIC_API_URL`.
 
 ## Form & Validasi
 

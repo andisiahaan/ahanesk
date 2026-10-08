@@ -33,17 +33,19 @@ Ini adalah **starter kit monorepo untuk project skala menengah ke atas**. Kerumi
 | Queue | Redis DB 0 + BullMQ |
 | Validasi | Zod v4 (backend: global `ZodValidationPipe` + `createZodDto` class; frontend: react-hook-form + zodResolver) |
 | i18n | next-intl, cookie-based locale, semua locale di `packages/shared` |
+| Storage | Local (`/storage` di root monorepo) & S3-compatible, ditentukan via `.env` `DISK=local|s3` |
 
 ## Monorepo Structure
 
 ```
 apps/
-  backend/    → NestJS (port 10311)
-  frontend/   → Next.js user-facing (port 10312)
-  admin/      → Next.js admin panel (port 10313)
+  backend/    → NestJS (port 10321)
+  frontend/   → Next.js user-facing (port 10322)
+  admin/      → Next.js admin panel (port 10323)
 packages/
   shared/     → Zod schemas, types, constants, i18n localeRegistry, pagination utils
   ui/         → Komponen & asset shared antar Next.js apps (Logo, favicon)
+storage/      → Folder storage local root project (dilayani web server / subdomain langsung)
 ```
 
 ## Import Path Aliases
@@ -76,3 +78,4 @@ packages/
 - Menggunakan `import * as cookieParser` — pakai `import cookieParser = require(...)`.
 - Melakukan mutasi data tanpa memverifikasi CSRF Token di backend (Double-Submit Cookie).
 - Menggunakan alias `type` pada DTO di controller NestJS. Wajib memakai `class` via `createZodDto`.
+- Menyimpan file upload di dalam `apps/backend` (wajib di root monorepo `/storage` jika disk local, disajikan langsung oleh web server / subdomain).

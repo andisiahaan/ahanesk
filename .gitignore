@@ -55,4 +55,6 @@ next-env.d.ts
 
 # Uploads / Public assets
 apps/backend/uploads/
+uploads/
+/storage/
 self-guide.md

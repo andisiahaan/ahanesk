@@ -113,9 +113,13 @@ Gunakan `PaginatedResponse<T>` dan `buildPaginationMeta()`.
 
 ## File Upload
 
-- Gunakan `StorageService`. Konfigurasi upload (MIME type, ukuran, prefix folder) wajib di `src/config/filesystem.ts` sebagai SSOT (`DISK_CONFIGS`) — bukan inline di module/controller.
-- **Simpan path relatif ke DB**, bukan full URL.
-- Driver storage ditentukan env var `DISK=local|s3`. Validasi di `env.validation.ts`.
+- Gunakan `StorageService`. Konfigurasi upload (MIME type, ukuran, prefix folder) SSOT di `packages/shared/src/upload-configs.ts` (`UPLOAD_CONFIGS`) — bukan inline di module/controller.
+- **Simpan path relatif ke DB**, bukan full URL (contoh: `avatars/xyz.webp`, `blog/cover.jpg`).
+- Driver storage ditentukan env var `DISK=local|s3` (validasi di `env.validation.ts`).
+- **Local Storage di Root Monorepo**: Driver `local` menyimpan file ke root monorepo di folder `/storage` (`STORAGE_LOCAL_PATH=../../storage`), bukan di dalam folder API backend.
+- **Penyajian File Statis Independen**: Akses file lokal dilayani langsung oleh web server (Laragon vhost / Nginx / Apache / subdomain, misal `http://ahansk.test/storage` atau `https://storage.domain.com`), BUKAN melalui streaming controller NestJS.
+- **Public URL**: Base URL publik didefinisikan lewat `STORAGE_URL` di backend dan `NEXT_PUBLIC_STORAGE_URL` di frontend & admin. Helper URL: `storageService.getUrl(path)` di backend dan `getImageUrl(path)` di frontend/admin.
+- **Disk Override Runtime**: `StorageService.upload()` menerima opsi disk override `{ disk?: 'local' | 's3' }` jika pemanggil ingin menyimpan ke disk spesifik.
 
 ## Fitur Opsional (tambah hanya jika project membutuhkan)
 

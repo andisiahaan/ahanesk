@@ -9,12 +9,13 @@ A mid-to-high scale Monorepo Starter Kit based on **NestJS**, **Next.js App Rout
 ```
 ahanesk/
 ├── apps/
-│   ├── backend/    → NestJS API Server (Port 10311)
-│   ├── frontend/   → Next.js User-Facing App Router (Port 10312)
-│   └── admin/      → Next.js Admin Panel Dashboard (Port 10313)
+│   ├── backend/    → NestJS API Server (Port 10321)
+│   ├── frontend/   → Next.js User-Facing App Router (Port 10322)
+│   └── admin/      → Next.js Admin Panel Dashboard (Port 10323)
 ├── packages/
 │   ├── shared/     → Zod schemas, types, constants, i18n locales registry, pagination utils
 │   └── ui/         → Shared UI Components & assets (Logo, favicon, shadcn tokens)
+├── storage/        → Root local storage (direct static serving via Laragon/web server)
 ├── ecosystem.config.js → PM2 Cluster & Instance Configuration
 └── turbo.json      → Turborepo Pipeline
 ```
@@ -32,6 +33,8 @@ ahanesk/
 | **ORM & Database** | **Prisma** + **MySQL / MariaDB** | DB Queries exclusively in `*.repository.ts`. All SQL migrations must be tracked in Git |
 | **Data Validation** | **Zod v4** (`z.object(...)`) | Backend: `ZodValidationPipe`; Frontend/Admin: `react-hook-form` + `zodResolver` |
 | **Authentication** | **JWT httpOnly Cookie** + **Passport** | Access token (15m) & Refresh token (7d) in httpOnly cookies (`access_token`) |
+| **OAuth / Google** | **Google Identity Services** | `@react-oauth/google` with Google Sign-In & One Tap on Frontend, server verification with `google-auth-library` |
+| **Storage System** | **Local (`/storage` root) & S3** | Switchable via `DISK=local\|s3`. Local uploads reside in monorepo root `/storage` and are served directly by web server / subdomain |
 | **Caching** | **Redis DB 1** (`@nestjs/cache-manager`) | Namespace `cache:*`. Explicitly invalidated on write (Memcached is not used) |
 | **Queue** | **BullMQ + Redis DB 0** | Async/background job processing separated from cache |
 | **Internationalization** | **next-intl** (`packages/shared/src/locales`) | SSOT translation EN/ID in shared package, cookie-based `locale` |
@@ -86,9 +89,9 @@ pnpm run db:seed
 pnpm run dev
 ```
 Once the server is running, services will be accessible at:
-- **Backend API**: http://localhost:10311 (`GET /` to check health status)
-- **Frontend App**: http://localhost:10312
-- **Admin Dashboard**: http://localhost:10313
+- **Backend API**: http://localhost:10321 (`GET /` to check health status)
+- **Frontend App**: http://localhost:10322
+- **Admin Dashboard**: http://localhost:10323
 
 ---
 
@@ -166,4 +169,5 @@ pm2 logs ahanesk-backend
 2. **Readability & Data Types**: The use of `any` type is strictly forbidden. Use `unknown` + type narrowing or Zod inferred types.
 3. **Auth Token Storage**: Access tokens and Refresh tokens are set directly via **httpOnly cookies** by the backend server. Frontend and Admin are not permitted to store authentication tokens in `localStorage`.
 4. **I18n / Localization**: Hardcoding UI strings in JSX/TSX is prohibited. All translated strings are stored in the SSOT registry at `packages/shared/src/locales`.
-5. **Custom Guides**: Any addition of new conventions must be immediately updated in the guide files located inside `.agents/rules/` (`project-guide.md`, `backend-app-guide.md`, `frontend-app-guide.md`, `admin-app-guide.md`).
+5. **Storage & Assets**: Uploaded files must never be placed inside the backend API directory. In local mode, files reside in the root `/storage` directory and are served directly by web server / subdomain via `STORAGE_URL` / `NEXT_PUBLIC_STORAGE_URL`. The database only stores relative paths.
+6. **Custom Guides**: Any addition of new conventions must be immediately updated in the guide files located inside `.agents/rules/` (`project-guide.md`, `backend-app-guide.md`, `frontend-app-guide.md`, `admin-app-guide.md`).

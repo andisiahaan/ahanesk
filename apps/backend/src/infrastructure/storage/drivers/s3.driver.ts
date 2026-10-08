@@ -29,6 +29,17 @@ export class S3Driver implements StorageDriver {
     });
   }
 
+  getUrl(filePath: string): string {
+    const publicUrl = this.config.get<string>('app.storage.s3.publicUrl');
+    const clean = filePath.replace(/^\//, '');
+    if (publicUrl) {
+      return `${publicUrl.replace(/\/$/, '')}/${clean}`;
+    }
+    const endpoint = this.config.get<string>('app.storage.s3.endpoint', '');
+    const cleanEndpoint = endpoint.replace(/\/$/, '');
+    return `${cleanEndpoint}/${this.bucket}/${clean}`;
+  }
+
   async upload(file: UploadedFile, context: UploadContext): Promise<string> {
     const { prefix } = UPLOAD_CONFIGS[context];
     const ext        = path.extname(file.originalname).toLowerCase();

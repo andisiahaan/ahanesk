@@ -93,17 +93,14 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
 // ─── Storage Image URL Helper ────────────────────────────────────────────────
 export function getImageUrl(path: string | null | undefined): string | null {
   if (!path) return null;
-  if (path.startsWith('http://') || path.startsWith('https://')) return path;
-  if (path.startsWith('data:')) return path;
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) return path;
   
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10311';
-  // Ensure we don't double slash if path starts with slash
-  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+  const baseUrl = (process.env.NEXT_PUBLIC_STORAGE_URL ?? 'http://ahansk.test/storage').replace(/\/$/, '');
+  let cleanPath = path.startsWith('/') ? path.substring(1) : path;
   
-  // If the path already has 'storage/' prefix, just append it
-  if (cleanPath.startsWith('storage/')) {
-    return `${baseUrl}/${cleanPath}`;
+  if (baseUrl.endsWith('/storage') && cleanPath.startsWith('storage/')) {
+    cleanPath = cleanPath.substring(8);
   }
   
-  return `${baseUrl}/storage/${cleanPath}`;
+  return `${baseUrl}/${cleanPath}`;
 }

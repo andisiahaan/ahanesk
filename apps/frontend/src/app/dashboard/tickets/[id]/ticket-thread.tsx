@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, MessageSquare, Shield, XCircle, Clock, Paperclip, X } from 'lucide-react';
 import { UPLOAD_CONFIGS, CreateReplySchema, type CreateReplyDto } from '@ahanesk/shared';
-import api from '@/lib/api';
+import api, { getImageUrl } from '@/lib/api';
 import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/cn';
@@ -200,7 +200,7 @@ function MessageBubble({ name, isStaff, date, message, isFirst = false, attachme
       {attachments && attachments.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-border/50">
           {attachments.map((att, i) => (
-            <a key={i} href={`${process.env.NEXT_PUBLIC_API_URL}/storage/${att}`} target="_blank" rel="noreferrer"
+            <a key={i} href={getImageUrl(att) || '#'} target="_blank" rel="noreferrer"
               className="flex items-center gap-1.5 text-xs text-primary hover:underline underline-offset-2">
               <Paperclip className="size-3" />{att.split('/').pop()}
             </a>

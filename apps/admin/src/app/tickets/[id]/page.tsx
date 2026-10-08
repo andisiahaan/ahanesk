@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { UPLOAD_CONFIGS } from '@ahanesk/shared';
-import api from '@/lib/api';
+import api, { getImageUrl } from '@/lib/api';
 import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -114,7 +114,7 @@ export default function TicketDetailPage() {
             {r.attachments.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-2">
                 {r.attachments.map((att, i) => (
-                  <a key={i} href={`${process.env.NEXT_PUBLIC_API_URL}/storage/${att}`} target="_blank" rel="noreferrer"
+                  <a key={i} href={getImageUrl(att) || '#'} target="_blank" rel="noreferrer"
                     className="flex items-center gap-1 text-xs text-primary hover:underline underline-offset-2">
                     <Paperclip className="size-3" />{att.split('/').pop()}
                   </a>

@@ -3,6 +3,7 @@ import { Geist } from 'next/font/google';
 import { getBrandIcons } from '@ahanesk/ui';
 import { getLocale, getMessages } from 'next-intl/server';
 import { ThemeProvider } from '@/providers/theme-provider';
+import { GoogleAuthProvider } from '@/providers/google-auth-provider';
 import { AuthProvider } from '@/providers/auth-provider';
 import { IntlProvider } from '@/providers/intl-provider';
 import { Toaster } from '@/components/ui/toast';
@@ -50,10 +51,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <IntlProvider locale={locale} messages={messages}>
           <QueryProvider>
             <ThemeProvider>
-              <AuthProvider isLoggedIn={isLoggedIn}>
-                {children}
-                <Toaster />
-              </AuthProvider>
+              <GoogleAuthProvider>
+                <AuthProvider isLoggedIn={isLoggedIn}>
+                  {children}
+                  <Toaster />
+                </AuthProvider>
+              </GoogleAuthProvider>
             </ThemeProvider>
           </QueryProvider>
         </IntlProvider>

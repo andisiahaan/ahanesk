@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { UPLOAD_CONFIGS } from '@ahanesk/shared';
-import api from '@/lib/api';
+import api, { getImageUrl } from '@/lib/api';
 import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -121,7 +121,7 @@ export default function BlogPostEditPage() {
           {previewSrc ? (
             <div className="relative w-48 h-28 rounded-xl overflow-hidden border border-border group">
               <img
-                src={previewSrc.startsWith('blob:') ? previewSrc : `${process.env.NEXT_PUBLIC_API_URL}/storage/${previewSrc}`}
+                src={previewSrc.startsWith('blob:') ? previewSrc : (getImageUrl(previewSrc) || '')}
                 alt="Cover" className="w-full h-full object-cover"
               />
               <button onClick={removeCover}

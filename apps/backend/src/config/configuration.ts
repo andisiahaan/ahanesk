@@ -33,12 +33,14 @@ export default registerAs('app', () => {
     storage: {
       disk: env.DISK,
       localPath: env.STORAGE_LOCAL_PATH,
+      url: env.STORAGE_URL,
       s3: {
         endpoint: env.S3_ENDPOINT,
         bucket: env.S3_BUCKET,
         region: env.S3_REGION,
         key: env.S3_KEY,
         secret: env.S3_SECRET,
+        publicUrl: env.S3_PUBLIC_URL,
       },
     },
   };
