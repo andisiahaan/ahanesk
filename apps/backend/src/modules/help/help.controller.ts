@@ -25,6 +25,7 @@ export class HelpController {
     return this.service.getPublicArticleBySlug(slug);
   }
 
+  @Public()
   @Post('articles/:id/vote')
   async vote(
     @Param('id', ParseIntPipe) id: number,

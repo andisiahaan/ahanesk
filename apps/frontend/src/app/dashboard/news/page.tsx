@@ -6,7 +6,7 @@ import { apiFetch } from '@/lib/api';
 export const metadata = { title: 'News' };
 
 interface NewsItem {
-  id:           string;
+  id:           number;
   title:        string;
   slug:         string;
   type:         string;

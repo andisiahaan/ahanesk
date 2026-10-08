@@ -7,7 +7,14 @@ export const metadata: Metadata = {
   description: 'Browse all blog tags.',
 };
 
-async function getTags() {
+interface Tag {
+  id: number;
+  name: string;
+  slug: string;
+  _count?: { posts: number };
+}
+
+async function getTags(): Promise<Tag[]> {
   try {
     const res = await apiFetch('/blog/tags?limit=200');
     if (!res.ok) return [];
@@ -30,7 +37,7 @@ export default async function BlogTagsPage() {
         <p className="text-muted-foreground">No tags found.</p>
       ) : (
         <div className="flex flex-wrap gap-3">
-          {tags.map((t: any) => (
+          {tags.map((t) => (
             <Link key={t.id} href={`/blog/tags/${t.slug}`}
               className="group flex items-center gap-2 px-4 py-2 border border-border rounded-full bg-card hover:border-primary/50 hover:bg-primary hover:text-primary-foreground transition-colors text-sm text-muted-foreground">
               <span className="font-medium group-hover:text-primary-foreground transition-colors">{t.name}</span>

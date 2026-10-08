@@ -30,7 +30,7 @@ export default function HelpCategoryFormPage({ params }: { params: Promise<{ id:
     if (isNew) return;
     api.get(`/admin/help/categories`)
       .then(({ data }) => {
-        const cat = data.data?.find((c: any) => c.id === id);
+        const cat = data.data?.find((c: any) => String(c.id) === String(id));
         if (cat) {
           setFormData({
             title: cat.title,

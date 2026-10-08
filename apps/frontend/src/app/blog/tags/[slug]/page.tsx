@@ -10,7 +10,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: `Tag: ${slug} | Blog` };
 }
 
-async function getTagPosts(slug: string) {
+interface TagPost {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  cover_image: string | null;
+  published_at: string | null;
+  author: { name: string };
+}
+
+async function getTagPosts(slug: string): Promise<TagPost[]> {
   try {
     const res = await apiFetch(`/blog/posts?tag=${slug}&limit=20`);
     if (!res.ok) return [];
@@ -40,7 +50,7 @@ export default async function BlogTagPage({ params }: Props) {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {posts.map((post: any) => (
+          {posts.map((post) => (
             <Link key={post.id} href={`/blog/${post.slug}`}
               className="group flex flex-col border border-border rounded-2xl overflow-hidden bg-card hover:border-primary/40 hover:shadow-md transition-all duration-300">
               {post.cover_image && (

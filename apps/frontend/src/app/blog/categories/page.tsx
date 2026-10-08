@@ -7,7 +7,14 @@ export const metadata: Metadata = {
   description: 'Browse all blog categories.',
 };
 
-async function getCategories() {
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  _count?: { posts: number };
+}
+
+async function getCategories(): Promise<Category[]> {
   try {
     const res = await apiFetch('/blog/categories');
     if (!res.ok) return [];
@@ -30,7 +37,7 @@ export default async function BlogCategoriesPage() {
         <p className="text-muted-foreground">No categories found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {categories.map((c: any) => (
+          {categories.map((c) => (
             <Link key={c.id} href={`/blog/categories/${c.slug}`}
               className="group flex items-center justify-between p-4 border border-border rounded-xl bg-card hover:border-primary/50 hover:bg-primary/5 transition-colors">
               <span className="font-bold text-foreground group-hover:text-primary transition-colors">{c.name}</span>

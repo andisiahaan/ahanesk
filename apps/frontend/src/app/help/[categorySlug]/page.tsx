@@ -4,17 +4,17 @@ import type { Metadata } from 'next';
 import { ChevronRight, FileText, ArrowRight } from 'lucide-react';
 
 interface Article {
-  id: string; slug: string; title: string;
+  id: number; slug: string; title: string;
   meta_description: string | null; sort_order: number;
 }
 interface Category {
-  id: string; slug: string; title: string; description: string | null;
+  id: number; slug: string; title: string; description: string | null;
   icon: string | null; articles: Article[];
 }
 
 interface PageProps { params: Promise<{ categorySlug: string }> }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10311';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10321';
 
 async function getCategory(slug: string): Promise<Category | null> {
   try {

@@ -5,7 +5,7 @@ import { apiFetch } from '@/lib/api';
 export const metadata = { title: 'Support Tickets' };
 
 interface Ticket {
-  id:            string;
+  id:            number;
   ticket_number: string;
   subject:       string;
   status:        string;
@@ -34,7 +34,7 @@ async function getTickets(): Promise<Ticket[]> {
     const res = await apiFetch('/tickets?limit=50');
     if (!res.ok) return [];
     const data = await res.json();
-    return Array.isArray(data.data) ? data.data : [];
+    return data.data?.items ?? (Array.isArray(data.data) ? data.data : []);
   } catch { return []; }
 }
 

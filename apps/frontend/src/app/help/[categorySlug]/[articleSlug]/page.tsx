@@ -5,14 +5,14 @@ import { ChevronRight, LifeBuoy, MessageSquarePlus } from 'lucide-react';
 import { HelpfulVote } from './helpful-vote';
 
 interface Article {
-  id: string; slug: string; title: string; content: string;
+  id: number; slug: string; title: string; content: string;
   meta_description: string | null; helpful_yes: number; helpful_no: number;
-  category: { id: string; slug: string; title: string };
+  category: { id: number; slug: string; title: string };
 }
 
 interface PageProps { params: Promise<{ categorySlug: string; articleSlug: string }> }
 
-const API_URL    = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10311';
+const API_URL    = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10321';
 const DASH_PATH  = process.env.NEXT_PUBLIC_DASHBOARD_PATH ?? '/dashboard';
 
 async function getArticle(slug: string): Promise<Article | null> {

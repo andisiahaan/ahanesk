@@ -9,8 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Paperclip, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
-interface Reply { id: string; message: string; is_staff_reply: boolean; attachments: string[]; created_at: string; user: { name: string; role: string }; }
-interface Ticket { id: string; ticket_number: string; subject: string; description: string; status: string; priority: string; category: string | null; user: { name: string; email: string }; assignee: { id: string; name: string } | null; replies: Reply[]; created_at: string; }
+interface Reply { id: number; message: string; is_staff_reply: boolean; attachments: string[]; created_at: string; user: { name: string; role: string }; }
+interface Ticket { id: number; ticket_number: string; subject: string; description: string; status: string; priority: string; category: string | null; user: { name: string; email: string }; assignee: { id: number; name: string } | null; replies: Reply[]; created_at: string; }
 
 const STATUSES   = ['OPEN', 'IN_PROGRESS', 'ON_HOLD', 'RESOLVED', 'CLOSED'];
 const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];

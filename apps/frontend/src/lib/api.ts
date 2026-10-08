@@ -4,7 +4,7 @@ import axios from 'axios';
 // All auth is cookie-based (httpOnly). No manual token management needed here.
 // withCredentials ensures cookies are sent on every request automatically.
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10311',
+  baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10321',
   withCredentials: true,
 });
 
@@ -14,7 +14,7 @@ api.interceptors.request.use(async (config) => {
     let match = document.cookie.match(new RegExp('(^| )csrf_token=([^;]+)'));
     if (!match) {
       try {
-        const baseURL = config.baseURL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10311';
+        const baseURL = config.baseURL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10321';
         await axios.get(`${baseURL.replace(/\/$/, '')}/`, { withCredentials: true });
         match = document.cookie.match(new RegExp('(^| )csrf_token=([^;]+)'));
       } catch (e) {
@@ -79,7 +79,7 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
       .join('; ');
   }
 
-  const url = `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10311'}${endpoint}`;
+  const url = `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10321'}${endpoint}`;
 
   return fetch(url, {
     ...options,
@@ -95,7 +95,7 @@ export function getImageUrl(path: string | null | undefined): string | null {
   if (!path) return null;
   if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) return path;
   
-  const baseUrl = (process.env.NEXT_PUBLIC_STORAGE_URL ?? 'http://ahansk.test/storage').replace(/\/$/, '');
+  const baseUrl = (process.env.NEXT_PUBLIC_STORAGE_URL ?? 'http://ahanesk.test/storage').replace(/\/$/, '');
   let cleanPath = path.startsWith('/') ? path.substring(1) : path;
   
   if (baseUrl.endsWith('/storage') && cleanPath.startsWith('storage/')) {

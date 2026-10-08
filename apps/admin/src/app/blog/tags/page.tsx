@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-interface Tag { id: string; name: string; slug: string; _count?: { posts: number } }
+interface Tag { id: number; name: string; slug: string; _count?: { posts: number } }
 interface Form { name: string; slug: string }
 const EMPTY: Form = { name: '', slug: '' };
 
@@ -14,7 +14,7 @@ const toSlug = (str: string) => str.toLowerCase().replace(/[^a-z0-9]+/g, '-').re
 
 export default function BlogTagsPage() {
   const [tags, setTags]         = useState<Tag[]>([]);
-  const [editing, setEditing]   = useState<string | null>(null);
+  const [editing, setEditing]   = useState<number | 'new' | null>(null);
   const [form, setForm]         = useState<Form>(EMPTY);
   const [saving, setSaving]     = useState(false);
 
@@ -48,7 +48,7 @@ export default function BlogTagsPage() {
     finally { setSaving(false); }
   };
 
-  const del = async (id: string, name: string) => {
+  const del = async (id: number, name: string) => {
     if (!confirm(`Delete tag "${name}"? It will be detached from all posts.`)) return;
     try {
       await api.delete(`/admin/blog/tags/${id}`);

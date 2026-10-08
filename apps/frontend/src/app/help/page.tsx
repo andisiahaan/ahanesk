@@ -11,13 +11,13 @@ export const metadata: Metadata = {
 };
 
 interface HelpCategory {
-  id: string; slug: string; title: string; description: string | null;
-  icon: string | null; articles: { id: string }[];
+  id: number; slug: string; title: string; description: string | null;
+  icon: string | null; articles: { id: number }[];
 }
 
 async function getCategories(): Promise<HelpCategory[]> {
   try {
-    const url = `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10311'}/help/categories`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10321'}/help/categories`;
     const res = await fetch(url, { next: { revalidate: 60 } });
     if (!res.ok) return [];
     const data = await res.json();

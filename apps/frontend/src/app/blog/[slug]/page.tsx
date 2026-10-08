@@ -8,8 +8,16 @@ interface Post {
   cover_image: string | null; published_at: string | null; view_count: number;
   meta_title: string | null; meta_description: string | null;
   author: { name: string; avatar: string | null };
-  categories: { id: string; name: string; slug: string }[];
-  tags: { id: string; name: string; slug: string }[];
+  categories: { id: number; name: string; slug: string }[];
+  tags: { id: number; name: string; slug: string }[];
+}
+
+interface RelatedPost {
+  id: number;
+  slug: string;
+  title: string;
+  cover_image: string | null;
+  published_at: string | null;
 }
 
 async function getPost(slug: string): Promise<Post | null> {
@@ -21,13 +29,13 @@ async function getPost(slug: string): Promise<Post | null> {
   } catch { return null; }
 }
 
-async function getRelatedPosts(categorySlug: string | undefined, currentSlug: string) {
+async function getRelatedPosts(categorySlug: string | undefined, currentSlug: string): Promise<RelatedPost[]> {
   if (!categorySlug) return [];
   try {
     const res = await apiFetch(`/blog/posts?category=${categorySlug}&limit=3`);
     if (!res.ok) return [];
     const data = await res.json();
-    return (data.data?.posts ?? []).filter((p: any) => p.slug !== currentSlug).slice(0, 2);
+    return ((data.data?.posts ?? []) as RelatedPost[]).filter((p) => p.slug !== currentSlug).slice(0, 2);
   } catch { return []; }
 }
 
@@ -112,7 +120,7 @@ export default async function BlogPostPage({ params }: Props) {
         <div className="mt-16 pt-10 border-t border-border">
           <h3 className="text-2xl font-bold text-foreground mb-6">Related Posts</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {relatedPosts.map((rp: any) => (
+            {relatedPosts.map((rp) => (
               <Link key={rp.id} href={`/blog/${rp.slug}`} className="group flex flex-col border border-border rounded-xl overflow-hidden bg-card hover:border-primary/40 transition-colors">
                 {rp.cover_image && (
                   <div className="h-40 bg-muted overflow-hidden shrink-0">

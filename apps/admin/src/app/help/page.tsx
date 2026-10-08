@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 interface Category {
-  id: string;
+  id: number;
   title: string;
   slug: string;
   is_published: boolean;
@@ -16,11 +16,11 @@ interface Category {
 }
 
 interface Article {
-  id: string;
+  id: number;
   title: string;
   slug: string;
   is_published: boolean;
-  category: { id: string; title: string };
+  category: { id: number; title: string };
   sort_order: number;
 }
 
@@ -54,7 +54,7 @@ export default function HelpCenterPage() {
     fetchData();
   }, [fetchData]);
 
-  const deleteCategory = async (id: string) => {
+  const deleteCategory = async (id: number) => {
     if (!confirm(t('deleteCategory') + '?')) return;
     try {
       await api.delete(`/admin/help/categories/${id}`);
@@ -65,7 +65,7 @@ export default function HelpCenterPage() {
     }
   };
 
-  const deleteArticle = async (id: string) => {
+  const deleteArticle = async (id: number) => {
     if (!confirm(t('deleteArticle') + '?')) return;
     try {
       await api.delete(`/admin/help/articles/${id}`);

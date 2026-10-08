@@ -3,9 +3,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, X, Loader2, FileText } from 'lucide-react';
 
-interface Article { id: string; title: string; slug: string; meta_description: string | null; category: { slug: string; title: string } }
+interface Article { id: number; title: string; slug: string; meta_description: string | null; category: { slug: string; title: string } }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10311';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10321';
 
 export function HelpSearch() {
   const router   = useRouter();

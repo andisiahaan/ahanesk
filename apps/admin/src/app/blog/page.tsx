@@ -6,7 +6,7 @@ import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/cn';
 
-interface Post { id: string; title: string; slug: string; status: string; is_featured: boolean; published_at: string | null; view_count: number; author: { name: string }; }
+interface Post { id: number; title: string; slug: string; status: string; is_featured: boolean; published_at: string | null; view_count: number; author: { name: string }; }
 
 const STATUS_BADGE: Record<string, string> = {
   DRAFT:     'bg-muted text-muted-foreground',
@@ -31,7 +31,7 @@ export default function BlogPostsPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  const deletePost = async (id: string) => {
+  const deletePost = async (id: number) => {
     if (!confirm('Delete this post?')) return;
     try {
       await api.delete(`/admin/blog/posts/${id}`);

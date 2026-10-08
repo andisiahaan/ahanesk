@@ -6,13 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-interface Category { id: string; name: string; slug: string; is_active: boolean; _count?: { posts: number }; }
+interface Category { id: number; name: string; slug: string; is_active: boolean; _count?: { posts: number }; }
 interface Form { name: string; slug: string; description: string; }
 const EMPTY: Form = { name: '', slug: '', description: '' };
 
 export default function BlogCategoriesPage() {
   const [cats, setCats]     = useState<Category[]>([]);
-  const [editing, setEditing] = useState<string | null>(null);
+  const [editing, setEditing] = useState<number | 'new' | null>(null);
   const [form, setForm]     = useState<Form>(EMPTY);
   const [saving, setSaving] = useState(false);
 
@@ -39,7 +39,7 @@ export default function BlogCategoriesPage() {
     finally { setSaving(false); }
   };
 
-  const del = async (id: string) => {
+  const del = async (id: number) => {
     if (!confirm('Delete this category?')) return;
     await api.delete(`/admin/blog/categories/${id}`);
     setCats((p) => p.filter((c) => c.id !== id));

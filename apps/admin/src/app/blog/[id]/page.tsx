@@ -12,13 +12,13 @@ import { ImagePlus, X } from 'lucide-react';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 
-interface Category { id: string; name: string; }
+interface Category { id: number; name: string; }
 
 const EMPTY = {
   title: '', slug: '', excerpt: '', content: '', status: 'DRAFT',
   is_featured: false, allow_comments: true,
   meta_title: '', meta_description: '', meta_keywords: '',
-  categories: [] as string[], tags: [] as string[],
+  categories: [] as number[], tags: [] as string[],
 };
 
 const cfg = UPLOAD_CONFIGS.blog_cover;
@@ -164,8 +164,8 @@ export default function BlogPostEditPage() {
             isMulti
             placeholder="Select categories..."
             options={categories.map(c => ({ label: c.name, value: c.id }))}
-            value={categories.filter(c => form.categories.includes(c.id)).map(c => ({ label: c.name, value: c.id }))}
-            onChange={(v) => setForm(p => ({ ...p, categories: (v as any[]).map(x => x.value) }))}
+            value={categories.filter(c => form.categories.some(x => Number(x) === Number(c.id))).map(c => ({ label: c.name, value: c.id }))}
+            onChange={(v) => setForm(p => ({ ...p, categories: (v as any[]).map(x => Number(x.value)) }))}
             className="text-sm text-foreground"
             styles={{ control: (base) => ({ ...base, minHeight: '36px', borderRadius: '0.5rem', borderColor: 'var(--border)' }) }}
           />

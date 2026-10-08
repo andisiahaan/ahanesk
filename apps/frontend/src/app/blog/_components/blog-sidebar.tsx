@@ -2,19 +2,40 @@ import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
 import { getImageUrl } from '@/lib/api';
 
-async function getSidebarData() {
+interface SidebarPost {
+  id: number;
+  title: string;
+  slug: string;
+  cover_image: string | null;
+  published_at: string | null;
+}
+
+interface SidebarCategory {
+  id: number;
+  name: string;
+  slug: string;
+  _count?: { posts: number };
+}
+
+interface SidebarTag {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+async function getSidebarData(): Promise<{ popular: SidebarPost[]; categories: SidebarCategory[]; tags: SidebarTag[] }> {
   const [popularRes, categoriesRes, tagsRes] = await Promise.all([
     apiFetch('/blog/posts?sort=popular&limit=5').catch(() => null),
     apiFetch('/blog/categories').catch(() => null),
     apiFetch('/blog/tags?limit=50').catch(() => null),
   ]);
 
-  const popular = popularRes?.ok ? (await popularRes.json()).data?.posts ?? [] : [];
+  const popular: SidebarPost[] = popularRes?.ok ? (await popularRes.json()).data?.posts ?? [] : [];
   const categoriesData = categoriesRes?.ok ? (await categoriesRes.json()).data : [];
   const tagsData = tagsRes?.ok ? (await tagsRes.json()).data : [];
 
-  const categories = Array.isArray(categoriesData) ? categoriesData : (categoriesData?.items ?? []);
-  const allTags = Array.isArray(tagsData) ? tagsData : (tagsData?.items ?? []);
+  const categories: SidebarCategory[] = Array.isArray(categoriesData) ? categoriesData : (categoriesData?.items ?? []);
+  const allTags: SidebarTag[] = Array.isArray(tagsData) ? tagsData : (tagsData?.items ?? []);
 
   // Randomize 20 tags for the cloud
   const shuffledTags = [...allTags].sort(() => 0.5 - Math.random());
@@ -53,7 +74,7 @@ export async function BlogSidebar() {
         <div className="bg-card border border-border rounded-xl p-5">
           <h3 className="font-bold text-foreground mb-4">Popular Posts</h3>
           <div className="flex flex-col gap-4">
-            {popular.map((post: any) => (
+            {popular.map((post) => (
               <Link key={post.id} href={`/blog/${post.slug}`} className="group flex gap-3 items-start">
                 {post.cover_image && (
                   <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-muted">
@@ -83,7 +104,7 @@ export async function BlogSidebar() {
         <div className="bg-card border border-border rounded-xl p-5">
           <h3 className="font-bold text-foreground mb-4">Popular Categories</h3>
           <ul className="flex flex-col gap-2">
-            {categories.map((cat: any) => (
+            {categories.map((cat) => (
               <li key={cat.id}>
                 <Link
                   href={`/blog/categories/${cat.slug}`}
@@ -107,7 +128,7 @@ export async function BlogSidebar() {
         <div className="bg-card border border-border rounded-xl p-5">
           <h3 className="font-bold text-foreground mb-4">Tags</h3>
           <div className="flex flex-wrap gap-2">
-            {tags.map((tag: any) => (
+            {tags.map((tag) => (
               <Link
                 key={tag.id}
                 href={`/blog/tags/${tag.slug}`}

@@ -186,12 +186,12 @@ export const UpdateHelpCategorySchema = CreateHelpCategorySchema.partial();
 export type UpdateHelpCategoryDto = z.infer<typeof UpdateHelpCategorySchema>;
 
 export const CreateHelpArticleSchema = z.object({
-  category_id:      z.number().int().positive(),
+  category_id:      z.coerce.number().int().positive(),
   slug:             z.string().min(1).max(255).regex(slugPattern),
   title:            z.string().min(1).max(255),
   content:          z.string().min(1),
   meta_description: z.string().max(160).optional(),
-  sort_order:       z.number().int().default(0),
+  sort_order:       z.coerce.number().int().default(0),
   is_published:     z.boolean().default(false),
 });
 export type CreateHelpArticleDto = z.infer<typeof CreateHelpArticleSchema>;

@@ -1,12 +1,11 @@
 'use client';
 import { useState } from 'react';
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import api from '@/lib/api';
 
 interface HelpfulVoteProps {
-  articleId: string; initialYes: number; initialNo: number;
+  articleId: number; initialYes: number; initialNo: number;
 }
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10311';
 
 export function HelpfulVote({ articleId, initialYes, initialNo }: HelpfulVoteProps) {
   const [voted, setVoted]   = useState<boolean | null>(null);
@@ -16,11 +15,7 @@ export function HelpfulVote({ articleId, initialYes, initialNo }: HelpfulVotePro
   const vote = async (helpful: boolean) => {
     if (voted !== null) return;
     try {
-      await fetch(`${API_URL}/help/articles/${articleId}/vote`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ helpful }),
-      });
+      await api.post(`/help/articles/${articleId}/vote`, { helpful });
       if (helpful) setYes((n) => n + 1);
       else setNo((n) => n + 1);
       setVoted(helpful);

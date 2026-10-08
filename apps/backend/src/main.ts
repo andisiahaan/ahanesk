@@ -54,8 +54,8 @@ async function bootstrap(): Promise<void> {
   // ─── CORS ───────────────────────────────────────────────────────────────────
   app.enableCors({
     origin: [
-      process.env.FRONTEND_URL ?? 'http://localhost:10312',
-      process.env.ADMIN_URL ?? 'http://localhost:10313',
+      process.env.FRONTEND_URL ?? 'http://localhost:10322',
+      process.env.ADMIN_URL ?? 'http://localhost:10323',
     ],
     credentials: true,
   });
@@ -74,7 +74,7 @@ async function bootstrap(): Promise<void> {
   app.useGlobalInterceptors(new ResponseInterceptor());
 
   // ─── Start ──────────────────────────────────────────────────────────────────
-  const port = parseInt(process.env.PORT ?? '10311', 10);
+  const port = parseInt(process.env.PORT ?? '10321', 10);
   await app.listen(port, '0.0.0.0');
   logger.log(`🚀 Backend running on http://0.0.0.0:${port}`, 'Bootstrap');
 }

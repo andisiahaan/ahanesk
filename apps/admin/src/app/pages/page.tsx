@@ -8,14 +8,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/cn';
 
-interface Page { id: string; slug: string; title: string; is_published: boolean; updated_at: string; }
+interface Page { id: number; slug: string; title: string; is_published: boolean; updated_at: string; }
 interface Form { slug: string; title: string; content: string; meta_description: string; is_published: boolean; }
 
 const EMPTY: Form = { slug: '', title: '', content: '', meta_description: '', is_published: false };
 
 export default function PagesPage() {
   const [pages, setPages] = useState<Page[]>([]);
-  const [editing, setEditing] = useState<string | null>(null);
+  const [editing, setEditing] = useState<number | 'new' | null>(null);
   const [form, setForm] = useState<Form>(EMPTY);
   const [saving, setSaving] = useState(false);
 
@@ -26,7 +26,7 @@ export default function PagesPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  const startEdit = async (id: string) => {
+  const startEdit = async (id: number) => {
     const { data } = await api.get(`/pages/id/${id}`);
     const p = data.data;
     setForm({ slug: p.slug, title: p.title, content: p.content, meta_description: p.meta_description ?? '', is_published: p.is_published });
@@ -44,7 +44,7 @@ export default function PagesPage() {
     finally { setSaving(false); }
   };
 
-  const deletePage = async (id: string) => {
+  const deletePage = async (id: number) => {
     if (!confirm('Delete this page?')) return;
     try {
       await api.delete(`/pages/${id}`);

@@ -24,7 +24,7 @@ export default function HelpArticleFormPage({ params }: { params: Promise<{ id: 
     sort_order: 0,
     is_published: false,
   });
-  const [categories, setCategories] = useState<{ id: string; title: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: number; title: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -67,11 +67,12 @@ export default function HelpArticleFormPage({ params }: { params: Promise<{ id: 
     
     setSaving(true);
     try {
+      const payload = { ...formData, category_id: Number(formData.category_id), sort_order: Number(formData.sort_order) };
       if (isNew) {
-        await api.post('/admin/help/articles', formData);
+        await api.post('/admin/help/articles', payload);
         toast.success('Article created');
       } else {
-        await api.patch(`/admin/help/articles/${id}`, formData);
+        await api.patch(`/admin/help/articles/${id}`, payload);
         toast.success('Article updated');
       }
       router.push('/help');

@@ -7,13 +7,13 @@ interface PageProps { params: Promise<{ id: string }> }
 
 export async function generateMetadata({ params }: PageProps) {
   const { id } = await params;
-  return { title: `Ticket #${id.slice(0, 8).toUpperCase()}` };
+  return { title: `Ticket #${id}` };
 }
 
 async function getTicket(id: string) {
   const cookieStore = await cookies();
   const cookieString = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join('; ');
-  const url = `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10311'}/tickets/${id}`;
+  const url = `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:10321'}/tickets/${id}`;
   const res = await fetch(url, { headers: { cookie: cookieString }, cache: 'no-store' });
   if (!res.ok) return null;
   const data = await res.json();

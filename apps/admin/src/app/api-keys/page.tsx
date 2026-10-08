@@ -7,14 +7,14 @@ import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 
 interface PAT {
-  id: string;
+  id: number;
   name: string;
   token_prefix: string;
   last_used_at: string | null;
   expires_at: string | null;
   created_at: string;
   user: {
-    id: string;
+    id: number;
     name: string;
     email: string;
   };
@@ -54,7 +54,7 @@ export default function ApiKeysPage() {
     load(page);
   }, [load, page]);
 
-  const revoke = async (id: string) => {
+  const revoke = async (id: number) => {
     if (!confirm(t('actions.confirmRevoke'))) return;
     try {
       await api.delete(`/admin/personal-access-tokens/${id}`);

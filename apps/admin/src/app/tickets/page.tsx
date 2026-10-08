@@ -6,7 +6,7 @@ import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/cn';
 
-interface Ticket { id: string; ticket_number: string; subject: string; status: string; priority: string; category: string | null; user: { name: string; email: string }; created_at: string; _count: { replies: number }; }
+interface Ticket { id: number; ticket_number: string; subject: string; status: string; priority: string; category: string | null; user: { name: string; email: string }; created_at: string; _count: { replies: number }; }
 
 const STATUS_COLOR: Record<string, string> = {
   OPEN:        'bg-primary/12 text-primary',
@@ -36,7 +36,7 @@ export default function TicketsPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  const del = async (id: string) => {
+  const del = async (id: number) => {
     if (!confirm('Delete this ticket permanently?')) return;
     await api.delete(`/admin/tickets/${id}`);
     setTickets((p) => p.filter((t) => t.id !== id));

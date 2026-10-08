@@ -9,11 +9,11 @@ export const metadata: Metadata = {
 };
 
 interface Post {
-  id: string; title: string; slug: string; excerpt: string | null;
+  id: number; title: string; slug: string; excerpt: string | null;
   cover_image: string | null; is_featured: boolean;
   published_at: string | null; view_count: number;
   author: { name: string };
-  categories: { id: string; name: string; slug: string }[];
+  categories: { id: number; name: string; slug: string }[];
 }
 
 async function getPosts(search?: string): Promise<Post[]> {
