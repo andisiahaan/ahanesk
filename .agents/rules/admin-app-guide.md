@@ -26,7 +26,7 @@ Auth store (`useAdminAuthStore`) hanya menyimpan objek `user` — tidak ada `acc
 
 ## Styling & UI Conventions
 
-- Aturan Tailwind & CSS sama dengan frontend (lihat frontend-app-guide.md).
+- Aturan Tailwind & CSS sama dengan web (lihat web-app-guide.md).
 - Tabel data: border, `rounded-xl`, header `bg-muted`, hover row `hover:bg-muted/50`.
 - Badge status/type: inline dengan `cn()`.
 - Sidebar active state: `border-primary bg-primary/10 text-primary`.
@@ -34,7 +34,7 @@ Auth store (`useAdminAuthStore`) hanya menyimpan objek `user` — tidak ada `acc
 
 ## Data Fetching & State
 
-- Sama dengan frontend: axios instance `src/lib/api.ts` dengan `withCredentials: true`, auto-refresh on 401.
+- Sama dengan web: axios instance `src/lib/api.ts` dengan `withCredentials: true`, auto-refresh on 401.
 - **Server state**: TanStack Query. **Client state**: Zustand.
 - **Dilarang fetch langsung di komponen UI**.
 - **Storage / Asset Image URL**: Gunakan `getImageUrl(path)` dari `src/lib/api.ts` yang membaca `NEXT_PUBLIC_STORAGE_URL`. Dilarang menggabungkan path storage secara manual dengan `NEXT_PUBLIC_API_URL`.
@@ -50,7 +50,7 @@ packages/shared/src/locales/
   en/
     modules/    ← cross-app: auth, common, blog (field labels)
     admin/      ← khusus admin: nav, dashboard, blog (mgmt), users, news, settings
-    frontend/   ← khusus frontend (tidak dipakai di sini)
+    web/        ← khusus web (tidak dipakai di sini)
 ```
 
 Di `i18n/request.ts`:

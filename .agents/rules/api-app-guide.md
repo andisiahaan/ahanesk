@@ -1,11 +1,11 @@
 ---
 trigger: always_on
-description: Standar dan aturan khusus NestJS backend — routing, auth, validasi, cache, dan lainnya
+description: Standar dan aturan khusus NestJS API (apps/api) — routing, auth, validasi, cache, dan lainnya
 ---
 
-> **INSTRUKSI AGENT**: Setiap kali ada kesepakatan baru terkait backend (library baru, pola baru, gotcha baru, atau keputusan arsitektur NestJS) — **langsung perbarui file ini** sebelum lanjut ke pekerjaan lain.
+> **INSTRUKSI AGENT**: Setiap kali ada kesepakatan baru terkait API backend (library baru, pola baru, gotcha baru, atau keputusan arsitektur NestJS) — **langsung perbarui file ini** sebelum lanjut ke pekerjaan lain.
 
-# Backend App Guide — NestJS
+# API App Guide — NestJS (`apps/api`)
 
 ## Stack & Library
 
@@ -29,13 +29,13 @@ description: Standar dan aturan khusus NestJS backend — routing, auth, validas
 
 ## Routing
 
-- **Tidak ada prefix `/api`**. Backend di domain `api.domain.com`.
+- **Tidak ada prefix `/api`**. API di domain `api.domain.com`.
 - Route structure:
-  - (tanpa prefix) → route internal untuk Frontend user-facing
-  - `/admin/*` → route untuk Admin Panel. **Prefix ini hanya di backend** — halaman Next.js admin tidak pakai `/admin/` di URL.
+  - (tanpa prefix) → route internal untuk Web user-facing
+  - `/admin/*` → route untuk Admin Panel. **Prefix ini hanya di API server** — halaman Next.js admin tidak pakai `/admin/` di URL.
   - `/v1/*` → external API, auth pakai Personal Access Token
   - `/webhooks/*` → selalu POST, wajib verifikasi signature, tanpa CORS
-- **CORS** tidak boleh wildcard `*` untuk route dengan auth/cookie. Origin frontend dan admin didaftarkan eksplisit.
+- **CORS** tidak boleh wildcard `*` untuk route dengan auth/cookie. Origin web dan admin didaftarkan eksplisit.
 - **CRUD hanya di 1 tempat (Service)**. Controller admin, user, `/v1/*` memanggil service yang sama.
 - Struktur modul: `*.dto.ts` → `*.repository.ts` → `*.service.ts` → `*.controller.ts` → `*.module.ts`.
 - Controller hanya orchestrator: terima request → validasi → panggil service → return response.
@@ -116,14 +116,14 @@ Gunakan `PaginatedResponse<T>` dan `buildPaginationMeta()`.
 - Gunakan `StorageService`. Konfigurasi upload (MIME type, ukuran, prefix folder) SSOT di `packages/shared/src/upload-configs.ts` (`UPLOAD_CONFIGS`) — bukan inline di module/controller.
 - **Simpan path relatif ke DB**, bukan full URL (contoh: `avatars/xyz.webp`, `blog/cover.jpg`).
 - Driver storage ditentukan env var `DISK=local|s3` (validasi di `env.validation.ts`).
-- **Local Storage di Root Monorepo**: Driver `local` menyimpan file ke root monorepo di folder `/storage` (`STORAGE_LOCAL_PATH=../../storage`), bukan di dalam folder API backend.
+- **Local Storage di Root Monorepo**: Driver `local` menyimpan file ke root monorepo di folder `/storage` (`STORAGE_LOCAL_PATH=../../storage`), bukan di dalam folder `apps/api`.
 - **Penyajian File Statis Independen**: Akses file lokal dilayani langsung oleh web server (Laragon vhost / Nginx / Apache / subdomain, misal `http://ahansk.test/storage` atau `https://storage.domain.com`), BUKAN melalui streaming controller NestJS.
-- **Public URL**: Base URL publik didefinisikan lewat `STORAGE_URL` di backend dan `NEXT_PUBLIC_STORAGE_URL` di frontend & admin. Helper URL: `storageService.getUrl(path)` di backend dan `getImageUrl(path)` di frontend/admin.
+- **Public URL**: Base URL publik didefinisikan lewat `STORAGE_URL` di API dan `NEXT_PUBLIC_STORAGE_URL` di web & admin. Helper URL: `storageService.getUrl(path)` di API dan `getImageUrl(path)` di web/admin.
 - **Disk Override Runtime**: `StorageService.upload()` menerima opsi disk override `{ disk?: 'local' | 's3' }` jika pemanggil ingin menyimpan ke disk spesifik.
 
 ## Fitur Opsional (tambah hanya jika project membutuhkan)
 
-- **Google Login**: `google-auth-library` — Google ID token selalu diverifikasi di server. Google One Tap di `frontend`, bukan admin.
+- **Google Login**: `google-auth-library` — Google ID token selalu diverifikasi di server. Google One Tap di `web`, bukan admin.
 - **Realtime**: `@nestjs/websockets` + `platform-socket.io`. Tambah ke dependencies hanya jika dibutuhkan.
 
 ## TypeScript
@@ -133,7 +133,7 @@ Gunakan `PaginatedResponse<T>` dan `buildPaginationMeta()`.
 - Semua fungsi async wajib return type eksplisit.
 - Semua DTO: Zod schema, derive type via `createZodDto(Schema)` lalu export sebagai `class`, bukan `type alias`.
 
-## Checklist Backend
+## Checklist API (apps/api)
 
 - [ ] Tidak ada prefix `/api` di route?
 - [ ] Query Prisma hanya di `*.repository.ts`?

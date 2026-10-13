@@ -32,7 +32,7 @@ function SidebarContent({ onNav }: { onNav?: () => void }) {
   return (
     <>
       <div className="flex items-center px-4 h-14 border-b border-sidebar-border shrink-0">
-        <Logo frontendUrl={process.env.NEXT_PUBLIC_FRONTEND_URL} width={96} height={24} />
+        <Logo webUrl={process.env.NEXT_PUBLIC_WEB_URL} width={96} height={24} />
       </div>
 
       <nav className="flex flex-col gap-0.5 flex-1 overflow-y-auto p-2">

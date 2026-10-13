@@ -17,7 +17,7 @@ export class AppService {
 
   getHealth(): HealthStatus {
     return {
-      name: 'ahanesk-backend',
+      name: 'ahanesk-api',
       status: 'running',
       version: '1.0.0',
       features: {

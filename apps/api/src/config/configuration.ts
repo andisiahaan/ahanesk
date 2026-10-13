@@ -16,7 +16,7 @@ export default registerAs('app', () => {
     redis: { url: env.REDIS_URL },
     google: { clientId: env.GOOGLE_CLIENT_ID },
     recaptcha: { secretKey: env.RECAPTCHA_SECRET_KEY },
-    cors: { frontendUrl: env.FRONTEND_URL, adminUrl: env.ADMIN_URL },
+    cors: { webUrl: env.WEB_URL, adminUrl: env.ADMIN_URL },
     smtp: {
       host: env.SMTP_HOST,
       port: env.SMTP_PORT,

@@ -30,7 +30,7 @@ export default getRequestConfig(async () => {
     // cookies() throws in static pages like not-found
   }
 
-  const { modules, frontend } = localeRegistry[locale];
+  const { modules, web } = localeRegistry[locale];
 
   return {
     locale,
@@ -39,12 +39,12 @@ export default getRequestConfig(async () => {
       auth:          modules.auth,
       common:        modules.common,
       notifications: modules.notifications,
-      // Blog: shared field labels + frontend reader-context strings
-      blog: { ...modules.blog, ...frontend.blog },
-      // ── Frontend-specific ──────────────────────────────────────────────
-      nav:       frontend.nav,
-      dashboard: frontend.dashboard,
-      account:   frontend.account,
+      // Blog: shared field labels + web reader-context strings
+      blog: { ...modules.blog, ...web.blog },
+      // ── Web-specific ───────────────────────────────────────────────────
+      nav:       web.nav,
+      dashboard: web.dashboard,
+      account:   web.account,
     },
   };
 });

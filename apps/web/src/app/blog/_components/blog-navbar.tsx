@@ -23,7 +23,7 @@ export async function BlogNavbar() {
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-6xl mx-auto px-4 items-center gap-6">
         <Link href="/blog" className="flex items-center gap-2 font-bold tracking-tight hover:opacity-80 transition-opacity">
-          <Logo width={90} height={20} frontendUrl={process.env.NEXT_PUBLIC_FRONTEND_URL} />
+          <Logo width={90} height={20} webUrl={process.env.NEXT_PUBLIC_WEB_URL} />
           <span className="text-primary hidden sm:inline-block">Blog</span>
         </Link>
         

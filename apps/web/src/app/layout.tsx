@@ -14,7 +14,7 @@ const geist = Geist({ subsets: ['latin'], variable: '--font-geist' });
 export const metadata: Metadata = {
   title: { default: 'My App', template: '%s | My App' },
   description: 'A production-ready full-stack starter kit',
-  ...getBrandIcons(process.env.NEXT_PUBLIC_FRONTEND_URL),
+  ...getBrandIcons(process.env.NEXT_PUBLIC_WEB_URL),
 };
 
 export const dynamic = 'force-dynamic';

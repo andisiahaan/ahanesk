@@ -22,7 +22,7 @@ describe('AppController', () => {
   describe('root', () => {
     it('should return health status object', () => {
       expect(appController.getHealth()).toEqual({
-        name: 'ahanesk-backend',
+        name: 'ahanesk-api',
         status: 'running',
         version: '1.0.0',
         features: {

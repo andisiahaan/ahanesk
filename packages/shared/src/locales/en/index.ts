@@ -3,10 +3,10 @@ import modulesCommon from './modules/common.json';
 import modulesBlog from './modules/blog.json';
 import modulesNotifications from './modules/notifications.json';
 
-import frontendNav from './frontend/nav.json';
-import frontendBlog from './frontend/blog.json';
-import frontendDashboard from './frontend/dashboard.json';
-import frontendAccount from './frontend/account.json';
+import webNav from './web/nav.json';
+import webBlog from './web/blog.json';
+import webDashboard from './web/dashboard.json';
+import webAccount from './web/account.json';
 
 import adminNav from './admin/nav.json';
 import adminDashboard from './admin/dashboard.json';
@@ -21,7 +21,7 @@ import adminApiKeys from './admin/api-keys.json';
 /**
  * English locale data — structured by layer:
  *  - modules/  : cross-app strings, identical in all apps
- *  - frontend/ : strings specific to the user-facing frontend app
+ *  - web/      : strings specific to the user-facing web app
  *  - admin/    : strings specific to the admin dashboard app
  *
  * To add a new module, add the JSON file under modules/ and re-export here.
@@ -34,11 +34,11 @@ export const en = {
     blog:          modulesBlog,
     notifications: modulesNotifications,
   },
-  frontend: {
-    nav:       frontendNav,
-    blog:      frontendBlog,
-    dashboard: frontendDashboard,
-    account:   frontendAccount,
+  web: {
+    nav:       webNav,
+    blog:      webBlog,
+    dashboard: webDashboard,
+    account:   webAccount,
   },
   admin: {
     nav:           adminNav,

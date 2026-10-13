@@ -3,7 +3,7 @@ trigger: always_on
 description: Panduan umum project ahansk — konteks, stack, prinsip kerja, dan aturan universal
 ---
 
-> **INSTRUKSI AGENT**: Setiap kali ada kesepakatan baru, keputusan arsitektur, pola baru, atau standar baru yang disepakati bersama user — **wajib langsung dicatat di file guide yang sesuai** sebelum melanjutkan pekerjaan lain. Jika keputusan bersifat lintas-app (universal), catat di `project-guide.md`. Jika spesifik ke satu app atau layer, catat di guide yang relevan (`backend-app-guide.md`, `frontend-app-guide.md`, atau `admin-app-guide.md`).
+> **INSTRUKSI AGENT**: Setiap kali ada kesepakatan baru, keputusan arsitektur, pola baru, atau standar baru yang disepakati bersama user — **wajib langsung dicatat di file guide yang sesuai** sebelum melanjutkan pekerjaan lain. Jika keputusan bersifat lintas-app (universal), catat di `project-guide.md`. Jika spesifik ke satu app atau layer, catat di guide yang relevan (`api-app-guide.md`, `web-app-guide.md`, atau `admin-app-guide.md`).
 
 # Project Guide — ahansk Starter Kit
 
@@ -23,15 +23,15 @@ Ini adalah **starter kit monorepo untuk project skala menengah ke atas**. Kerumi
 
 | Layer | Pilihan |
 |---|---|
-| Backend | NestJS |
-| Frontend (user-facing) | Next.js App Router |
+| API (Server) | NestJS |
+| Web (user-facing) | Next.js App Router |
 | Admin | Next.js App Router |
 | ORM | Prisma (MySQL/MariaDB) |
 | Package manager | pnpm workspaces |
 | Task orchestrator | Turborepo (Full Monorepo) |
 | Cache | Redis DB 1, namespace `cache:*` — **bukan Memcached** |
 | Queue | Redis DB 0 + BullMQ |
-| Validasi | Zod v4 (backend: global `ZodValidationPipe` + `createZodDto` class; frontend: react-hook-form + zodResolver) |
+| Validasi | Zod v4 (API: global `ZodValidationPipe` + `createZodDto` class; Web: react-hook-form + zodResolver) |
 | i18n | next-intl, cookie-based locale, semua locale di `packages/shared` |
 | Storage | Local (`/storage` di root monorepo) & S3-compatible, ditentukan via `.env` `DISK=local|s3` |
 
@@ -39,8 +39,8 @@ Ini adalah **starter kit monorepo untuk project skala menengah ke atas**. Kerumi
 
 ```
 apps/
-  backend/    → NestJS (port 10321)
-  frontend/   → Next.js user-facing (port 10322)
+  api/        → NestJS (port 10321)
+  web/        → Next.js user-facing (port 10322)
   admin/      → Next.js admin panel (port 10323)
 packages/
   shared/     → Zod schemas, types, constants, i18n localeRegistry, pagination utils
@@ -57,8 +57,8 @@ storage/      → Folder storage local root project (dilayani web server / subdo
 ## Deployment
 
 - PM2 via `ecosystem.config.js` di root monorepo.
-- Backend production: cluster mode.
-- Frontend & Admin production: `script: 'node_modules/.bin/next'`, `args: 'start'`.
+- API production: cluster mode.
+- Web & Admin production: `script: 'node_modules/.bin/next'`, `args: 'start'`.
 
 ## Hal yang SELALU DILARANG (lintas semua app)
 
@@ -78,4 +78,4 @@ storage/      → Folder storage local root project (dilayani web server / subdo
 - Menggunakan `import * as cookieParser` — pakai `import cookieParser = require(...)`.
 - Melakukan mutasi data tanpa memverifikasi CSRF Token di backend (Double-Submit Cookie).
 - Menggunakan alias `type` pada DTO di controller NestJS. Wajib memakai `class` via `createZodDto`.
-- Menyimpan file upload di dalam `apps/backend` (wajib di root monorepo `/storage` jika disk local, disajikan langsung oleh web server / subdomain).
+- Menyimpan file upload di dalam `apps/api` (wajib di root monorepo `/storage` jika disk local, disajikan langsung oleh web server / subdomain).

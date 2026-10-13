@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
       <div className="absolute top-4 right-4"><ThemeToggle /></div>
       <div className="w-full max-w-sm bg-card border border-border rounded-2xl p-8 shadow-lg">
         <div className="text-center mb-8">
-          <Logo frontendUrl={process.env.NEXT_PUBLIC_FRONTEND_URL} width={110} height={28} className="mx-auto mb-5" />
+          <Logo webUrl={process.env.NEXT_PUBLIC_WEB_URL} width={110} height={28} className="mx-auto mb-5" />
           <h1 className="text-xl font-bold text-foreground">Admin Panel</h1>
           <p className="text-xs text-muted-foreground mt-1">Restricted access — administrators only</p>
         </div>

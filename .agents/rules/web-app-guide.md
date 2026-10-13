@@ -1,14 +1,14 @@
 ---
 trigger: always_on
 glob:
-description: Standar khusus frontend user-facing (Next.js App Router) — styling, data fetching, i18n, form
+description: Standar khusus web user-facing (Next.js App Router — apps/web) — styling, data fetching, i18n, form
 ---
 
-> **INSTRUKSI AGENT**: Setiap kali ada kesepakatan baru terkait frontend (komponen baru, pola baru, perubahan i18n, standar UI) — **langsung perbarui file ini** sebelum lanjut ke pekerjaan lain.
+> **INSTRUKSI AGENT**: Setiap kali ada kesepakatan baru terkait web user-facing (komponen baru, pola baru, perubahan i18n, standar UI) — **langsung perbarui file ini** sebelum lanjut ke pekerjaan lain.
 
-# Frontend App Guide — Next.js (User-Facing)
+# Web App Guide — Next.js (User-Facing)
 
-App: `apps/frontend` — domain `domain.com`
+App: `apps/web` — domain `domain.com`
 
 ## Styling & Komponen
 
@@ -42,26 +42,26 @@ App: `apps/frontend` — domain `domain.com`
 
 - **Semua string UI wajib `next-intl`** — dilarang hardcode string dalam JSX/TSX.
 - Client Components: `useTranslations('namespace')`. Server Components: `getTranslations('namespace')`.
-- **Tidak ada folder `messages/` atau `locales/` di dalam `apps/frontend`** — semua locale ada di `packages/shared`.
+- **Tidak ada folder `messages/` atau `locales/` di dalam `apps/web`** — semua locale ada di `packages/shared`.
 
 Arsitektur locale (SSOT di shared):
 ```
 packages/shared/src/locales/
   en/
     modules/    ← cross-app: auth, common, blog (field labels)
-    frontend/   ← khusus frontend: nav, blog (reader context)
+    web/        ← khusus web: nav, blog (reader context), dashboard, account
     admin/      ← khusus admin (tidak dipakai di sini)
 ```
 
 Di `i18n/request.ts`:
 ```ts
 import { localeRegistry } from '@ahansk/shared';
-const { modules, frontend } = localeRegistry[locale];
-// messages: { auth, common, blog: {...modules.blog, ...frontend.blog}, nav: frontend.nav }
+const { modules, web } = localeRegistry[locale];
+// messages: { auth, common, blog: {...modules.blog, ...web.blog}, nav: web.nav, dashboard: web.dashboard, account: web.account }
 ```
 
 - Locale: cookie `locale` (1 tahun) diset otomatis di `src/middleware.ts` dari header `Accept-Language`. Guest: cookie. User login: `user.preferences.locale`.
-- Menambah namespace baru: tambah JSON di `shared/src/locales/en/frontend/`, import di `en/index.ts`, wiring di `request.ts`.
+- Menambah namespace baru: tambah JSON di `shared/src/locales/en/web/`, import di `en/index.ts`, wiring di `request.ts`.
 - `next-intl/plugin` **tidak** mengekspor tipe `Config`. Cukup:
   ```ts
   import createNextIntlPlugin from 'next-intl/plugin';
@@ -79,7 +79,7 @@ const { modules, frontend } = localeRegistry[locale];
 - `.env` dan `.env.example` wajib sinkron.
 - Tidak ada hardcode URL/secret di kode.
 
-## Checklist Frontend
+## Checklist Web (apps/web)
 
 - [ ] Semua API call via `src/lib/api.ts`?
 - [ ] Route protection SSR dan penentuan cookie locale via `src/middleware.ts`?
@@ -90,7 +90,7 @@ const { modules, frontend } = localeRegistry[locale];
 - [ ] File tidak melebihi 300 baris?
 - [ ] Tampilan dicek di Mobile, Tablet, Desktop?
 - [ ] Semua string UI pakai `useTranslations()` / `getTranslations()`?
-- [ ] Key terjemahan ditambahkan ke `shared/src/locales/en/frontend/`?
+- [ ] Key terjemahan ditambahkan ke `shared/src/locales/en/web/`?
 
 ## Yang DILARANG
 
@@ -99,4 +99,4 @@ const { modules, frontend } = localeRegistry[locale];
 - Membuat komponen yang sudah ada di `components/ui/`.
 - Fetch langsung di komponen UI.
 - **Hardcode string UI** tanpa terjemahan.
-- Folder `messages/` atau `locales/` di dalam `apps/frontend`.
+- Folder `messages/` atau `locales/` di dalam `apps/web`.

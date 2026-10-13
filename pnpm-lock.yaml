@@ -122,7 +122,7 @@ importers:
         specifier: ^5
         version: 5.9.3
 
-  apps/backend:
+  apps/api:
     dependencies:
       '@ahanesk/shared':
         specifier: workspace:*
@@ -336,7 +336,7 @@ importers:
         specifier: ^8.20.0
         version: 8.63.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
 
-  apps/frontend:
+  apps/web:
     dependencies:
       '@ahanesk/shared':
         specifier: workspace:*
@@ -440,6 +440,9 @@ importers:
         specifier: '>=18'
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@types/node':
+        specifier: ^20
+        version: 20.19.43
       '@types/react':
         specifier: ^19.0.0
         version: 19.2.17

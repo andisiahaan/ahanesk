@@ -24,7 +24,7 @@ export const envSchema = z.object({
   RECAPTCHA_SECRET_KEY: z.string().default(''),
 
   // ─── CORS ─────────────────────────────────────────────────────────────────
-  FRONTEND_URL: z.string().url(),
+  WEB_URL: z.string().url(),
   ADMIN_URL: z.string().url(),
 
   // ─── Email (SMTP) ─────────────────────────────────────────────────────────

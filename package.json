@@ -8,9 +8,9 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "type-check": "turbo run type-check",
     "test": "turbo run test",
-    "db:generate": "turbo run db:generate --filter=backend",
-    "db:migrate": "turbo run db:migrate --filter=backend",
-    "db:seed": "turbo run db:seed --filter=backend"
+    "db:generate": "turbo run db:generate --filter=api",
+    "db:migrate": "turbo run db:migrate --filter=api",
+    "db:seed": "turbo run db:seed --filter=api"
   },
   "devDependencies": {
     "prettier": "^3.5.3",

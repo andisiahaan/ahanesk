@@ -9,8 +9,8 @@ A mid-to-high scale Monorepo Starter Kit based on **NestJS**, **Next.js App Rout
 ```
 ahanesk/
 ├── apps/
-│   ├── backend/    → NestJS API Server (Port 10321)
-│   ├── frontend/   → Next.js User-Facing App Router (Port 10322)
+│   ├── api/        → NestJS API Server (Port 10321)
+│   ├── web/        → Next.js User-Facing App Router (Port 10322)
 │   └── admin/      → Next.js Admin Panel Dashboard (Port 10323)
 ├── packages/
 │   ├── shared/     → Zod schemas, types, constants, i18n locales registry, pagination utils
@@ -27,8 +27,8 @@ ahanesk/
 | Layer | Technology & Library | Description / Key Rules |
 | :--- | :--- | :--- |
 | **Monorepo Engine** | **Turborepo** + **pnpm workspaces** | Orchestration & caching of dev/build/test tasks across workspaces |
-| **Backend** | **NestJS** (TypeScript) | Domain `api.domain.com`, without `/api` prefix. Only `/admin/*` and `/v1/*` routes have prefixes |
-| **Frontend** | **Next.js 16 App Router** | Domain `domain.com`, pure Tailwind CSS styling in JSX, shadcn/ui |
+| **API Server** | **NestJS** (TypeScript) | Domain `api.domain.com`, without `/api` prefix. Only `/admin/*` and `/v1/*` routes have prefixes |
+| **Web** | **Next.js 16 App Router** | Domain `domain.com`, pure Tailwind CSS styling in JSX, shadcn/ui |
 | **Admin Panel** | **Next.js 16 App Router** | Domain `admin.domain.com`, no `/admin/` prefix in URLs, 2-layer auth |
 | **ORM & Database** | **Prisma** + **MySQL / MariaDB** | DB Queries exclusively in `*.repository.ts`. All SQL migrations must be tracked in Git |
 | **Data Validation** | **Zod v4** (`z.object(...)`) | Backend: `ZodValidationPipe`; Frontend/Admin: `react-hook-form` + `zodResolver` |
@@ -63,17 +63,17 @@ pnpm install
 ### 2. Configure Environment Variables (`.env`)
 Copy the `.env.example` file to `.env` in each workspace, then adjust the values:
 ```bash
-# Backend (apps/backend/.env)
-cp apps/backend/.env.example apps/backend/.env
+# API (apps/api/.env)
+cp apps/api/.env.example apps/api/.env
 
-# Frontend (apps/frontend/.env.local)
-cp apps/frontend/.env.example apps/frontend/.env.local
+# Web (apps/web/.env.local)
+cp apps/web/.env.example apps/web/.env.local
 
 # Admin Panel (apps/admin/.env.local)
 cp apps/admin/.env.example apps/admin/.env.local
 ```
 
-> **Important Backend Note (`apps/backend/.env`)**:
+> **Important API Note (`apps/api/.env`)**:
 > Ensure `DATABASE_URL` points to an active MySQL/MariaDB database:
 > `DATABASE_URL="mysql://root:@localhost:3306/ahanesk_extended"`
 
@@ -89,8 +89,8 @@ pnpm run db:seed
 pnpm run dev
 ```
 Once the server is running, services will be accessible at:
-- **Backend API**: http://localhost:10321 (`GET /` to check health status)
-- **Frontend App**: http://localhost:10322
+- **API Server**: http://localhost:10321 (`GET /` to check health status)
+- **Web App**: http://localhost:10322
 - **Admin Dashboard**: http://localhost:10323
 
 ---
@@ -124,8 +124,8 @@ pnpm run test
 ### 2. End-to-End (E2E) API Test
 Every module in the Backend (Auth, User, Blog, Settings, etc.) is equipped with full E2E specs, ensuring controller integration, interceptors, Zod validation, and email delivery work perfectly.
 ```bash
-# Run backend E2E API specs
-pnpm --filter backend run test:e2e
+# Run API E2E specs
+pnpm --filter api run test:e2e
 ```
 *(This process uses a global test environment setup, cleans up isolated data, and uses Cookie-based authentication transparently).*
 
@@ -134,7 +134,7 @@ The application is secured using **Double-Submit Cookie** (`x-csrf-token` header
 A proof-of-concept and load testing script is provided to test server resilience.
 ```bash
 # Perform bombard test & verify mutation security live (optional)
-node apps/backend/scripts/bombard.mjs
+node apps/api/scripts/bombard.mjs
 ```
 
 ---
@@ -158,7 +158,7 @@ pm2 reload ecosystem.config.js --env production
 
 # Check status and application logs
 pm2 status
-pm2 logs ahanesk-backend
+pm2 logs ahanesk-api
 ```
 
 ---
@@ -170,4 +170,4 @@ pm2 logs ahanesk-backend
 3. **Auth Token Storage**: Access tokens and Refresh tokens are set directly via **httpOnly cookies** by the backend server. Frontend and Admin are not permitted to store authentication tokens in `localStorage`.
 4. **I18n / Localization**: Hardcoding UI strings in JSX/TSX is prohibited. All translated strings are stored in the SSOT registry at `packages/shared/src/locales`.
 5. **Storage & Assets**: Uploaded files must never be placed inside the backend API directory. In local mode, files reside in the root `/storage` directory and are served directly by web server / subdomain via `STORAGE_URL` / `NEXT_PUBLIC_STORAGE_URL`. The database only stores relative paths.
-6. **Custom Guides**: Any addition of new conventions must be immediately updated in the guide files located inside `.agents/rules/` (`project-guide.md`, `backend-app-guide.md`, `frontend-app-guide.md`, `admin-app-guide.md`).
+6. **Custom Guides**: Any addition of new conventions must be immediately updated in the guide files located inside `.agents/rules/` (`project-guide.md`, `api-app-guide.md`, `web-app-guide.md`, `admin-app-guide.md`).

@@ -1,10 +1,10 @@
-# AhanESK — Backend API Server (`apps/backend`)
+# AhanESK — API Server (`apps/api`)
 
 Server API NestJS (TypeScript) dari **AhanESK Monorepo**.
 
 ## 🚀 Fitur & Arsitektur Utama
 - **Port Pengembangan**: `10321` (`turbo run dev`). Endpoint tidak menggunakan prefix `/api`.
-- **Health Check Endpoint**: `GET /` (bersifat `@Public()`) mengembalikan `{ name: 'ahanesk-backend', status: 'running', version: '1.0.0' }`.
+- **Health Check Endpoint**: `GET /` (bersifat `@Public()`) mengembalikan `{ name: 'ahanesk-api', status: 'running', version: '1.0.0' }`.
 - **ORM & Database**: Prisma ORM untuk akses database MySQL/MariaDB. Seluruh migrasi SQL di `prisma/migrations` wajib di-commit ke Git.
 - **Validasi Zod v4**: Menggunakan `ZodValidationPipe` (`common/pipes/zod-validation.pipe.ts`) dengan `ZodType` (bukan class-validator).
 - **Autentikasi Cookie**: JWT Access token (`access_token`, 15m) & Refresh token (`refresh_token`, 7d) dikirim eksklusif lewat cookie `httpOnly`.
@@ -15,7 +15,7 @@ Server API NestJS (TypeScript) dari **AhanESK Monorepo**.
 ## 🛠️ Cara Menjalankan
 ```bash
 # Jalankan dari root monorepo
-pnpm run dev --filter=backend
+pnpm run dev --filter=api
 ```
 Atau jalankan serentak via `pnpm run dev` dari root.
 

@@ -24,6 +24,6 @@ Salin dari `.env.example`:
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:10321
 NEXT_PUBLIC_STORAGE_URL=http://ahansk.test/storage
-NEXT_PUBLIC_FRONTEND_URL=http://localhost:10322
+NEXT_PUBLIC_WEB_URL=http://localhost:10322
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your-recaptcha-site-key
 ```

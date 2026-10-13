@@ -38,8 +38,8 @@ export class EmailProcessor extends WorkerHost {
   }
 
   private async sendVerification(to: string, name: string, token: string): Promise<void> {
-    const frontendUrl = this.config.get<string>('app.cors.frontendUrl');
-    const link = `${frontendUrl}/auth/verify-email?token=${token}`;
+    const webUrl = this.config.get<string>('app.cors.webUrl');
+    const link = `${webUrl}/auth/verify-email?token=${token}`;
     await this.transporter.sendMail({
       from: `"${this.config.get<string>('app.smtp.fromName')}" <${this.config.get<string>('app.smtp.fromAddress')}>`,
       to,
@@ -49,8 +49,8 @@ export class EmailProcessor extends WorkerHost {
   }
 
   private async sendPasswordReset(to: string, name: string, token: string): Promise<void> {
-    const frontendUrl = this.config.get<string>('app.cors.frontendUrl');
-    const link = `${frontendUrl}/auth/reset-password?token=${token}`;
+    const webUrl = this.config.get<string>('app.cors.webUrl');
+    const link = `${webUrl}/auth/reset-password?token=${token}`;
     await this.transporter.sendMail({
       from: `"${this.config.get<string>('app.smtp.fromName')}" <${this.config.get<string>('app.smtp.fromAddress')}>`,
       to,
