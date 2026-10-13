@@ -4,6 +4,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import type { Request } from 'express';
 import { PrismaService } from '../../../infrastructure/prisma/prisma.service';
+import { StorageService } from '../../../infrastructure/storage/storage.service';
 import type { AuthUser } from '@ahanesk/shared';
 
 interface JwtPayload {
@@ -25,6 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     config: ConfigService,
     private readonly prisma: PrismaService,
+    private readonly storage: StorageService,
   ) {
     super({
       jwtFromRequest: cookieOrBearerExtractor,
@@ -51,7 +53,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       name: user.name,
       role: user.role,
       twoFactorEnabled: user.totp_enabled,
-      avatar: user.avatar,
+      avatar: this.storage.getUrl(user.avatar),
     };
   }
 }

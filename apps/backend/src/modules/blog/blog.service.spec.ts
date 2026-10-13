@@ -27,6 +27,7 @@ describe('BlogService', () => {
   const mockStorage = {
     upload: jest.fn(),
     delete: jest.fn(),
+    getUrl: jest.fn((path) => (path ? `http://ahanesk.test/storage/${path}` : null)),
   };
 
   beforeEach(async () => {

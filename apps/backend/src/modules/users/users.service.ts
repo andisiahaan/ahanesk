@@ -17,22 +17,32 @@ export class UsersService {
     private readonly storage:  StorageService,
   ) {}
 
+  private formatUser<T extends { avatar?: string | null }>(user: T): T {
+    if (!user) return user;
+    return {
+      ...user,
+      avatar: this.storage.getUrl(user.avatar),
+    };
+  }
+
   async findAll(page = 1, limit = 20) {
     const result = await this.repo.findAll(page, limit);
-    return { items: result.data, meta: buildPaginationMeta(result.total, page, limit) };
+    const items = result.data.map((user) => this.formatUser(user));
+    return { items, meta: buildPaginationMeta(result.total, page, limit) };
   }
 
   async findById(id: number | bigint) {
     const user = await this.repo.findById(id);
     if (!user) throw new NotFoundException(messages.users.notFound);
-    return user;
+    return this.formatUser(user);
   }
 
   async create(dto: CreateUserDto) {
     const exists = await this.repo.findByEmail(dto.email);
     if (exists) throw new ConflictException(messages.auth.emailAlreadyExists);
     const password = dto.password ? await argon2.hash(dto.password) : undefined;
-    return this.repo.createUser({ ...dto, password });
+    const created = await this.repo.createUser({ ...dto, password });
+    return this.formatUser(created);
   }
 
   async update(id: number | bigint, dto: UpdateUserDto) {
@@ -41,7 +51,8 @@ export class UsersService {
     if (dto.password) {
       data.password = await argon2.hash(dto.password);
     }
-    return this.repo.updateUser(id, data);
+    const updated = await this.repo.updateUser(id, data);
+    return this.formatUser(updated);
   }
 
   async delete(id: number | bigint): Promise<void> {
@@ -55,7 +66,8 @@ export class UsersService {
     if (avatarFile) {
       avatarPath = await this.storage.upload(avatarFile, 'avatar');
     }
-    return this.repo.updateUser(id, { ...dto, ...(avatarPath ? { avatar: avatarPath } : {}) });
+    const updated = await this.repo.updateUser(id, { ...dto, ...(avatarPath ? { avatar: avatarPath } : {}) });
+    return this.formatUser(updated);
   }
 
   async changePassword(id: number | bigint, dto: ChangePasswordDto): Promise<{ message: string }> {

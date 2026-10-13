@@ -11,31 +11,54 @@ export class BlogService {
     private readonly storage: StorageService,
   ) {}
 
+  private formatPost<T extends { cover_image?: string | null; author?: { avatar?: string | null } | null }>(post: T): T {
+    if (!post) return post;
+    return {
+      ...post,
+      cover_image: this.storage.getUrl(post.cover_image),
+      ...(post.author
+        ? {
+            author: {
+              ...post.author,
+              avatar: this.storage.getUrl(post.author.avatar),
+            },
+          }
+        : {}),
+    };
+  }
+
   // ─── Public ──────────────────────────────────────────────────
-  listPublished(q: ListPostsQueryDto) { return this.repo.listPosts(q, false); }
+  async listPublished(q: ListPostsQueryDto) {
+    const res = await this.repo.listPosts(q, false);
+    return { ...res, posts: res.posts.map((p) => this.formatPost(p)) };
+  }
 
   async getBySlug(slug: string) {
     const post = await this.repo.findBySlug(slug, true);
     if (!post) throw new NotFoundException('Post not found');
-    return post;
+    return this.formatPost(post);
   }
 
   listActiveCategories() { return this.repo.listCategories(true); }
   listTags(page: number, limit: number) { return this.repo.listTags(page, limit); }
 
   // ─── Admin ───────────────────────────────────────────────────
-  listAll(q: ListPostsQueryDto) { return this.repo.listPosts(q, true); }
+  async listAll(q: ListPostsQueryDto) {
+    const res = await this.repo.listPosts(q, true);
+    return { ...res, posts: res.posts.map((p) => this.formatPost(p)) };
+  }
 
   async getById(id: number | bigint) {
     const post = await this.repo.findById(id);
     if (!post) throw new NotFoundException('Post not found');
-    return post;
+    return this.formatPost(post);
   }
 
   async createPost(dto: CreatePostDto, authorId: number | bigint, file?: UploadedFile) {
     let cover_image: string | undefined;
     if (file) cover_image = await this.storage.upload(file, 'blog_cover');
-    return this.repo.create({ ...dto, author_id: authorId, cover_image });
+    const created = await this.repo.create({ ...dto, author_id: authorId, cover_image });
+    return this.formatPost(created);
   }
 
   async updatePost(id: number | bigint, dto: UpdatePostDto, file?: UploadedFile) {
@@ -45,7 +68,8 @@ export class BlogService {
       if (cover_image) await this.storage.delete(cover_image).catch(() => {});
       cover_image = await this.storage.upload(file, 'blog_cover');
     }
-    return this.repo.update(id, { ...dto, cover_image });
+    const updated = await this.repo.update(id, { ...dto, cover_image });
+    return this.formatPost(updated);
   }
 
   async deletePost(id: number | bigint) {

@@ -55,9 +55,15 @@ export class StorageService {
     await this.localDriver.delete(filePath).catch(() => this.s3Driver.delete(filePath));
   }
 
-  getUrl(filePath: string, disk?: DiskDriver): string {
-    if (!filePath) return '';
-    if (filePath.startsWith('http://') || filePath.startsWith('https://')) return filePath;
+  getUrl(filePath: string, disk?: DiskDriver): string;
+  getUrl(filePath: null | undefined, disk?: DiskDriver): null;
+  getUrl(filePath: string | null | undefined, disk?: DiskDriver): string | null;
+  getUrl(filePath: string | null | undefined, disk?: DiskDriver): string | null {
+    if (filePath === null || filePath === undefined) return null;
+    if (filePath === '') return '';
+    if (filePath.startsWith('http://') || filePath.startsWith('https://') || filePath.startsWith('data:')) {
+      return filePath;
+    }
     return this.resolveDriver(undefined, disk).getUrl(filePath);
   }
 }
